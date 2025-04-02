@@ -1,5 +1,7 @@
 cached_datasets
 tinyllama_model
 tinyllama-alpaca-finetuned
+tokenized_train
+tokenized_val
 
 __pycache__
