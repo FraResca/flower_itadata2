@@ -1,0 +1,10 @@
+flwr
+flwr-datasets
+torch
+torchvision
+numpy
+datasets
+transformers
+peft
+bitsandbytes
+sentencepiece
