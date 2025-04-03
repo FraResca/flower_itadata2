@@ -1,22 +1,4 @@
 Starting federated fine-tuning client...
 Using device: cpu
-Using permanent model directory: tinyllama_model
-Loading model and tokenizer from local directory
+Using permanent model directory: smollm_model
 Model and tokenizer loaded successfully.
-Loading tokenized datasets from cache...
-Step 5 logs: {'loss': 2.2832, 'grad_norm': 2.1592488288879395, 'learning_rate': 0.0, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'train_runtime': 62.3289, 'train_samples_per_second': 0.075, 'train_steps_per_second': 0.08, 'total_flos': 15891494338560.0, 'train_loss': 2.2832141876220704, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'eval_loss': 1.4358973503112793, 'eval_runtime': 10.9453, 'eval_samples_per_second': 0.091, 'eval_steps_per_second': 0.091, 'epoch': 0.00010683532403153778}
-Step 0 logs: {'eval_loss': 1.4358973503112793, 'eval_model_preparation_time': 0.0132, 'eval_runtime': 11.8791, 'eval_samples_per_second': 0.084, 'eval_steps_per_second': 0.084}
-Step 5 logs: {'loss': 2.2601, 'grad_norm': 2.3025617599487305, 'learning_rate': 0.0, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'train_runtime': 118.6053, 'train_samples_per_second': 0.039, 'train_steps_per_second': 0.042, 'total_flos': 15891494338560.0, 'train_loss': 2.260143852233887, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'loss': 2.265, 'grad_norm': 2.387218952178955, 'learning_rate': 0.0, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'train_runtime': 118.7022, 'train_samples_per_second': 0.039, 'train_steps_per_second': 0.042, 'total_flos': 15891494338560.0, 'train_loss': 2.2649654388427733, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'eval_loss': 1.42975914478302, 'eval_model_preparation_time': 0.0132, 'eval_runtime': 13.1462, 'eval_samples_per_second': 0.076, 'eval_steps_per_second': 0.076, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'eval_loss': 1.42975914478302, 'eval_runtime': 13.2799, 'eval_samples_per_second': 0.075, 'eval_steps_per_second': 0.075, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'loss': 2.2351, 'grad_norm': 2.6085362434387207, 'learning_rate': 0.0, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'train_runtime': 126.7624, 'train_samples_per_second': 0.037, 'train_steps_per_second': 0.039, 'total_flos': 15891494338560.0, 'train_loss': 2.235099983215332, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'loss': 2.234, 'grad_norm': 2.5362226963043213, 'learning_rate': 0.0, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'train_runtime': 127.4814, 'train_samples_per_second': 0.037, 'train_steps_per_second': 0.039, 'total_flos': 15891494338560.0, 'train_loss': 2.2339799880981444, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'eval_loss': 1.4214469194412231, 'eval_runtime': 11.7389, 'eval_samples_per_second': 0.085, 'eval_steps_per_second': 0.085, 'epoch': 0.00010683532403153778}
-Step 5 logs: {'eval_loss': 1.4214469194412231, 'eval_model_preparation_time': 0.0132, 'eval_runtime': 11.7449, 'eval_samples_per_second': 0.085, 'eval_steps_per_second': 0.085, 'epoch': 0.00010683532403153778}

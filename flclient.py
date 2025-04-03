@@ -12,12 +12,7 @@ from transformers import (
 )
 from peft import LoraConfig, get_peft_model
 import flwr as fl
-
-class FileLogCallback(TrainerCallback):
-    def on_log(self, args, state, control, logs=None, **kwargs):
-        if logs is not None:
-            with open("log.txt", "a") as log_file:
-                log_file.write(f"Step {state.global_step} logs: {logs}\n")
+import random
 
 def preprocess_function(example):
     if example["input"].strip():
@@ -47,82 +42,113 @@ def load_alpaca(test_size=0.1, seed=42):
             split_dataset = raw_dataset["train"].train_test_split(test_size=test_size, seed=seed)
             train_dataset = split_dataset["train"].map(preprocess_function)
             val_dataset = split_dataset["test"].map(preprocess_function)
+
             return train_dataset, val_dataset
 
 def tinyllama_model_tokenizer():
-        model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-        model_dir = "tinyllama_model"
-        
+        # model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+        # model_dir = "tinyllama_model"
+        model_name = "HuggingFaceTB/SmolLM2-135M"
+        model_dir = "smollm_model"
         os.makedirs(model_dir, exist_ok=True)
-        with open("log.txt", "a") as log_file:
-            log_file.write(f"Using permanent model directory: {model_dir}\n")
+        print(f"Using permanent model directory: {model_dir}\n")
         
-        # Check if model already exists locally
         tokenizer_path = os.path.join(model_dir, "tokenizer")
         model_path = os.path.join(model_dir, "model")
         
         if os.path.exists(tokenizer_path) and os.path.exists(model_path):
-            # Load from local directory
-            with open("log.txt", "a") as log_file:
-                log_file.write("Loading model and tokenizer from local directory\n")
+            print("Loading model and tokenizer from local directory\n")
             tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, use_fast=False)
             model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto")
         else:
-            # Download from HuggingFace and save locally
-            with open("log.txt", "a") as log_file:
-                log_file.write("Downloading model and tokenizer from HuggingFace\n")
+            print("Downloading model and tokenizer from HuggingFace\n")
             tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
             model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
             
-            # Save to permanent location
             tokenizer.save_pretrained(tokenizer_path)
             model.save_pretrained(model_path)
-            with open("log.txt", "a") as log_file:
-                log_file.write("Model and tokenizer saved to local directory\n")
+            print("Model and tokenizer saved to local directory\n")
                 
         tokenizer.pad_token = tokenizer.eos_token
 
         return tokenizer, model
 
-def get_tokenized_datasets(tokenizer):
+def create_partitioned_datasets(tokenizer, num_partitions=5, client_seed=None):
     cached_dir = "cached_datasets"
     os.makedirs(cached_dir, exist_ok=True)
-    train_cache_path = "tokenized_train"
-    val_cache_path = "tokenized_val"
     
-    # Check if cached datasets exist
-    if os.path.exists(train_cache_path) and os.path.exists(val_cache_path):
-        with open("log.txt", "a") as log_file:
-            log_file.write("Loading tokenized datasets from cache...\n")
-        train_dataset = load_dataset("json", data_files=train_cache_path)["train"]
-        val_dataset = load_dataset("json", data_files=val_cache_path)["train"]
-    else:
-        with open("log.txt", "a") as log_file:
-            log_file.write("Tokenizing datasets and saving to cache...\n")
-        train_dataset, val_dataset = load_alpaca()
-        train_dataset = train_dataset.map(
+    partitions_dir = os.path.join(cached_dir, "partitions")
+    os.makedirs(partitions_dir, exist_ok=True)
+    
+    val_cache_path = os.path.join(cached_dir, "tokenized_val")
+    
+    partitions_created = True
+    for i in range(num_partitions):
+        partition_path = os.path.join(partitions_dir, f"partition_{i}")
+        if not os.path.exists(partition_path):
+            partitions_created = False
+            break
+    
+    num_partitions_created = len(os.listdir(partitions_dir))
+    if num_partitions_created != num_partitions:
+        partitions_created = False
+
+    if not partitions_created or not os.path.exists(val_cache_path):
+
+        for filename in os.listdir(partitions_dir):
+            file_path = os.path.join(partitions_dir, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+
+        print(f"Creating {num_partitions} dataset partitions...\n")
+        train_dataset_full, val_dataset = load_alpaca()
+        
+        train_dataset_full = train_dataset_full.map(
             lambda ex: tokenize_function(ex, tokenizer), batched=True
         )
         val_dataset = val_dataset.map(
             lambda ex: tokenize_function(ex, tokenizer), batched=True
         )
         
-        # Save processed datasets to disk
-        train_dataset.to_json(train_cache_path)
         val_dataset.to_json(val_cache_path)
-        with open("log.txt", "a") as log_file:
-            log_file.write(f"Datasets cached to {cached_dir}\n")
+        
+        total_size = len(train_dataset_full)
+        indices = list(range(total_size))
+        random.shuffle(indices)
+        
+        partition_size = total_size // num_partitions
+        for i in range(num_partitions):
+            start_idx = i * partition_size
+            end_idx = start_idx + partition_size if i < num_partitions - 1 else total_size
+            partition_indices = indices[start_idx:end_idx]
+            
+            partition = train_dataset_full.select(partition_indices)
+            partition_path = os.path.join(partitions_dir, f"partition_{i}")
+            partition.to_json(partition_path)
+            
+            print(f"Created partition {i} with {len(partition)} examples\n")
+    
+    return partitions_dir, val_cache_path
 
-    return train_dataset, val_dataset
+def load_random_partition():
+    cached_dir = "cached_datasets"
+    partitions_dir = os.path.join(cached_dir, "partitions")
+    partition_id = random.choice(os.listdir(partitions_dir))
+    partition_path = os.path.join(partitions_dir, partition_id)
+    print(f"Loading partition {partition_id}...\n")
+
+    train_dataset = load_dataset("json", data_files=partition_path)["train"]
+    
+    print(f"Using partition {partition_id} with {len(train_dataset)} examples for this round\n")
+    
+    return train_dataset, partition_id
 
 class LLMFlowerClient(fl.client.NumPyClient):
     def __init__(self):
-        with open("log.txt", "w") as log_file:
-            log_file.write("Starting federated fine-tuning client...\n")
+        print("Starting federated fine-tuning client...\n")
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        with open("log.txt", "a") as log_file:
-            log_file.write(f"Using device: {self.device}\n")
+        print(f"Using device: {self.device}\n")
 
         self.tokenizer, self.model = tinyllama_model_tokenizer()
         lora_config = LoraConfig(
@@ -134,11 +160,11 @@ class LLMFlowerClient(fl.client.NumPyClient):
             task_type="CAUSAL_LM",
         )
         self.model = get_peft_model(self.model, lora_config)
-        with open("log.txt", "a") as log_file:
-            log_file.write("Model and tokenizer loaded successfully.\n")
+        print("Model and tokenizer loaded successfully.\n")
 
-        self.train_dataset, self.val_dataset = get_tokenized_datasets(self.tokenizer)
-        # downsample the val_dataset to 1 example
+        _, val_cache_path = create_partitioned_datasets(self.tokenizer, num_partitions=8000)
+        # sample only one example for validation
+        self.val_dataset = load_dataset("json", data_files=val_cache_path)["train"]  
         self.val_dataset = self.val_dataset.select(range(1))
 
         self.data_collator = DataCollatorForLanguageModeling(
@@ -149,28 +175,16 @@ class LLMFlowerClient(fl.client.NumPyClient):
             output_dir="./tinyllama-alpaca-finetuned",
             eval_strategy="no",
             learning_rate=1e-4,
-            per_device_train_batch_size=1,
-            num_train_epochs=0.0001,
+            num_train_epochs=1,
             weight_decay=0.0,
             logging_steps=5,
             save_strategy="no",
-            fp16=False,
+            fp16=False
         )
 
-        self.trainer = Trainer(
-            model=self.model,
-            args=self.training_args,
-            train_dataset=self.train_dataset,
-            eval_dataset=self.val_dataset,
-            data_collator=self.data_collator,
-            callbacks=[FileLogCallback()]
-        )
-
-        # ...existing code...
     def get_parameters(self, config=None):
-        # Only get the trainable parameters (LoRA parameters)
         trainable_params = {
-            k: v.cpu().detach().numpy()  # Add detach() before numpy()
+            k: v.cpu().detach().numpy()
             for k, v in self.model.named_parameters()
             if v.requires_grad
         }
@@ -193,17 +207,57 @@ class LLMFlowerClient(fl.client.NumPyClient):
 
     def fit(self, parameters, config):
         self.set_parameters(parameters)
+
+        train_dataset, partition_id = load_random_partition()
+
+        self.trainer = Trainer(
+            model=self.model,
+            args=self.training_args,
+            train_dataset=train_dataset,
+            eval_dataset=self.val_dataset,
+            data_collator=self.data_collator
+        )
+
         self.trainer.train()
         updated_parameters = self.get_parameters()
-        num_examples = len(self.train_dataset)
-        return updated_parameters, num_examples, {}
+        num_examples = len(train_dataset)
+        return updated_parameters, num_examples, {"partition": partition_id}
 
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
-        eval_result = self.trainer.evaluate()
-        loss = eval_result.get("eval_loss", 0.0)
-        num_examples = len(self.val_dataset)
-        return float(loss), num_examples, {"loss": float(loss)}
+        
+        batch_size = config.get("eval_batch_size", 1)
+        
+        dataset_len = len(self.val_dataset)
+        num_batches = (dataset_len + batch_size - 1) // batch_size
+        
+        total_loss = 0.0
+        total_examples = 0
+        
+        for i in range(num_batches):
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, dataset_len)
+            current_batch_size = end_idx - start_idx
+            
+            batch_dataset = self.val_dataset.select(range(start_idx, end_idx))
+            
+            temp_trainer = Trainer(
+                model=self.model,
+                args=self.training_args,
+                eval_dataset=batch_dataset,
+                data_collator=self.data_collator
+            )
+            
+            batch_result = temp_trainer.evaluate()
+            batch_loss = batch_result.get("eval_loss", 0.0)
+            
+            total_loss += batch_loss * current_batch_size
+            total_examples += current_batch_size
+        
+        # Calculate average loss
+        avg_loss = total_loss / total_examples if total_examples > 0 else 0.0
+        
+        return float(avg_loss), total_examples, {"loss": float(avg_loss)}
 
 def main():
     client = LLMFlowerClient()
