@@ -10,3 +10,4 @@ bitsandbytes
 sentencepiece
 evaluate
 rouge_score
+deepeval

@@ -38,7 +38,7 @@ def tokenize_function(examples, tokenizer, max_length=512):
         padding="max_length"
     )
 
-def load_alpaca(test_size=0.1, seed=42):
+def load_dataset_fine(test_size=0.1, seed=42):
             # raw_dataset = load_dataset("tatsu-lab/alpaca")
             raw_dataset = load_dataset("lavita/ChatDoctor-HealthCareMagic-100k")
             split_dataset = raw_dataset["train"].train_test_split(test_size=test_size, seed=seed)
@@ -103,7 +103,7 @@ def create_partitioned_datasets(tokenizer, num_partitions=5, client_seed=None):
                 os.remove(file_path)
 
         print(f"Creating {num_partitions} dataset partitions...\n")
-        train_dataset_full, val_dataset = load_alpaca()
+        train_dataset_full, val_dataset = load_dataset_fine()
         
         train_dataset_full = train_dataset_full.map(
             lambda ex: tokenize_function(ex, tokenizer), batched=True
@@ -164,7 +164,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.model = get_peft_model(self.model, lora_config)
         print("Model and tokenizer loaded successfully.\n")
 
-        self.metric = evaluate.load("rouge")
+        self.metric = evaluate.load("bleurt", 'bleurt-large-512')
 
         _, val_cache_path = create_partitioned_datasets(self.tokenizer, num_partitions=8000)
         # sample only one example for validation
@@ -185,36 +185,44 @@ class LLMFlowerClient(fl.client.NumPyClient):
             save_strategy="no",
             fp16=False,
             greater_is_better=True,
-            metric_for_best_model="rouge1"
+            metric_for_best_model="bleurt"
         )
+
 
     def compute_metrics(self, eval_pred):
         predictions, labels = eval_pred
-        
-        # Get logits from predictions
         if isinstance(predictions, tuple):
             predictions = predictions[0]
         
-        # Convert predictions from logits to token IDs
         predictions_ids = np.argmax(predictions, axis=-1)
         
-        # Decode predictions and labels
         decoded_preds = self.tokenizer.batch_decode(predictions_ids, skip_special_tokens=True)
-        
-        # For labels, we need to handle potential padding
-        # Ignore -100 which is used as padding token ID in many cases
         labels = np.where(labels != -100, labels, self.tokenizer.pad_token_id)
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
-        
-        # Compute ROUGE scores
+
+        # The BLEURT metric typically returns results with 'scores' key
         result = self.metric.compute(predictions=decoded_preds, references=decoded_labels)
         
-        # Return metrics - directly use the result values without accessing .mid.fmeasure
+        # Print the keys to understand what's actually returned
+        print(f"BLEURT result keys: {list(result.keys())}")
+        
+        # Extract scores correctly - BLEURT typically uses 'scores' key
+        if 'scores' in result:
+            bleurt_scores = result['scores']
+            print(f"BLEURT scores: {bleurt_scores}")
+        else:
+            # Fallback to first key if 'scores' doesn't exist
+            first_key = next(iter(result.keys())) if result else None
+            bleurt_scores = result.get(first_key, [0.0])
+            print(f"Using fallback key '{first_key}' for BLEURT scores")
+        
+        # Compute average of the scores
+        avg_bleurt = float(np.mean(bleurt_scores)) if len(bleurt_scores) > 0 else 0.0
+        
         return {
-            "rouge1": float(result["rouge1"]),
-            "rougeL": float(result["rougeL"]),
+            "bleurt": avg_bleurt
         }
-
+    
     def get_parameters(self, config=None):
         trainable_params = {
             k: v.cpu().detach().numpy()
@@ -257,6 +265,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         num_examples = len(train_dataset)
         return updated_parameters, num_examples, {"partition": partition_id}
 
+    '''
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
         
@@ -299,6 +308,46 @@ class LLMFlowerClient(fl.client.NumPyClient):
         return float(avg_rouge1), total_examples, {
             "rouge1": float(avg_rouge1),
             "rougeL": float(avg_rougeL)
+        }
+    '''
+
+    def evaluate(self, parameters, config):
+        self.set_parameters(parameters)
+        
+        batch_size = config.get("eval_batch_size", 1)
+        
+        dataset_len = len(self.val_dataset)
+        num_batches = (dataset_len + batch_size - 1) // batch_size
+        
+        total_bleurt = 0.0
+        total_examples = 0
+        
+        for i in range(num_batches):
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, dataset_len)
+            current_batch_size = end_idx - start_idx
+            
+            batch_dataset = self.val_dataset.select(range(start_idx, end_idx))
+            
+            temp_trainer = Trainer(
+                model=self.model,
+                args=self.training_args,
+                eval_dataset=batch_dataset,
+                data_collator=self.data_collator,
+                compute_metrics=self.compute_metrics
+            )
+            
+            batch_result = temp_trainer.evaluate()
+            batch_bleurt = batch_result.get("eval_bleurt", 0.0)
+            
+            total_bleurt += batch_bleurt * current_batch_size
+            total_examples += current_batch_size
+        
+        # Calculate average metrics
+        avg_bleurt = total_bleurt / total_examples if total_examples > 0 else 0.0
+        
+        return float(avg_bleurt), total_examples, {
+            "bleurt": float(avg_bleurt)
         }
 
 def main():
