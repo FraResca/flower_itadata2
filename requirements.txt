@@ -8,3 +8,5 @@ transformers
 peft
 bitsandbytes
 sentencepiece
+evaluate
+rouge_score

@@ -12,7 +12,7 @@ class SaveModelStrategy(fl.server.strategy.FedAvg):
         save_dir="./aggregated_models",
         save_frequency=1,
         save_final=True,
-        num_rounds=3,
+        num_rounds=1,
         **kwargs
     ):
         super().__init__(**kwargs)

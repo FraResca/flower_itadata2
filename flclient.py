@@ -1,6 +1,7 @@
 import os
 import torch
 import numpy as np
+import evaluate
 from datasets import load_dataset
 from transformers import (
     AutoTokenizer,
@@ -38,7 +39,8 @@ def tokenize_function(examples, tokenizer, max_length=512):
     )
 
 def load_alpaca(test_size=0.1, seed=42):
-            raw_dataset = load_dataset("tatsu-lab/alpaca")
+            # raw_dataset = load_dataset("tatsu-lab/alpaca")
+            raw_dataset = load_dataset("lavita/ChatDoctor-HealthCareMagic-100k")
             split_dataset = raw_dataset["train"].train_test_split(test_size=test_size, seed=seed)
             train_dataset = split_dataset["train"].map(preprocess_function)
             val_dataset = split_dataset["test"].map(preprocess_function)
@@ -162,6 +164,8 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.model = get_peft_model(self.model, lora_config)
         print("Model and tokenizer loaded successfully.\n")
 
+        self.metric = evaluate.load("rouge")
+
         _, val_cache_path = create_partitioned_datasets(self.tokenizer, num_partitions=8000)
         # sample only one example for validation
         self.val_dataset = load_dataset("json", data_files=val_cache_path)["train"]  
@@ -173,14 +177,43 @@ class LLMFlowerClient(fl.client.NumPyClient):
 
         self.training_args = TrainingArguments(
             output_dir="./tinyllama-alpaca-finetuned",
-            eval_strategy="no",
+            eval_strategy="epoch",
             learning_rate=1e-4,
             num_train_epochs=1,
             weight_decay=0.0,
             logging_steps=5,
             save_strategy="no",
-            fp16=False
+            fp16=False,
+            greater_is_better=True,
+            metric_for_best_model="rouge1"
         )
+
+    def compute_metrics(self, eval_pred):
+        predictions, labels = eval_pred
+        
+        # Get logits from predictions
+        if isinstance(predictions, tuple):
+            predictions = predictions[0]
+        
+        # Convert predictions from logits to token IDs
+        predictions_ids = np.argmax(predictions, axis=-1)
+        
+        # Decode predictions and labels
+        decoded_preds = self.tokenizer.batch_decode(predictions_ids, skip_special_tokens=True)
+        
+        # For labels, we need to handle potential padding
+        # Ignore -100 which is used as padding token ID in many cases
+        labels = np.where(labels != -100, labels, self.tokenizer.pad_token_id)
+        decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
+        
+        # Compute ROUGE scores
+        result = self.metric.compute(predictions=decoded_preds, references=decoded_labels)
+        
+        # Return metrics - directly use the result values without accessing .mid.fmeasure
+        return {
+            "rouge1": float(result["rouge1"]),
+            "rougeL": float(result["rougeL"]),
+        }
 
     def get_parameters(self, config=None):
         trainable_params = {
@@ -215,7 +248,8 @@ class LLMFlowerClient(fl.client.NumPyClient):
             args=self.training_args,
             train_dataset=train_dataset,
             eval_dataset=self.val_dataset,
-            data_collator=self.data_collator
+            data_collator=self.data_collator,
+            compute_metrics=self.compute_metrics
         )
 
         self.trainer.train()
@@ -231,7 +265,8 @@ class LLMFlowerClient(fl.client.NumPyClient):
         dataset_len = len(self.val_dataset)
         num_batches = (dataset_len + batch_size - 1) // batch_size
         
-        total_loss = 0.0
+        total_rouge1 = 0.0
+        total_rougeL = 0.0
         total_examples = 0
         
         for i in range(num_batches):
@@ -245,23 +280,30 @@ class LLMFlowerClient(fl.client.NumPyClient):
                 model=self.model,
                 args=self.training_args,
                 eval_dataset=batch_dataset,
-                data_collator=self.data_collator
+                data_collator=self.data_collator,
+                compute_metrics=self.compute_metrics  # Add compute_metrics function
             )
             
             batch_result = temp_trainer.evaluate()
-            batch_loss = batch_result.get("eval_loss", 0.0)
+            batch_rouge1 = batch_result.get("eval_rouge1", 0.0)
+            batch_rougeL = batch_result.get("eval_rougeL", 0.0)
             
-            total_loss += batch_loss * current_batch_size
+            total_rouge1 += batch_rouge1 * current_batch_size
+            total_rougeL += batch_rougeL * current_batch_size
             total_examples += current_batch_size
         
-        # Calculate average loss
-        avg_loss = total_loss / total_examples if total_examples > 0 else 0.0
+        # Calculate average metrics
+        avg_rouge1 = total_rouge1 / total_examples if total_examples > 0 else 0.0
+        avg_rougeL = total_rougeL / total_examples if total_examples > 0 else 0.0
         
-        return float(avg_loss), total_examples, {"loss": float(avg_loss)}
+        return float(avg_rouge1), total_examples, {
+            "rouge1": float(avg_rouge1),
+            "rougeL": float(avg_rougeL)
+        }
 
 def main():
     client = LLMFlowerClient()
-    fl.client.start_client(server_address="127.0.0.1:8080", client=client)
+    fl.client.start_client(server_address="127.0.0.1:8080", client=client.to_client())
 
 
 if __name__ == "__main__":
