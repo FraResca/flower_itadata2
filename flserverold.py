@@ -6,6 +6,7 @@ from peft import LoraConfig, get_peft_model
 import numpy as np
 from flwr.common import parameters_to_ndarrays
 
+'''
 class SaveModelStrategy(fl.server.strategy.FedAvg):
     def __init__(
         self,
@@ -86,12 +87,17 @@ class SaveModelStrategy(fl.server.strategy.FedAvg):
                     device=param.device
                 )
                 param.copy_(tensor_data)
+'''
+
+# https://flower.ai/docs/framework/explanation-federated-evaluation.html
+# guarda qui per migliorare il server
 
 def main():
     num_rounds = 3
     min_clients = 2
     server_config = fl.server.ServerConfig(num_rounds=num_rounds)
 
+    '''
     strategy = SaveModelStrategy(
         save_dir="./aggregated_models",
         save_frequency=1,
@@ -100,6 +106,13 @@ def main():
         min_fit_clients=min_clients,
         min_evaluate_clients=min_clients,
         num_rounds=num_rounds
+    )
+    '''
+
+    strategy = fl.server.strategy.FedAvg(
+        min_available_clients=min_clients,
+        min_fit_clients=min_clients,
+        min_evaluate_clients=min_clients,
     )
 
     fl.server.start_server(
