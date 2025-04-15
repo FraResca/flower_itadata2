@@ -1,5 +1,0 @@
-# TERMINAL 1
-# flower-superlink --insecure --serverappio-api-address 0.0.0.0:8080
-
-# TERMINAL 2
-# flower-supernode --insecure --superlink "127.0.0.1:9092"

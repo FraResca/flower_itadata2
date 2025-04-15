@@ -6,5 +6,6 @@ smollm-alpaca-finetuned
 tokenized_train
 tokenized_val
 aggregated_models
+server_evaluation
 
 __pycache__

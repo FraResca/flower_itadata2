@@ -1,5 +1,5 @@
 import pandas as pd
-
+from datasets import Dataset
 
 
 
@@ -129,8 +129,18 @@ def medpix2_2050():
 
         medpix2['train']['input'].append(instring)
         medpix2['train']['output'].append(outstring)
-
-    return medpix2
+    
+    # Convert to Hugging Face Dataset
+    dataset = Dataset.from_dict({
+        "instruction": ["Interpret this medical case and provide diagnosis information"] * len(medpix2["train"]["input"]),
+        "input": medpix2['train']['input'],
+        "output": medpix2['train']['output']
+    })
+    
+    # Return in the structure expected by load_dataset_fine
+    result = {"train": dataset}
+    
+    return result
 
 # Creates the combined dataset (less examples)
 def medpix2_671():

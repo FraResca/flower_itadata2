@@ -1,4 +1,0 @@
-Starting federated fine-tuning client...
-Using device: cpu
-Using permanent model directory: smollm_model
-Model and tokenizer loaded successfully.
