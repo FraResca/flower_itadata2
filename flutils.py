@@ -1,13 +1,9 @@
 import os
 import random
-import numpy as np
-import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from datasets import Dataset, load_dataset
+from datasets import load_dataset
 from medpix2_dataset_preparation import medpix2_2050
 import evaluate
-from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
-import tempfile
 
 def preprocess_function(example):
     if example["input"].strip():

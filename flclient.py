@@ -1,18 +1,14 @@
-import os
 import torch
 import numpy as np
 import evaluate
 from datasets import load_dataset
 from transformers import (
-    AutoTokenizer,
-    AutoModelForCausalLM,
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
 )
 from peft import LoraConfig, get_peft_model
 import flwr as fl
-import random
 from flutils import *
 from medpix2_dataset_preparation import medpix2_2050, medpix2_671
 
@@ -49,7 +45,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         _, val_cache_path = create_partitioned_datasets(
             tokenizer=self.tokenizer,
             dataset_name="medpix2",
-            partition_size=5
+            partition_size=300
         )
         self.val_dataset = load_dataset("json", data_files=val_cache_path)["train"]  
 
@@ -60,7 +56,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.training_args = TrainingArguments(
             output_dir="./tinyllama-alpaca-finetuned",
             eval_strategy="epoch",
-            learning_rate=1e-4,
+            learning_rate=2e-6,
             num_train_epochs=1,
             weight_decay=0.0,
             logging_steps=5,
@@ -143,7 +139,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
         
-        batch_size = config.get("eval_batch_size", 1)
+        batch_size = config.get("eval_batch_size", 5)
         
         dataset_len = len(self.val_dataset)
         num_batches = (dataset_len + batch_size - 1) // batch_size

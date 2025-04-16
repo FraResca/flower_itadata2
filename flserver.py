@@ -92,7 +92,7 @@ def main():
     _, val_cache_path = create_partitioned_datasets(
         tokenizer=tokenizer,
         dataset_name=datasetname,
-        partition_size=5
+        partition_size=300
     )
 
     val_dataset = load_dataset("json", data_files=val_cache_path)["train"]
