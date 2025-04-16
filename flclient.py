@@ -24,7 +24,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
     def __init__(self):
         print("Starting federated fine-tuning client...\n")
 
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cuda:1" if torch.cuda.is_available() else "cpu"
         print(f"Using device: {self.device}\n")
 
         self.model, self.tokenizer = get_model_tokenizer("smol")

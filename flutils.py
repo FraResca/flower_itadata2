@@ -41,7 +41,7 @@ def load_dataset_fine(dataset_name, test_size=0.1, seed=42):
     val_dataset = split_dataset["test"].map(preprocess_function)
 
     # sample only one example for validation
-    val_dataset = val_dataset.select([0])
+    # val_dataset = val_dataset.select([0])
 
     return train_dataset, val_dataset
 

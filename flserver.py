@@ -17,7 +17,8 @@ class ServerEvaluator:
         self.data_collator = DataCollatorForLanguageModeling(
             tokenizer=self.tokenizer, mlm=False
         )
-        self.bleurt = evaluate.load("bleurt", "bleurt-large-512")  # or "bleurt-base-128"
+        # self.bleurt = evaluate.load("bleurt", "bleurt-large-512")  # or "bleurt-base-128"
+        self.bleurt = evaluate.load("bertscore")  # Specify the language or model_type
 
         self.training_args = TrainingArguments(
             output_dir="./server_evaluation",
@@ -37,7 +38,7 @@ class ServerEvaluator:
                 for path in module_path[:-1]:
                     curr_module = getattr(curr_module, path)
                 param = getattr(curr_module, module_path[-1])
-                param.copy_(torch.tensor(param_data).to(self.device))
+                param.copy_(torch.tensor(param_data, device=self.device))
 
     def evaluate_fn(self, server_round, parameters, config):
         # Typical Flower signature: evaluate_fn(server_round, parameters, config), but we only need parameters, config
@@ -54,12 +55,18 @@ class ServerEvaluator:
         
         prediction_output = trainer.predict(self.val_dataset)
         predictions, label_ids = prediction_output.predictions, prediction_output.label_ids
-        predictions_ids = np.argmax(predictions, axis=-1)
-        decoded_preds = self.tokenizer.batch_decode(predictions_ids, skip_special_tokens=True)
-        decoded_labels = self.tokenizer.batch_decode(label_ids, skip_special_tokens=True)
 
-        bleurt_result = self.bleurt.compute(predictions=decoded_preds, references=decoded_labels)
+        # Ensure on GPU for torch ops, then move to CPU for decoding
+        predictions_tensor = torch.tensor(predictions).to(self.device)
+        predictions_ids = torch.argmax(predictions_tensor, dim=-1)
+
+        # Decoding expects CPU
+        decoded_preds = self.tokenizer.batch_decode(predictions_ids.cpu().numpy(), skip_special_tokens=True)
+        decoded_labels = self.tokenizer.batch_decode(torch.tensor(label_ids).cpu().numpy(), skip_special_tokens=True)
+
+        bleurt_result = self.bleurt.compute(predictions=decoded_preds, references=decoded_labels, lang="en")
         avg_bleurt = float(np.mean(bleurt_result["scores"])) if "scores" in bleurt_result else 0.0
+
 
         return avg_bleurt, {"bleurt": avg_bleurt}
 
@@ -71,7 +78,7 @@ def main():
     server_config = fl.server.ServerConfig(num_rounds=num_rounds)
     modelname = "smol"
     datasetname = "medpix2"
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     print(f"Using device: {device}\n")
 
