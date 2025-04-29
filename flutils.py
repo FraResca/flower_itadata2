@@ -87,7 +87,7 @@ def create_partitioned_datasets(tokenizer, partition_config, client_seed=None):
             lambda ex: tokenize_function(ex, tokenizer), batched=True
         )
         # sample 5 random examples for validation
-        val_dataset = val_dataset.shuffle(seed=client_seed).select(range(5))
+        val_dataset = val_dataset.shuffle(seed=client_seed).select(range(50))
         val_dataset.to_json(val_cache_path)
         
         total_size = len(train_dataset_full)
@@ -176,21 +176,21 @@ def get_device_capacity(device):
 
 def get_partition_config(device):
 
-    capacity = get_device_capacity(device)
-    print(f"\nDevice capacity:\n{capacity//1000}\n")
+   # capacity = get_device_capacity(device)
+    #print(f"\nDevice capacity:\n{capacity//1000}\n")
 
     if device.startswith("cpu"):
         partition_config = {
             # select a random dataset from the list
             # "dataset_name": random.choice(["alpaca", "hcm", "medpix2"]),
-            "dataset_name": "medpix2",
+            "dataset_name": "hcm",
             "partition_size": 200,
         }
     else:
         partition_config = {
             # select a random dataset from the list
             # "dataset_name": random.choice(["alpaca", "hcm", "medpix2"]),
-            "dataset_name": "medpix2",
+            "dataset_name": "hcm",
             "partition_size": 500,
         }
     return partition_config
@@ -207,6 +207,7 @@ class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
             weights_results.append((fit_res.parameters, num_tokens))
 
         if total_tokens == 0:
+            print("ERROR: No tokens received from clients. Using default aggregation.")
             return super().aggregate_fit(rnd, results, failures)
 
         # Weighted average by number of tokens

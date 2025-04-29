@@ -12,6 +12,8 @@ import flwr as fl
 from flutils import *
 from medpix2_dataset_preparation import medpix2_2050, medpix2_671
 
+# export CUDA_VISIBLE_DEVICES = 0
+
 def tokenize_function(examples, tokenizer, max_length=512):
     return tokenizer(
         examples["text"],
@@ -24,7 +26,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
     def __init__(self):
         print("Starting federated fine-tuning client...\n")
 
-        self.device = "cuda:1" if torch.cuda.is_available() else "cpu"
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         print(f"Using device: {self.device}\n")
 
         self.model, self.tokenizer = get_model_tokenizer("smol")
@@ -54,7 +56,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
 
         self.training_args = TrainingArguments(
             output_dir="./tinyllama-alpaca-finetuned",
-            eval_strategy="epoch",
+            eval_strategy="no",  # Disabilita valutazione durante il training
             learning_rate=2e-6,
             num_train_epochs=1,
             weight_decay=0.0,
@@ -62,8 +64,12 @@ class LLMFlowerClient(fl.client.NumPyClient):
             save_strategy="no",
             fp16=False,
             greater_is_better=True,
-            metric_for_best_model="bleurt"
+            per_device_train_batch_size=1,
+            gradient_accumulation_steps=4,
+            metric_for_best_model="bleurt",
+            dataloader_num_workers=0  # Riduce l'uso di memoria
         )
+    
 
 
     def compute_metrics(self, eval_pred):
@@ -121,26 +127,67 @@ class LLMFlowerClient(fl.client.NumPyClient):
 
     def fit(self, parameters, config):
         self.set_parameters(parameters)
-
+        
         train_dataset, partition_id = load_random_partition()
-
-        self.trainer = Trainer(
-            model=self.model,
-            args=self.training_args,
-            train_dataset=train_dataset,
-            eval_dataset=self.val_dataset,
-            data_collator=self.data_collator,
-            compute_metrics=self.compute_metrics
-        )
-
-        self.trainer.train()
-        updated_parameters = self.get_parameters()
+        batch_size = 10  # Imposta la dimensione del batch a 10 esempi
+        
+        # Modifica le training_args per usare batch piccoli e per evitare OOM
+        self.training_args.per_device_train_batch_size = 1
+        self.training_args.gradient_accumulation_steps = 4
+        self.training_args.dataloader_num_workers = 0
+        
+        # Prepara il modello e ottimizzatore
+        self.model.to(self.device)
+        
+        # Suddivide il dataset in batch più piccoli
         num_examples = len(train_dataset)
-
+        num_batches = (num_examples + batch_size - 1) // batch_size
+        
+        # Counters
         num_tokens = 0
         for example in train_dataset:
             num_tokens += len(example["input_ids"])
+        
+        # Addestra su batch piccoli
+        print(f"Training on {num_examples} examples in {num_batches} batches")
+        
+        for i in range(num_batches):
+            # Libera memoria CUDA
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                
+            # Crea sotto-dataset per questo batch
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, num_examples)
+            current_batch_size = end_idx - start_idx
+            
+            batch_dataset = train_dataset.select(range(start_idx, end_idx))
+            
+            print(f"Training batch {i+1}/{num_batches} with {len(batch_dataset)} examples")
+            
+            # Crea un nuovo trainer per ogni batch
+            temp_trainer = Trainer(
+                model=self.model,
+                args=self.training_args,
+                train_dataset=batch_dataset,
+                eval_dataset=None,  # Non valutare durante il training a batch
+                data_collator=self.data_collator,
+                compute_metrics=None  # Non calcolare metriche durante il training a batch
+            )
+            
+            temp_trainer.train()
+            
+            # Libera memoria dopo ogni batch
+            del temp_trainer
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                
+            print(f"Batch {i+1}/{num_batches} completed successfully")
 
+        
+        # Ottiene i parametri aggiornati dopo aver completato tutti i batch
+        updated_parameters = self.get_parameters()
+        
         return updated_parameters, num_examples, {
             "partition": partition_id,
             "num_tokens": num_tokens

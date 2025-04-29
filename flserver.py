@@ -6,6 +6,8 @@ from datasets import load_dataset
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 import numpy as np
 
+# export CUDA_VISIBLE_DEVICES = 1
+
 class ServerEvaluator:
     def __init__(self, model, tokenizer, val_dataset, device):
         self.model = model
@@ -83,7 +85,7 @@ class ServerEvaluator:
         return avg_bleurt, {"bleurt": avg_bleurt}
 
 def main():
-    num_rounds = 3
+    num_rounds = 5
     min_clients = 1
 
     server_config = fl.server.ServerConfig(num_rounds=num_rounds)
