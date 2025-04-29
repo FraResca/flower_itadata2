@@ -4,6 +4,9 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from datasets import load_dataset
 from medpix2_dataset_preparation import medpix2_2050
 import evaluate
+import json
+import psutil
+import torch
 
 def preprocess_function(example):
     if example["input"].strip():
@@ -40,12 +43,9 @@ def load_dataset_fine(dataset_name, test_size=0.1, seed=42):
     train_dataset = split_dataset["train"].map(preprocess_function)
     val_dataset = split_dataset["test"].map(preprocess_function)
 
-    # sample only one example for validation
-    # val_dataset = val_dataset.select([0])
-
     return train_dataset, val_dataset
 
-def create_partitioned_datasets(tokenizer, dataset_name, partition_size, client_seed=None):
+def create_partitioned_datasets(tokenizer, partition_config, client_seed=None):
     cached_dir = "cached_datasets"
     os.makedirs(cached_dir, exist_ok=True)
     
@@ -54,16 +54,30 @@ def create_partitioned_datasets(tokenizer, dataset_name, partition_size, client_
     
     val_cache_path = os.path.join(cached_dir, "tokenized_val")
     
-    partitions_created = False
+    partitions_created = True
+
+    if not os.path.exists(os.path.join(cached_dir, "partitions_config.json")):
+        with open(os.path.join(cached_dir, "partitions_config.json"), "w") as f:
+            json.dump(partition_config, f)
+    else:
+        config_path = os.path.join(cached_dir, "partitions_config.json")
+        with open(config_path, "r") as f:
+            existing_config = json.load(f)
+        if existing_config != partition_config:
+            print("Partitions config has changed, re-creating partitions...")
+            partitions_created = False
+            with open(config_path, "w") as f:
+                json.dump(partition_config, f)
 
     if not partitions_created or not os.path.exists(val_cache_path):
+        partition_size = partition_config["partition_size"]
 
         for filename in os.listdir(partitions_dir):
             file_path = os.path.join(partitions_dir, filename)
             if os.path.isfile(file_path):
                 os.remove(file_path)
 
-        train_dataset_full, val_dataset = load_dataset_fine(dataset_name)
+        train_dataset_full, val_dataset = load_dataset_fine(partition_config["dataset_name"])
         
         train_dataset_full = train_dataset_full.map(
             lambda ex: tokenize_function(ex, tokenizer), batched=True
@@ -71,13 +85,14 @@ def create_partitioned_datasets(tokenizer, dataset_name, partition_size, client_
         val_dataset = val_dataset.map(
             lambda ex: tokenize_function(ex, tokenizer), batched=True
         )
-        
+        # sample 5 random examples for validation
+        val_dataset = val_dataset.shuffle(seed=client_seed).select(range(50))
         val_dataset.to_json(val_cache_path)
         
         total_size = len(train_dataset_full)
         indices = list(range(total_size))
-        random.shuffle(indices)
-        
+        random.shuffle(indices)    
+    
         partition_indices = [
             indices[i : i + partition_size] for i in range(0, total_size, partition_size)
         ]
@@ -139,3 +154,42 @@ def bleurt_metric(predictions, references):
     metric = evaluate.load("bleurt", "bleurt-base-128")
     scores = metric.compute(predictions=predictions, references=references)
     return scores
+
+def bert_metric(predictions, references):
+    metric = evaluate.load("bertscore", "microsoft/deberta-v3-small")
+    scores = metric.compute(predictions=predictions, references=references)
+    return scores
+
+def get_device_capacity(device):
+    if device.startswith("cuda") and torch.cuda.is_available():
+        props = torch.cuda.get_device_properties(torch.device(device))
+        # Estimate: CUDA cores × clock speed (Hz)
+        cores_per_sm = 128  # typical for recent NVIDIA GPUs
+        gpu_cores = props.multi_processor_count * cores_per_sm
+        gpu_freq = props.clock_rate * 1e3  # Hz
+        return gpu_cores * gpu_freq
+    else:
+        cpu_count = psutil.cpu_count(logical=True)
+        cpu_freq = psutil.cpu_freq().max  # MHz
+        return cpu_count * cpu_freq # Hz
+
+def get_partition_config(device):
+
+    capacity = get_device_capacity(device)
+    print(f"\nDevice capacity:\n{capacity//1000}\n")
+
+    if device.startswith("cpu"):
+        partition_config = {
+            # select a random dataset from the list
+            # "dataset_name": random.choice(["alpaca", "hcm", "medpix2"]),
+            "dataset_name": "medpix2",
+            "partition_size": 200,
+        }
+    else:
+        partition_config = {
+            # select a random dataset from the list
+            # "dataset_name": random.choice(["alpaca", "hcm", "medpix2"]),
+            "dataset_name": "medpix2",
+            "partition_size": 500,
+        }
+    return partition_config

@@ -1,9 +1,8 @@
 import torch
 from peft import LoraConfig, get_peft_model
 import flwr as fl
-from flutils import get_model_tokenizer, create_partitioned_datasets
+from flutils import *
 from datasets import load_dataset
-from flwr.common import parameters_to_ndarrays
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 import numpy as np
 import evaluate
@@ -17,8 +16,6 @@ class ServerEvaluator:
         self.data_collator = DataCollatorForLanguageModeling(
             tokenizer=self.tokenizer, mlm=False
         )
-        # self.bleurt = evaluate.load("bleurt", "bleurt-large-512")  # or "bleurt-base-128"
-        self.bleurt = evaluate.load("bertscore")  # Specify the language or model_type
 
         self.training_args = TrainingArguments(
             output_dir="./server_evaluation",
@@ -28,7 +25,6 @@ class ServerEvaluator:
         )
 
     def set_parameters(self, parameters):
-        # Convert parameters to torch and load into model
         trainable_param_names = [k for k, v in self.model.named_parameters() if v.requires_grad]
         trainable_param_names = sorted(trainable_param_names)
         with torch.no_grad():
@@ -41,43 +37,58 @@ class ServerEvaluator:
                 param.copy_(torch.tensor(param_data, device=self.device))
 
     def evaluate_fn(self, server_round, parameters, config):
-        # Typical Flower signature: evaluate_fn(server_round, parameters, config), but we only need parameters, config
         self.set_parameters(parameters)
 
-        trainer = Trainer(
-            model=self.model,
-            args=self.training_args,
-            eval_dataset=self.val_dataset,
-            data_collator=self.data_collator
-        )
+        batch_size = config.get("eval_batch_size", 5)
+        dataset_len = len(self.val_dataset)
+        num_batches = (dataset_len + batch_size - 1) // batch_size
 
-        result = trainer.evaluate()
-        
-        prediction_output = trainer.predict(self.val_dataset)
-        predictions, label_ids = prediction_output.predictions, prediction_output.label_ids
+        total_bleurt = 0.0
+        total_examples = 0
 
-        # Ensure on GPU for torch ops, then move to CPU for decoding
-        predictions_tensor = torch.tensor(predictions).to(self.device)
-        predictions_ids = torch.argmax(predictions_tensor, dim=-1)
+        for i in range(num_batches):
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, dataset_len)
+            current_batch_size = end_idx - start_idx
 
-        # Decoding expects CPU
-        decoded_preds = self.tokenizer.batch_decode(predictions_ids.cpu().numpy(), skip_special_tokens=True)
-        decoded_labels = self.tokenizer.batch_decode(torch.tensor(label_ids).cpu().numpy(), skip_special_tokens=True)
+            batch_dataset = self.val_dataset.select(range(start_idx, end_idx))
+            temp_trainer = Trainer(
+                model=self.model,
+                args=self.training_args,
+                eval_dataset=batch_dataset,
+                data_collator=self.data_collator
+            )
 
-        bleurt_result = self.bleurt.compute(predictions=decoded_preds, references=decoded_labels, lang="en")
-        avg_bleurt = float(np.mean(bleurt_result["scores"])) if "scores" in bleurt_result else 0.0
+            _ = temp_trainer.evaluate()
 
+            prediction_output = temp_trainer.predict(batch_dataset)
+            predictions, label_ids = prediction_output.predictions, prediction_output.label_ids
 
+            predictions_tensor = torch.tensor(predictions).to(self.device)
+            predictions_ids = torch.argmax(predictions_tensor, dim=-1)
+
+            decoded_preds = self.tokenizer.batch_decode(predictions_ids.cpu().numpy(), skip_special_tokens=True)
+
+            label_ids_np = np.array(label_ids)
+            label_ids_np[label_ids_np == -100] = self.tokenizer.pad_token_id
+            decoded_labels = self.tokenizer.batch_decode(label_ids_np, skip_special_tokens=True)
+
+            bleurt_result = bleurt_metric(decoded_preds, decoded_labels)
+            batch_scores = bleurt_result.get("scores", [])
+            batch_bleurt = float(np.mean(batch_scores)) if batch_scores else 0.0
+
+            total_bleurt += batch_bleurt * current_batch_size
+            total_examples += current_batch_size
+
+        avg_bleurt = total_bleurt / total_examples if total_examples else 0.0
         return avg_bleurt, {"bleurt": avg_bleurt}
 
 def main():
     num_rounds = 3
     min_clients = 1
-    partition_size = 5
 
     server_config = fl.server.ServerConfig(num_rounds=num_rounds)
     modelname = "smol"
-    datasetname = "medpix2"
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     print(f"Using device: {device}\n")
@@ -98,8 +109,7 @@ def main():
 
     _, val_cache_path = create_partitioned_datasets(
         tokenizer=tokenizer,
-        dataset_name=datasetname,
-        partition_size=300
+        partition_config=get_partition_config(device),
     )
 
     val_dataset = load_dataset("json", data_files=val_cache_path)["train"]

@@ -44,8 +44,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
 
         _, val_cache_path = create_partitioned_datasets(
             tokenizer=self.tokenizer,
-            dataset_name="medpix2",
-            partition_size=300
+            partition_config=get_partition_config(self.device)
         )
         self.val_dataset = load_dataset("json", data_files=val_cache_path)["train"]  
 
@@ -79,6 +78,9 @@ class LLMFlowerClient(fl.client.NumPyClient):
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         
         result = bleurt_metric(predictions=decoded_preds, references=decoded_labels)
+        for i in range(len(decoded_preds)):
+            print(f"\nDecoded prediction:\n{decoded_preds[i]}")
+            print(f"\nDecoded label:\n{decoded_labels[i]}")
 
         print(f"BLEURT result keys: {list(result.keys())}")
         
@@ -90,7 +92,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
             bleurt_scores = result.get(first_key, [0.0])
             print(f"Using fallback key '{first_key}' for BLEURT scores")
         
-        avg_bleurt = float(np.mean(bleurt_scores)) if len(bleurt_scores) > 0 else 0.0
+        avg_bleurt = float(np.mean(bleurt_scores))
         
         return {"bleurt": avg_bleurt}
     
