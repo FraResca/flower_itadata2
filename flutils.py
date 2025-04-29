@@ -7,6 +7,7 @@ import evaluate
 import json
 import psutil
 import torch
+import flwr as fl
 
 def preprocess_function(example):
     if example["input"].strip():
@@ -86,7 +87,7 @@ def create_partitioned_datasets(tokenizer, partition_config, client_seed=None):
             lambda ex: tokenize_function(ex, tokenizer), batched=True
         )
         # sample 5 random examples for validation
-        val_dataset = val_dataset.shuffle(seed=client_seed).select(range(50))
+        val_dataset = val_dataset.shuffle(seed=client_seed).select(range(5))
         val_dataset.to_json(val_cache_path)
         
         total_size = len(train_dataset_full)
@@ -193,3 +194,31 @@ def get_partition_config(device):
             "partition_size": 500,
         }
     return partition_config
+
+class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
+    def aggregate_fit(self, rnd, results, failures):
+        # Each result: (client, FitRes)
+        weights_results = []
+        total_tokens = 0
+
+        for _, fit_res in results:
+            num_tokens = fit_res.metrics.get("num_tokens", 0)
+            total_tokens += num_tokens
+            weights_results.append((fit_res.parameters, num_tokens))
+
+        if total_tokens == 0:
+            return super().aggregate_fit(rnd, results, failures)
+
+        # Weighted average by number of tokens
+        aggregated = None
+        for params, num_tokens in weights_results:
+            weight = num_tokens / total_tokens
+            params_ndarrays = fl.common.parameters_to_ndarrays(params)
+            if aggregated is None:
+                aggregated = [weight * p for p in params_ndarrays]
+            else:
+                for i, p in enumerate(params_ndarrays):
+                    aggregated[i] += weight * p
+
+        aggregated_parameters = fl.common.ndarrays_to_parameters(aggregated)
+        return aggregated_parameters, {}

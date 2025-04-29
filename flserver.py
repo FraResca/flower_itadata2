@@ -5,7 +5,6 @@ from flutils import *
 from datasets import load_dataset
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 import numpy as np
-import evaluate
 
 class ServerEvaluator:
     def __init__(self, model, tokenizer, val_dataset, device):
@@ -116,13 +115,21 @@ def main():
 
     evaluator = ServerEvaluator(model, tokenizer, val_dataset, device)
 
+    '''
     strategy = fl.server.strategy.FedAvg(
         min_available_clients=min_clients,
         min_fit_clients=min_clients,
         min_evaluate_clients=min_clients,
         evaluate_fn=evaluator.evaluate_fn,
     )
-
+    '''
+    strategy = TokenWeightedFedAvg(
+        min_available_clients=min_clients,
+        min_fit_clients=min_clients,
+        min_evaluate_clients=min_clients,
+        evaluate_fn=evaluator.evaluate_fn,
+    )
+    
     fl.server.start_server(
         server_address="0.0.0.0:8080",
         strategy=strategy,

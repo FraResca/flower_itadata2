@@ -136,7 +136,15 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.trainer.train()
         updated_parameters = self.get_parameters()
         num_examples = len(train_dataset)
-        return updated_parameters, num_examples, {"partition": partition_id}
+
+        num_tokens = 0
+        for example in train_dataset:
+            num_tokens += len(example["input_ids"])
+
+        return updated_parameters, num_examples, {
+            "partition": partition_id,
+            "num_tokens": num_tokens
+        }
 
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
