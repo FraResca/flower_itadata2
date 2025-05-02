@@ -67,37 +67,40 @@ def tokenize_function(examples, tokenizer, max_length=512):
         examples["text"],
         truncation=True,
         max_length=max_length,
-        padding="max_length"
+        padding="max_length",
+        return_tensors="pt"  # Ensure we get PyTorch tensors
     )
     
     # Create labels for causal language modeling
-    labels = tokens["input_ids"].copy()
+    labels = tokens["input_ids"].clone()
     vocab_size = len(tokenizer)
+    pad_token_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else -100
 
     for i, text in enumerate(examples["text"]):
         response_start = text.find("### Response:\n")
         if response_start == -1:
             continue
-        # Tokenize the text up to the response section and adjust the response_start index
-        response_token_start = len(tokenizer(text[:response_start + len("### Response:\n")])["input_ids"]) - 1
-        # Make sure response_token_start is within bounds
+            
+        # Tokenize the text up to the response section
+        prefix = text[:response_start + len("### Response:\n")]
+        prefix_tokens = tokenizer(prefix, add_special_tokens=False)["input_ids"]
+        response_token_start = len(prefix_tokens)
+        
+        # Ensure response_token_start is within bounds
         if response_token_start >= len(labels[i]):
             response_token_start = len(labels[i]) - 1
 
-        # Set labels to -100 for the input (i.e., the prompt), so the model doesn't predict it
-        labels[i][:response_token_start] = [-100] * response_token_start
+        # Set labels to -100 for the input (prompt)
+        labels[i][:response_token_start] = -100
 
-        # Ensure all label values are valid or -100
-        labels[i] = [l if l == -100 or (0 <= l < vocab_size) else -100 for l in labels[i]]
-
-        # Debug: print invalid values
-        for l in labels[i]:
-            if l != -100 and (l < 0 or l >= vocab_size):
-                print(f"Invalid label value: {l} (vocab_size={vocab_size}) in example {i}")
+        # Ensure all label values are valid
+        for j, token_id in enumerate(labels[i]):
+            if token_id != -100 and (token_id < 0 or token_id >= vocab_size):
+                print(f"Invalid token ID {token_id} at position {j} in example {i}")
+                labels[i][j] = pad_token_id  # Replace invalid IDs with pad token
 
     tokens["labels"] = labels
     return tokens
-
 
 def load_dataset_fine(dataset_name, test_size=0.1, seed=42):
     if dataset_name == "alpaca":
@@ -194,34 +197,32 @@ def get_model_tokenizer(modelname):
         model_dir = "smollm_model"
 
     os.makedirs(model_dir, exist_ok=True)
-    print(f"Using permanent model directory: {model_dir}\n")
     
     tokenizer_path = os.path.join(model_dir, "tokenizer")
     model_path = os.path.join(model_dir, "model")
     
     if os.path.exists(tokenizer_path) and os.path.exists(model_path):
-        print("Loading model and tokenizer from local directory\n")
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, use_fast=False)
-        model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto", ignore_mismatched_sizes=True)
+        model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto")
     else:
-        print("Downloading model and tokenizer from HuggingFace\n")
         tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
-        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", ignore_mismatched_sizes=True)
+        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
         
         tokenizer.save_pretrained(tokenizer_path)
         model.save_pretrained(model_path)
-        print("Model and tokenizer saved to local directory\n")
-        
-    # **EOS Token Handling**
-    eos_token = "<eos>"
-    if eos_token not in tokenizer.get_vocab():
-        tokenizer.add_special_tokens({'eos_token': eos_token})
-        model.resize_token_embeddings(len(tokenizer))
-    tokenizer.pad_token = tokenizer.eos_token  # Ensure pad token is set to eos_token
     
-    print(f"Tokenizer EOS token set to: {tokenizer.eos_token}")
-    print(model)
-
+    # Ensure proper token handling
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    
+    # Add special tokens if needed
+    special_tokens = ["<eos>"]
+    tokenizer.add_special_tokens({'additional_special_tokens': special_tokens})
+    model.resize_token_embeddings(len(tokenizer))
+    
+    print(f"Tokenizer vocab size: {len(tokenizer)}")
+    print(f"Model embedding size: {model.get_input_embeddings().weight.shape[0]}")
+    
     return model, tokenizer
 
 def bleurt_metric(predictions, references):

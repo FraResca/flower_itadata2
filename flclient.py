@@ -148,13 +148,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         
         train_dataset, partition_id = load_random_partition()
         
-        # Use real training args (already set in __init__)
-        self.model.to(self.device)
-
-        num_tokens = sum(len(example["input_ids"]) for example in train_dataset)
-        num_examples = len(train_dataset)
-
-        # Debug: Check for out-of-vocab token ids
+        # Validate all token IDs before training
         vocab_size = len(self.tokenizer)
         for example in train_dataset:
             for key in ["input_ids", "labels"]:
@@ -163,6 +157,12 @@ class LLMFlowerClient(fl.client.NumPyClient):
                     for idx in ids:
                         if idx != -100 and (idx < 0 or idx >= vocab_size):
                             print(f"Invalid token id {idx} in {key} (vocab size {vocab_size})")
+                            # Replace invalid token IDs with pad token
+                            example[key] = [self.tokenizer.pad_token_id if (x != -100 and (x < 0 or x >= vocab_size)) else x for x in ids]
+                            break
+
+        num_examples = len(train_dataset)
+        num_tokens = sum(len(example["input_ids"]) for example in train_dataset)
 
         print(f"Training on {num_examples} examples (single Trainer, automatic batching)")
 
