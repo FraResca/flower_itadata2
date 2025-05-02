@@ -119,6 +119,53 @@ class LLMFlowerClient(fl.client.NumPyClient):
 
         return updated_parameters, num_examples, {"partition": partition_id, "num_tokens": num_tokens}
 
+    '''
+    def evaluate(self, parameters, config):
+        self.set_parameters(parameters)
+        
+        batch_size = config.get("eval_batch_size", 8)
+        self.val_dataset = self.val_dataset.shuffle().select(range(100))
+
+        dataset_len = len(self.val_dataset)
+        num_batches = (dataset_len + batch_size - 1) // batch_size
+        
+        total_bleurt = 0.0
+        total_examples = 0
+        
+        for i in range(num_batches):
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, dataset_len)
+            current_batch_size = end_idx - start_idx
+            
+            batch_dataset = self.val_dataset.select(range(start_idx, end_idx))
+            
+            temp_trainer = Trainer(
+                model=self.model,
+                args=self.training_args,
+                eval_dataset=batch_dataset,
+                data_collator=self.data_collator,
+                compute_metrics=self.compute_metrics
+            )
+            
+            batch_result = temp_trainer.evaluate()
+            batch_bleurt = batch_result.get("eval_bleurt", 0.0)
+            
+            total_bleurt += batch_bleurt * current_batch_size
+            total_examples += current_batch_size
+
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        
+        avg_bleurt = total_bleurt / total_examples if total_examples > 0 else 0.0
+
+        return float(avg_bleurt), total_examples, {
+            "bleurt": float(avg_bleurt)
+        }
+    '''
+
 def main():
     client = LLMFlowerClient()
     fl.client.start_client(server_address="127.0.0.1:8080", client=client.to_client())

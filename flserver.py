@@ -6,6 +6,7 @@ from transformers import Trainer, TrainingArguments, DataCollatorForLanguageMode
 from datasets import load_dataset
 from flutils import *
 import evaluate
+import json
 
 def extract_prompt_and_response(text):
     marker = "### Response:\n"
@@ -54,6 +55,9 @@ class ServerEvaluator:
         num_batches = len(self.val_dataset) // batch_size + (len(self.val_dataset) % batch_size != 0)
         total_bleurt, total_examples = 0.0, 0
 
+        # For saving predictions
+        predictions_log = []
+
         # Evaluation loop
         for i in range(num_batches):
             if torch.cuda.is_available():
@@ -97,6 +101,16 @@ class ServerEvaluator:
                 extracted_preds.append(pred_output)
                 extracted_labels.append(gold_output)
 
+            # Save input, true output, and predicted output
+            for j, (pred, label) in enumerate(zip(decoded_preds, decoded_labels)):
+                prompt, gold_output = extract_prompt_and_response(label)
+                _, pred_output = extract_prompt_and_response(pred)
+                predictions_log.append({
+                    "input": prompt,
+                    "true_output": gold_output,
+                    "predicted_output": pred_output
+                })
+
             bleurt_result = bleurt_metric(predictions=extracted_preds, references=extracted_labels)
             batch_bleurt = np.mean(bleurt_result.get("scores", [0.0])) if bleurt_result else 0.0
 
@@ -105,6 +119,11 @@ class ServerEvaluator:
 
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
+
+        # Save predictions log to file
+        output_filename = f"server_predictions_round_{server_round}.json"
+        with open(output_filename, "w") as f:
+            json.dump(predictions_log, f, indent=2, ensure_ascii=False)
 
         avg_bleurt = total_bleurt / total_examples if total_examples else 0.0
         return avg_bleurt, {"bleurt": avg_bleurt}
