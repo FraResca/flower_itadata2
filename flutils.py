@@ -1,6 +1,6 @@
 import os
 import random
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer
 from datasets import load_dataset
 from medpix2_dataset_preparation import medpix2_2050
 import evaluate
@@ -9,21 +9,61 @@ import psutil
 import torch
 import flwr as fl
 
-def preprocess_function(example):
-    if example["input"].strip():
-        prompt = (
-            f"### Instruction:\n{example['instruction']}\n"
-            f"### Input:\n{example['input']}\n"
-            "### Response:\n"
-        )
-    else:
-        prompt = (
-            f"### Instruction:\n{example['instruction']}\n"
-            "### Response:\n"
-        )
-    full_text = prompt + example["output"]
-    return {"text": full_text}
+class CudaClearingTrainer(Trainer):
+    def training_step(self, *args, **kwargs):
+        output = super().training_step(*args, **kwargs)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        return output
 
+    def evaluation_step(self, *args, **kwargs):
+        output = super().evaluation_step(*args, **kwargs)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        return output
+
+def preprocess_function(example):
+    eos_token = "<eos>"  # Make sure this is in your tokenizer's vocabulary
+
+    # Handle batched input (list of dicts)
+    if isinstance(example["input"], list):
+        texts = []
+        for i in range(len(example["input"])):
+            input_val = example["input"][i]
+            instruction_val = example["instruction"][i]
+            output_val = example["output"][i]
+            if input_val.strip():
+                prompt = (
+                    f"### Instruction:\n{instruction_val.strip()}\n"
+                    f"### Input:\n{input_val.strip()}\n"
+                    f"### Response:\n"
+                )
+            else:
+                prompt = (
+                    f"### Instruction:\n{instruction_val.strip()}\n"
+                    f"### Response:\n"
+                )
+            full_text = prompt + output_val.strip() + " " + eos_token
+            texts.append(full_text)
+        return {"text": texts}
+    else:
+        # Single example
+        if example["input"].strip():
+            prompt = (
+                f"### Instruction:\n{example['instruction'].strip()}\n"
+                f"### Input:\n{example['input'].strip()}\n"
+                f"### Response:\n"
+            )
+        else:
+            prompt = (
+                f"### Instruction:\n{example['instruction'].strip()}\n"
+                f"### Response:\n"
+            )
+        full_text = prompt + example["output"].strip() + " " + eos_token
+        return {"text": full_text}
+
+
+'''
 def tokenize_function(examples, tokenizer, max_length=512):
     return tokenizer(
         examples["text"],
@@ -31,6 +71,17 @@ def tokenize_function(examples, tokenizer, max_length=512):
         max_length=max_length,
         padding="max_length"
     )
+'''
+
+def tokenize_function(examples, tokenizer, max_length=512):
+    tokens = tokenizer(
+        examples["text"],
+        truncation=True,
+        max_length=max_length,
+        padding="max_length"
+    )
+    tokens["labels"] = tokens["input_ids"].copy()  # Needed for training loss computation
+    return tokens
 
 def load_dataset_fine(dataset_name, test_size=0.1, seed=42):
     if dataset_name == "alpaca":
@@ -41,9 +92,9 @@ def load_dataset_fine(dataset_name, test_size=0.1, seed=42):
         raw_dataset = medpix2_2050()
 
     split_dataset = raw_dataset["train"].train_test_split(test_size=test_size, seed=seed)
-    train_dataset = split_dataset["train"].map(preprocess_function)
-    val_dataset = split_dataset["test"].map(preprocess_function)
-
+    train_dataset = split_dataset["train"].map(preprocess_function, batched=True)
+    val_dataset = split_dataset["test"].map(preprocess_function, batched=True)
+    
     return train_dataset, val_dataset
 
 def create_partitioned_datasets(tokenizer, partition_config, client_seed=None):
@@ -86,8 +137,7 @@ def create_partitioned_datasets(tokenizer, partition_config, client_seed=None):
         val_dataset = val_dataset.map(
             lambda ex: tokenize_function(ex, tokenizer), batched=True
         )
-        # sample 5 random examples for validation
-        val_dataset = val_dataset.shuffle(seed=client_seed).select(range(50))
+
         val_dataset.to_json(val_cache_path)
         
         total_size = len(train_dataset_full)
@@ -191,7 +241,7 @@ def get_partition_config(device):
             # select a random dataset from the list
             # "dataset_name": random.choice(["alpaca", "hcm", "medpix2"]),
             "dataset_name": "hcm",
-            "partition_size": 500,
+            "partition_size": 2000,
         }
     return partition_config
 

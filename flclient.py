@@ -12,8 +12,6 @@ import flwr as fl
 from flutils import *
 from medpix2_dataset_preparation import medpix2_2050, medpix2_671
 
-# export CUDA_VISIBLE_DEVICES = 0
-
 def tokenize_function(examples, tokenizer, max_length=512):
     return tokenizer(
         examples["text"],
@@ -21,6 +19,15 @@ def tokenize_function(examples, tokenizer, max_length=512):
         max_length=max_length,
         padding="max_length"
     )
+
+def clean_response(text):
+    # Remove unwanted headers from model output
+    lines = text.splitlines()
+    cleaned = []
+    for line in lines:
+        if not line.strip().lower().startswith(("instruction:", "answer:")):
+            cleaned.append(line)
+    return "\n".join(cleaned).strip()
 
 class LLMFlowerClient(fl.client.NumPyClient):
     def __init__(self):
@@ -54,23 +61,32 @@ class LLMFlowerClient(fl.client.NumPyClient):
             tokenizer=self.tokenizer, mlm=False
         )
 
+        # Real training parameters
         self.training_args = TrainingArguments(
-            output_dir="./tinyllama-alpaca-finetuned",
-            eval_strategy="no",  # Disabilita valutazione durante il training
-            learning_rate=2e-6,
-            num_train_epochs=1,
-            weight_decay=0.0,
-            logging_steps=5,
-            save_strategy="no",
-            fp16=False,
+            output_dir="./smollm-finetuned",
+            evaluation_strategy="steps",
+            eval_steps=100,                  # Evaluate every 100 steps
+            learning_rate=5e-5,              # Typical for LLM finetuning
+            num_train_epochs=3,              # More epochs for real training
+            weight_decay=0.01,
+            logging_steps=50,
+            save_strategy="epoch",           # Save at the end of each epoch
+            fp16=torch.cuda.is_available(),  # Use fp16 if possible
             greater_is_better=True,
-            per_device_train_batch_size=1,
-            gradient_accumulation_steps=4,
+            per_device_train_batch_size=4,   # Increase batch size if possible
+            per_device_eval_batch_size=4,
+            gradient_accumulation_steps=8,   # Accumulate gradients for larger effective batch
             metric_for_best_model="bleurt",
-            dataloader_num_workers=0  # Riduce l'uso di memoria
+            dataloader_num_workers=2
         )
     
-
+    @staticmethod
+    def extract_prompt_and_response(text):
+        marker = "### Response:\n"
+        if marker in text:
+            prompt, response = text.split(marker, 1)
+            return prompt.strip(), response.strip()
+        return "", text.strip()
 
     def compute_metrics(self, eval_pred):
         predictions, labels = eval_pred
@@ -78,16 +94,24 @@ class LLMFlowerClient(fl.client.NumPyClient):
             predictions = predictions[0]
         
         predictions_ids = np.argmax(predictions, axis=-1)
-        
         decoded_preds = self.tokenizer.batch_decode(predictions_ids, skip_special_tokens=True)
         labels = np.where(labels != -100, labels, self.tokenizer.pad_token_id)
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         
-        result = bleurt_metric(predictions=decoded_preds, references=decoded_labels)
+        extracted_preds = []
+        extracted_labels = []
         for i in range(len(decoded_preds)):
-            print(f"\nDecoded prediction:\n{decoded_preds[i]}")
-            print(f"\nDecoded label:\n{decoded_labels[i]}")
+            prompt, gold_output = self.extract_prompt_and_response(decoded_labels[i])
+            _, pred_output = self.extract_prompt_and_response(decoded_preds[i])
+            pred_output = clean_response(pred_output)
+            gold_output = clean_response(gold_output)
+            extracted_preds.append(pred_output)
+            extracted_labels.append(gold_output)
+            print(f"\nInput (Prompt):\n{prompt}")
+            print(f"Predicted Output:\n{pred_output}")
+            print(f"Original Output:\n{gold_output}")
 
+        result = bleurt_metric(predictions=extracted_preds, references=extracted_labels)
         print(f"BLEURT result keys: {list(result.keys())}")
         
         if 'scores' in result:
@@ -129,70 +153,32 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         
         train_dataset, partition_id = load_random_partition()
-        batch_size = 5  # Imposta la dimensione del batch a 10 esempi
         
-        # Modifica le training_args per usare batch piccoli e per evitare OOM
-        self.training_args.per_device_train_batch_size = 1
-        self.training_args.gradient_accumulation_steps = 1
-        self.training_args.gradient_accumulation_steps = 4
-        self.training_args.dataloader_num_workers = 0
-        
-        # Prepara il modello e ottimizzatore
+        # Use real training args (already set in __init__)
         self.model.to(self.device)
-        
-        # Suddivide il dataset in batch più piccoli
+
+        num_tokens = sum(len(example["input_ids"]) for example in train_dataset)
         num_examples = len(train_dataset)
-        num_batches = (num_examples + batch_size - 1) // batch_size
-        
-        # Counters
-        num_tokens = 0
-        for example in train_dataset:
-            num_tokens += len(example["input_ids"])
-        
-        # Addestra su batch piccoli
-        print(f"Training on {num_examples} examples in {num_batches} batches")
-        
-        for i in range(num_batches):
-            # Libera memoria CUDA
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-                
-            # Crea sotto-dataset per questo batch
-            start_idx = i * batch_size
-            end_idx = min((i + 1) * batch_size, num_examples)
-            current_batch_size = end_idx - start_idx
-            
-            batch_dataset = train_dataset.select(range(start_idx, end_idx))
-            
-            print(f"Training batch {i+1}/{num_batches} with {len(batch_dataset)} examples")
-            
-            # Crea un nuovo trainer per ogni batch
-            temp_trainer = Trainer(
-                model=self.model,
-                args=self.training_args,
-                train_dataset=batch_dataset,
-                eval_dataset=None,  # Non valutare durante il training a batch
-                data_collator=self.data_collator,
-                compute_metrics=None  # Non calcolare metriche durante il training a batch
-            )
-            
-            temp_trainer.train()
-            del temp_trainer
 
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+        print(f"Training on {num_examples} examples (single Trainer, automatic batching)")
 
-            # Libera memoria dopo ogni batch
-            del temp_trainer
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-                
-            print(f"Batch {i+1}/{num_batches} completed successfully")
+        eval_len = min(100, len(self.val_dataset))
+        trainer = CudaClearingTrainer(
+            model=self.model,
+            args=self.training_args,
+            train_dataset=train_dataset,
+            eval_dataset=self.val_dataset.shuffle().select(range(eval_len)),
+            data_collator=self.data_collator,
+            compute_metrics=self.compute_metrics
+        )
 
-        
-        # Ottiene i parametri aggiornati dopo aver completato tutti i batch
+        trainer.train()
+
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
         updated_parameters = self.get_parameters()
-        
+
         return updated_parameters, num_examples, {
             "partition": partition_id,
             "num_tokens": num_tokens
@@ -201,8 +187,9 @@ class LLMFlowerClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
         
-        batch_size = config.get("eval_batch_size", 5)
-        
+        batch_size = config.get("eval_batch_size", 8)
+        self.val_dataset = self.val_dataset.shuffle().select(range(100))
+
         dataset_len = len(self.val_dataset)
         num_batches = (dataset_len + batch_size - 1) // batch_size
         
@@ -210,6 +197,9 @@ class LLMFlowerClient(fl.client.NumPyClient):
         total_examples = 0
         
         for i in range(num_batches):
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
             start_idx = i * batch_size
             end_idx = min((i + 1) * batch_size, dataset_len)
             current_batch_size = end_idx - start_idx
@@ -229,9 +219,12 @@ class LLMFlowerClient(fl.client.NumPyClient):
             
             total_bleurt += batch_bleurt * current_batch_size
             total_examples += current_batch_size
+
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
         
         avg_bleurt = total_bleurt / total_examples if total_examples > 0 else 0.0
-        
+
         return float(avg_bleurt), total_examples, {
             "bleurt": float(avg_bleurt)
         }
@@ -239,7 +232,6 @@ class LLMFlowerClient(fl.client.NumPyClient):
 def main():
     client = LLMFlowerClient()
     fl.client.start_client(server_address="127.0.0.1:8080", client=client.to_client())
-
 
 if __name__ == "__main__":
     main()

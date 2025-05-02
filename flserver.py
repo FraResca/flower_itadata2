@@ -6,7 +6,12 @@ from datasets import load_dataset
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 import numpy as np
 
-# export CUDA_VISIBLE_DEVICES = 1
+def extract_prompt_and_response(text):
+    marker = "### Response:\n"
+    if marker in text:
+        prompt, response = text.split(marker, 1)
+        return prompt.strip(), response.strip()
+    return "", text.strip()
 
 class ServerEvaluator:
     def __init__(self, model, tokenizer, val_dataset, device):
@@ -17,11 +22,10 @@ class ServerEvaluator:
         self.data_collator = DataCollatorForLanguageModeling(
             tokenizer=self.tokenizer, mlm=False
         )
-
         self.training_args = TrainingArguments(
             output_dir="./server_evaluation",
-            per_device_eval_batch_size=1,
-            fp16=False,
+            per_device_eval_batch_size=8,   # Realistic batch size for evaluation
+            fp16=torch.cuda.is_available(),
             report_to="none"
         )
 
@@ -40,11 +44,11 @@ class ServerEvaluator:
     def evaluate_fn(self, server_round, parameters, config):
         self.set_parameters(parameters)
 
-        batch_size = config.get("eval_batch_size", 5)
-        
-        # RIGA DA TOGLIERE QUANDO FACCIAMO I SERI
-        self.val_dataset = self.val_dataset.shuffle(seed=server_round).select(range(5))
-        
+        batch_size = config.get("eval_batch_size", 8)
+        val_len = len(self.val_dataset)
+        select_len = min(100, val_len)
+        self.val_dataset = self.val_dataset.shuffle(seed=server_round).select(range(select_len))
+
         dataset_len = len(self.val_dataset)
         num_batches = (dataset_len + batch_size - 1) // batch_size
 
@@ -67,20 +71,29 @@ class ServerEvaluator:
             )
 
             _ = temp_trainer.evaluate()
-
             prediction_output = temp_trainer.predict(batch_dataset)
             predictions, label_ids = prediction_output.predictions, prediction_output.label_ids
 
             predictions_tensor = torch.tensor(predictions).to(self.device)
             predictions_ids = torch.argmax(predictions_tensor, dim=-1)
-
             decoded_preds = self.tokenizer.batch_decode(predictions_ids.cpu().numpy(), skip_special_tokens=True)
 
             label_ids_np = np.array(label_ids)
             label_ids_np[label_ids_np == -100] = self.tokenizer.pad_token_id
             decoded_labels = self.tokenizer.batch_decode(label_ids_np, skip_special_tokens=True)
 
-            bleurt_result = bleurt_metric(decoded_preds, decoded_labels)
+            extracted_preds = []
+            extracted_labels = []
+            for j in range(len(decoded_preds)):
+                prompt, gold_output = extract_prompt_and_response(decoded_labels[j])
+                _, pred_output = extract_prompt_and_response(decoded_preds[j])
+                extracted_preds.append(pred_output)
+                extracted_labels.append(gold_output)
+                print(f"\nInput (Prompt):\n{prompt}")
+                print(f"Predicted Output:\n{pred_output}")
+                print(f"Original Output:\n{gold_output}")
+
+            bleurt_result = bleurt_metric(predictions=extracted_preds, references=extracted_labels)
             batch_scores = bleurt_result.get("scores", [])
             batch_bleurt = float(np.mean(batch_scores)) if batch_scores else 0.0
 
@@ -89,13 +102,12 @@ class ServerEvaluator:
 
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-            
 
         avg_bleurt = total_bleurt / total_examples if total_examples else 0.0
         return avg_bleurt, {"bleurt": avg_bleurt}
 
 def main():
-    num_rounds = 5
+    num_rounds = 10
     min_clients = 1
 
     server_config = fl.server.ServerConfig(num_rounds=num_rounds)
@@ -127,14 +139,6 @@ def main():
 
     evaluator = ServerEvaluator(model, tokenizer, val_dataset, device)
 
-    '''
-    strategy = fl.server.strategy.FedAvg(
-        min_available_clients=min_clients,
-        min_fit_clients=min_clients,
-        min_evaluate_clients=min_clients,
-        evaluate_fn=evaluator.evaluate_fn,
-    )
-    '''
     strategy = TokenWeightedFedAvg(
         min_available_clients=min_clients,
         min_fit_clients=min_clients,

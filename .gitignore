@@ -3,9 +3,10 @@ tinyllama_model
 tinyllama-alpaca-finetuned
 smollm_model
 smollm-alpaca-finetuned
+smollm-finetuned
+server_evaluation
 tokenized_train
 tokenized_val
 aggregated_models
-server_evaluation
 
 __pycache__
