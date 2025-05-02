@@ -129,10 +129,11 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         
         train_dataset, partition_id = load_random_partition()
-        batch_size = 50  # Imposta la dimensione del batch a 10 esempi
+        batch_size = 5  # Imposta la dimensione del batch a 10 esempi
         
         # Modifica le training_args per usare batch piccoli e per evitare OOM
         self.training_args.per_device_train_batch_size = 1
+        self.training_args.gradient_accumulation_steps = 1
         self.training_args.gradient_accumulation_steps = 4
         self.training_args.dataloader_num_workers = 0
         
@@ -176,7 +177,11 @@ class LLMFlowerClient(fl.client.NumPyClient):
             )
             
             temp_trainer.train()
-            
+            del temp_trainer
+
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
             # Libera memoria dopo ogni batch
             del temp_trainer
             if torch.cuda.is_available():

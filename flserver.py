@@ -41,6 +41,10 @@ class ServerEvaluator:
         self.set_parameters(parameters)
 
         batch_size = config.get("eval_batch_size", 5)
+        
+        # RIGA DA TOGLIERE QUANDO FACCIAMO I SERI
+        self.val_dataset = self.val_dataset.shuffle(seed=server_round).select(range(5))
+        
         dataset_len = len(self.val_dataset)
         num_batches = (dataset_len + batch_size - 1) // batch_size
 
@@ -48,6 +52,8 @@ class ServerEvaluator:
         total_examples = 0
 
         for i in range(num_batches):
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
             start_idx = i * batch_size
             end_idx = min((i + 1) * batch_size, dataset_len)
             current_batch_size = end_idx - start_idx
@@ -80,6 +86,10 @@ class ServerEvaluator:
 
             total_bleurt += batch_bleurt * current_batch_size
             total_examples += current_batch_size
+
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            
 
         avg_bleurt = total_bleurt / total_examples if total_examples else 0.0
         return avg_bleurt, {"bleurt": avg_bleurt}
