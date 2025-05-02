@@ -129,7 +129,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         
         train_dataset, partition_id = load_random_partition()
-        batch_size = 10  # Imposta la dimensione del batch a 10 esempi
+        batch_size = 50  # Imposta la dimensione del batch a 10 esempi
         
         # Modifica le training_args per usare batch piccoli e per evitare OOM
         self.training_args.per_device_train_batch_size = 1
