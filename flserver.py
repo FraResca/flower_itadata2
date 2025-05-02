@@ -1,10 +1,11 @@
 import torch
-from peft import LoraConfig, get_peft_model
 import flwr as fl
-from flutils import *
-from datasets import load_dataset
-from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 import numpy as np
+from peft import LoraConfig, get_peft_model
+from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
+from datasets import load_dataset
+from flutils import *
+import evaluate
 
 def extract_prompt_and_response(text):
     marker = "### Response:\n"
@@ -24,59 +25,51 @@ class ServerEvaluator:
         )
         self.training_args = TrainingArguments(
             output_dir="./server_evaluation",
-            per_device_eval_batch_size=8,   # Realistic batch size for evaluation
+            per_device_eval_batch_size=8,
             fp16=torch.cuda.is_available(),
             report_to="none"
         )
 
     def set_parameters(self, parameters):
-        trainable_param_names = [k for k, v in self.model.named_parameters() if v.requires_grad]
-        trainable_param_names = sorted(trainable_param_names)
+        param_names = sorted(k for k, v in self.model.named_parameters() if v.requires_grad)
         with torch.no_grad():
-            for param_name, param_data in zip(trainable_param_names, parameters):
-                module_path = param_name.split('.')
-                curr_module = self.model
-                for path in module_path[:-1]:
-                    curr_module = getattr(curr_module, path)
-                param = getattr(curr_module, module_path[-1])
-                param.copy_(torch.tensor(param_data, device=self.device))
+            for param_name, param_data in zip(param_names, parameters):
+                param = self.model
+                for part in param_name.split('.')[:-1]:
+                    param = getattr(param, part)
+                param_part = getattr(param, param_name.split('.')[-1])
+                param_part.copy_(torch.tensor(param_data, device=self.device))
 
     def evaluate_fn(self, server_round, parameters, config):
         if server_round == 0:
-            print("Skipping server-side evaluation before first training round.")
+            print("Skipping evaluation before first training round.")
             return None, {}
 
         self.set_parameters(parameters)
-
+        
+        # Prepare validation data
+        self.val_dataset = self.val_dataset.shuffle(seed=server_round).select(range(min(100, len(self.val_dataset))))
+        
         batch_size = config.get("eval_batch_size", 8)
-        val_len = len(self.val_dataset)
-        select_len = min(100, val_len)
-        self.val_dataset = self.val_dataset.shuffle(seed=server_round).select(range(select_len))
+        num_batches = len(self.val_dataset) // batch_size + (len(self.val_dataset) % batch_size != 0)
+        total_bleurt, total_examples = 0.0, 0
 
-        dataset_len = len(self.val_dataset)
-        num_batches = (dataset_len + batch_size - 1) // batch_size
-
-        total_bleurt = 0.0
-        total_examples = 0
-
+        # Evaluation loop
         for i in range(num_batches):
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-            start_idx = i * batch_size
-            end_idx = min((i + 1) * batch_size, dataset_len)
-            current_batch_size = end_idx - start_idx
 
+            start_idx, end_idx = i * batch_size, min((i + 1) * batch_size, len(self.val_dataset))
             batch_dataset = self.val_dataset.select(range(start_idx, end_idx))
 
+            # Token ID validation
             vocab_size = len(self.tokenizer)
             for example in batch_dataset:
                 for key in ["input_ids", "labels"]:
                     if key in example:
-                        ids = example[key]
-                        for idx in ids:
-                            if idx != -100 and (idx < 0 or idx >= vocab_size):
-                                print(f"Invalid token id {idx} in {key} (vocab size {vocab_size}) in server eval batch {i}")
+                        example[key] = [self.tokenizer.pad_token_id if (x != -100 and (x < 0 or x >= vocab_size)) else x for x in example[key]]
 
+            # Temporary trainer for evaluation
             temp_trainer = Trainer(
                 model=self.model,
                 args=self.training_args,
@@ -84,35 +77,31 @@ class ServerEvaluator:
                 data_collator=self.data_collator
             )
 
-            _ = temp_trainer.evaluate()
+            # Evaluate the batch
             prediction_output = temp_trainer.predict(batch_dataset)
             predictions, label_ids = prediction_output.predictions, prediction_output.label_ids
 
-            predictions_tensor = torch.tensor(predictions).to(self.device)
-            predictions_ids = torch.argmax(predictions_tensor, dim=-1)
+            # Decode predictions and labels
+            predictions_ids = torch.argmax(torch.tensor(predictions).to(self.device), dim=-1)
             decoded_preds = self.tokenizer.batch_decode(predictions_ids.cpu().numpy(), skip_special_tokens=True)
-
+            
             label_ids_np = np.array(label_ids)
             label_ids_np[label_ids_np == -100] = self.tokenizer.pad_token_id
             decoded_labels = self.tokenizer.batch_decode(label_ids_np, skip_special_tokens=True)
 
-            extracted_preds = []
-            extracted_labels = []
-            for j in range(len(decoded_preds)):
-                prompt, gold_output = extract_prompt_and_response(decoded_labels[j])
-                _, pred_output = extract_prompt_and_response(decoded_preds[j])
+            # Extract responses and calculate BLEURT
+            extracted_preds, extracted_labels = [], []
+            for pred, label in zip(decoded_preds, decoded_labels):
+                prompt, gold_output = extract_prompt_and_response(label)
+                _, pred_output = extract_prompt_and_response(pred)
                 extracted_preds.append(pred_output)
                 extracted_labels.append(gold_output)
-                print(f"\nInput (Prompt):\n{prompt}")
-                print(f"Predicted Output:\n{pred_output}")
-                print(f"Original Output:\n{gold_output}")
 
             bleurt_result = bleurt_metric(predictions=extracted_preds, references=extracted_labels)
-            batch_scores = bleurt_result.get("scores", [])
-            batch_bleurt = float(np.mean(batch_scores)) if batch_scores else 0.0
+            batch_bleurt = np.mean(bleurt_result.get("scores", [0.0])) if bleurt_result else 0.0
 
-            total_bleurt += batch_bleurt * current_batch_size
-            total_examples += current_batch_size
+            total_bleurt += batch_bleurt * (end_idx - start_idx)
+            total_examples += (end_idx - start_idx)
 
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
@@ -124,42 +113,38 @@ def main():
     num_rounds = 10
     min_clients = 1
 
+    # Server configuration
     server_config = fl.server.ServerConfig(num_rounds=num_rounds)
-    modelname = "smol"
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
+    # Initialize model and tokenizer
+    model_name = "smol"
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}\n")
 
-    model, tokenizer = get_model_tokenizer(modelname)
-
+    model, tokenizer = get_model_tokenizer(model_name)
     lora_config = LoraConfig(
-        r=8,
-        lora_alpha=32,
-        target_modules=["q_proj", "v_proj", "o_proj", "k_proj", "gate_proj", "up_proj", "down_proj"],
-        lora_dropout=0.1,
-        bias="none",
-        task_type="CAUSAL_LM",
+        r=8, lora_alpha=32, target_modules=["q_proj", "v_proj", "o_proj", "k_proj", "gate_proj", "up_proj", "down_proj"],
+        lora_dropout=0.1, bias="none", task_type="CAUSAL_LM"
     )
+    model = get_peft_model(model, lora_config).to(device)
 
-    model = get_peft_model(model, lora_config)
-    model = model.to(device)
-
+    # Load validation dataset
     _, val_cache_path = create_partitioned_datasets(
         tokenizer=tokenizer,
-        partition_config=get_partition_config(device),
+        partition_config=get_partition_config(device)
     )
-
     val_dataset = load_dataset("json", data_files=val_cache_path)["train"]
 
+    # Set up evaluator and strategy
     evaluator = ServerEvaluator(model, tokenizer, val_dataset, device)
-
     strategy = TokenWeightedFedAvg(
         min_available_clients=min_clients,
         min_fit_clients=min_clients,
         min_evaluate_clients=min_clients,
-        evaluate_fn=evaluator.evaluate_fn,
+        evaluate_fn=evaluator.evaluate_fn
     )
-    
+
+    # Start federated learning server
     fl.server.start_server(
         server_address="0.0.0.0:8080",
         strategy=strategy,
