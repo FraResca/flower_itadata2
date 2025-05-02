@@ -12,14 +12,6 @@ import flwr as fl
 from flutils import *
 from medpix2_dataset_preparation import medpix2_2050, medpix2_671
 
-def tokenize_function(examples, tokenizer, max_length=512):
-    return tokenizer(
-        examples["text"],
-        truncation=True,
-        max_length=max_length,
-        padding="max_length"
-    )
-
 def clean_response(text):
     # Remove unwanted headers from model output
     lines = text.splitlines()
@@ -64,8 +56,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         # Real training parameters
         self.training_args = TrainingArguments(
             output_dir="./smollm-finetuned",
-            evaluation_strategy="steps",
-            eval_steps=100,                  # Evaluate every 100 steps
+            evaluation_strategy="epoch",
             learning_rate=5e-5,              # Typical for LLM finetuning
             num_train_epochs=3,              # More epochs for real training
             weight_decay=0.01,
@@ -73,7 +64,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
             save_strategy="epoch",           # Save at the end of each epoch
             fp16=torch.cuda.is_available(),  # Use fp16 if possible
             greater_is_better=True,
-            per_device_train_batch_size=4,   # Increase batch size if possible
+            per_device_train_batch_size=8,   # Increase batch size if possible
             per_device_eval_batch_size=4,
             gradient_accumulation_steps=8,   # Accumulate gradients for larger effective batch
             metric_for_best_model="bleurt",
@@ -150,6 +141,9 @@ class LLMFlowerClient(fl.client.NumPyClient):
                 param.copy_(torch.tensor(param_data).to(param.device))
 
     def fit(self, parameters, config):
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
         self.set_parameters(parameters)
         
         train_dataset, partition_id = load_random_partition()
@@ -160,9 +154,19 @@ class LLMFlowerClient(fl.client.NumPyClient):
         num_tokens = sum(len(example["input_ids"]) for example in train_dataset)
         num_examples = len(train_dataset)
 
+        # Debug: Check for out-of-vocab token ids
+        vocab_size = len(self.tokenizer)
+        for example in train_dataset:
+            for key in ["input_ids", "labels"]:
+                if key in example:
+                    ids = example[key]
+                    for idx in ids:
+                        if idx != -100 and (idx < 0 or idx >= vocab_size):
+                            print(f"Invalid token id {idx} in {key} (vocab size {vocab_size})")
+
         print(f"Training on {num_examples} examples (single Trainer, automatic batching)")
 
-        eval_len = min(100, len(self.val_dataset))
+        eval_len = min(32, len(self.val_dataset))
         trainer = CudaClearingTrainer(
             model=self.model,
             args=self.training_args,
@@ -183,7 +187,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
             "partition": partition_id,
             "num_tokens": num_tokens
         }
-
+    '''
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
         
@@ -228,6 +232,7 @@ class LLMFlowerClient(fl.client.NumPyClient):
         return float(avg_bleurt), total_examples, {
             "bleurt": float(avg_bleurt)
         }
+    '''
 
 def main():
     client = LLMFlowerClient()

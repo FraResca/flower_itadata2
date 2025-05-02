@@ -62,17 +62,6 @@ def preprocess_function(example):
         full_text = prompt + example["output"].strip() + " " + eos_token
         return {"text": full_text}
 
-
-'''
-def tokenize_function(examples, tokenizer, max_length=512):
-    return tokenizer(
-        examples["text"],
-        truncation=True,
-        max_length=max_length,
-        padding="max_length"
-    )
-'''
-
 def tokenize_function(examples, tokenizer, max_length=512):
     tokens = tokenizer(
         examples["text"],
@@ -80,8 +69,35 @@ def tokenize_function(examples, tokenizer, max_length=512):
         max_length=max_length,
         padding="max_length"
     )
-    tokens["labels"] = tokens["input_ids"].copy()  # Needed for training loss computation
+    
+    # Create labels for causal language modeling
+    labels = tokens["input_ids"].copy()
+    vocab_size = len(tokenizer)
+
+    for i, text in enumerate(examples["text"]):
+        response_start = text.find("### Response:\n")
+        if response_start == -1:
+            continue
+        # Tokenize the text up to the response section and adjust the response_start index
+        response_token_start = len(tokenizer(text[:response_start + len("### Response:\n")])["input_ids"]) - 1
+        # Make sure response_token_start is within bounds
+        if response_token_start >= len(labels[i]):
+            response_token_start = len(labels[i]) - 1
+
+        # Set labels to -100 for the input (i.e., the prompt), so the model doesn't predict it
+        labels[i][:response_token_start] = [-100] * response_token_start
+
+        # Ensure all label values are valid or -100
+        labels[i] = [l if l == -100 or (0 <= l < vocab_size) else -100 for l in labels[i]]
+
+        # Debug: print invalid values
+        for l in labels[i]:
+            if l != -100 and (l < 0 or l >= vocab_size):
+                print(f"Invalid label value: {l} (vocab_size={vocab_size}) in example {i}")
+
+    tokens["labels"] = labels
     return tokens
+
 
 def load_dataset_fine(dataset_name, test_size=0.1, seed=42):
     if dataset_name == "alpaca":
@@ -186,17 +202,24 @@ def get_model_tokenizer(modelname):
     if os.path.exists(tokenizer_path) and os.path.exists(model_path):
         print("Loading model and tokenizer from local directory\n")
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, use_fast=False)
-        model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto")
+        model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto", ignore_mismatched_sizes=True)
     else:
         print("Downloading model and tokenizer from HuggingFace\n")
         tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
-        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
+        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", ignore_mismatched_sizes=True)
         
         tokenizer.save_pretrained(tokenizer_path)
         model.save_pretrained(model_path)
         print("Model and tokenizer saved to local directory\n")
-            
-    tokenizer.pad_token = tokenizer.eos_token
+        
+    # **EOS Token Handling**
+    eos_token = "<eos>"
+    if eos_token not in tokenizer.get_vocab():
+        tokenizer.add_special_tokens({'eos_token': eos_token})
+        model.resize_token_embeddings(len(tokenizer))
+    tokenizer.pad_token = tokenizer.eos_token  # Ensure pad token is set to eos_token
+    
+    print(f"Tokenizer EOS token set to: {tokenizer.eos_token}")
     print(model)
 
     return model, tokenizer
@@ -241,7 +264,7 @@ def get_partition_config(device):
             # select a random dataset from the list
             # "dataset_name": random.choice(["alpaca", "hcm", "medpix2"]),
             "dataset_name": "hcm",
-            "partition_size": 2000,
+            "partition_size": 2048,
         }
     return partition_config
 

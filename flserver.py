@@ -42,6 +42,10 @@ class ServerEvaluator:
                 param.copy_(torch.tensor(param_data, device=self.device))
 
     def evaluate_fn(self, server_round, parameters, config):
+        if server_round == 0:
+            print("Skipping server-side evaluation before first training round.")
+            return None, {}
+
         self.set_parameters(parameters)
 
         batch_size = config.get("eval_batch_size", 8)
@@ -63,6 +67,16 @@ class ServerEvaluator:
             current_batch_size = end_idx - start_idx
 
             batch_dataset = self.val_dataset.select(range(start_idx, end_idx))
+
+            vocab_size = len(self.tokenizer)
+            for example in batch_dataset:
+                for key in ["input_ids", "labels"]:
+                    if key in example:
+                        ids = example[key]
+                        for idx in ids:
+                            if idx != -100 and (idx < 0 or idx >= vocab_size):
+                                print(f"Invalid token id {idx} in {key} (vocab size {vocab_size}) in server eval batch {i}")
+
             temp_trainer = Trainer(
                 model=self.model,
                 args=self.training_args,
