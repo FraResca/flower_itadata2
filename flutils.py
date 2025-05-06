@@ -47,7 +47,7 @@ def preprocess_function(example):
         texts.append(full_text)
     return {"text": texts}
 
-def tokenize_function(examples, tokenizer, max_length=512):
+def tokenize_function(examples, tokenizer, max_length=256):
     tokens = tokenizer(
         examples["text"], truncation=True, max_length=max_length,
         padding="max_length", return_tensors="pt"
@@ -55,6 +55,7 @@ def tokenize_function(examples, tokenizer, max_length=512):
     labels = tokens["input_ids"].clone()
     vocab_size = len(tokenizer)
     pad_token_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else -100
+    eos_token_id = tokenizer.eos_token_id
 
     for i, text in enumerate(examples["text"]):
         response_start = text.find("### Response:\n")
@@ -130,7 +131,7 @@ def load_random_partition():
     return train_dataset, partition_id
 
 def get_model_tokenizer(modelname):
-    model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0" if modelname == "llama" else "HuggingFaceTB/SmolLM2-135M"
+    model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0" if modelname == "llama" else "HuggingFaceTB/SmolLM2-360M"
     model_dir = "tinyllama_model" if modelname == "llama" else "smollm_model"
     os.makedirs(model_dir, exist_ok=True)
     
@@ -142,13 +143,17 @@ def get_model_tokenizer(modelname):
         model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto")
     else:
         tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+        tokenizer.padding_side = "left"  # Add this line
         model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
         tokenizer.save_pretrained(tokenizer_path)
         model.save_pretrained(model_path)
     
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-    
+    if tokenizer.eos_token is None or tokenizer.eos_token != "<eos>":
+        tokenizer.add_special_tokens({'eos_token': "<eos>"})
+    if tokenizer.pad_token is None or tokenizer.pad_token == tokenizer.eos_token:
+        tokenizer.add_special_tokens({'pad_token': "<pad>"})
+        model.resize_token_embeddings(len(tokenizer))
+
     special_tokens = ["<eos>"]
     tokenizer.add_special_tokens({'additional_special_tokens': special_tokens})
     model.resize_token_embeddings(len(tokenizer))
@@ -176,7 +181,7 @@ def get_device_capacity(device):
         return cpu_count * cpu_freq  # Hz
 
 def get_partition_config(device):
-    return {"dataset_name": "hcm", "partition_size": 4096} if not device.startswith("cpu") else {"dataset_name": "hcm", "partition_size": 200}
+    return {"dataset_name": "hcm", "partition_size": 128} if not device.startswith("cpu") else {"dataset_name": "hcm", "partition_size": 200}
 
 class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
     def aggregate_fit(self, rnd, results, failures):

@@ -39,10 +39,31 @@ class LLMFlowerClient(fl.client.NumPyClient):
         self.training_args = TrainingArguments(
             output_dir="./smollm-finetuned", evaluation_strategy="epoch", learning_rate=5e-5,
             num_train_epochs=3, weight_decay=0.01, logging_steps=50, save_strategy="epoch", 
-            fp16=torch.cuda.is_available(), greater_is_better=True, per_device_train_batch_size=8,
-            per_device_eval_batch_size=4, gradient_accumulation_steps=8, metric_for_best_model="bleurt",
+            fp16=False, greater_is_better=True, per_device_train_batch_size=4,
+            per_device_eval_batch_size=2, gradient_accumulation_steps=8, metric_for_best_model="bleurt",
             dataloader_num_workers=2
         )
+
+    def get_parameters(self, config=None):
+        """Return model parameters as a list of NumPy arrays."""
+        return [param.cpu().detach().numpy() for param in self.model.state_dict().values()]
+
+    def set_parameters(self, parameters):
+        """Set model parameters from a list of NumPy arrays."""
+        params_dict = zip(self.model.state_dict().keys(), parameters)
+        state_dict = {k: torch.tensor(v) for k, v in params_dict}
+        self.model.load_state_dict(state_dict, strict=False)
+
+    def move_model_to_cpu(self):
+        self.model.to("cpu")
+        self.device = "cpu"
+
+    def move_model_to_gpu(self):
+        if torch.cuda.is_available():
+            self.model.to("cuda")
+            self.device = "cuda"
+        else:
+            self.device = "cpu"
 
     @staticmethod
     def extract_prompt_and_response(text):
@@ -53,10 +74,22 @@ class LLMFlowerClient(fl.client.NumPyClient):
         return "", text.strip()
 
     def compute_metrics(self, eval_pred):
-        predictions, labels = eval_pred
-        predictions = np.argmax(predictions[0] if isinstance(predictions, tuple) else predictions, axis=-1)
-        
-        decoded_preds = self.tokenizer.batch_decode(predictions, skip_special_tokens=True)
+        # eval_pred: (logits, labels)
+        _, labels = eval_pred
+
+        # Get input_ids from the eval dataset (assuming order matches)
+        input_ids = np.array([ex["input_ids"] for ex in self.val_dataset.select(range(len(labels)))])
+        input_ids = torch.tensor(input_ids).to(self.device)
+
+        generated_ids = self.model.generate(
+            input_ids=input_ids,
+            max_new_tokens=128,
+            eos_token_id=self.tokenizer.eos_token_id,
+            pad_token_id=self.tokenizer.pad_token_id,
+            repetition_penalty=1.1,
+            no_repeat_ngram_size=3
+        )
+        decoded_preds = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
         labels = np.where(labels != -100, labels, self.tokenizer.pad_token_id)
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
 
@@ -69,24 +102,12 @@ class LLMFlowerClient(fl.client.NumPyClient):
 
         result = self.metric.compute(predictions=extracted_preds, references=extracted_labels)
         bleurt_scores = result.get("scores", [0.0])
-        
         avg_bleurt = np.mean(bleurt_scores)
         return {"bleurt": avg_bleurt}
 
-    def get_parameters(self, config=None):
-        return [v.cpu().detach().numpy() for k, v in sorted(self.model.named_parameters()) if v.requires_grad]
-
-    def set_parameters(self, parameters):
-        trainable_param_names = sorted(k for k, v in self.model.named_parameters() if v.requires_grad)
-        with torch.no_grad():
-            for param_name, param_data in zip(trainable_param_names, parameters):
-                param = self.model
-                for part in param_name.split('.')[:-1]:
-                    param = getattr(param, part)
-                param_part = getattr(param, param_name.split('.')[-1])
-                param_part.copy_(torch.tensor(param_data).to(param_part.device))
-
     def fit(self, parameters, config):
+        self.move_model_to_gpu()
+
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
@@ -101,7 +122,8 @@ class LLMFlowerClient(fl.client.NumPyClient):
                 if key in example:
                     example[key] = [self.tokenizer.pad_token_id if (x != -100 and (x < 0 or x >= vocab_size)) else x for x in example[key]]
 
-        eval_len = min(32, len(self.val_dataset))
+        eval_len = min(8, len(self.val_dataset))
+
         trainer = CudaClearingTrainer(
             model=self.model, args=self.training_args, train_dataset=train_dataset,
             eval_dataset=self.val_dataset.shuffle().select(range(eval_len)),
@@ -113,14 +135,17 @@ class LLMFlowerClient(fl.client.NumPyClient):
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        updated_parameters = self.get_parameters()
+        updated_parameters = self.get_parameters(config)
         num_examples = len(train_dataset)
         num_tokens = sum(len(example["input_ids"]) for example in train_dataset)
+
+        self.move_model_to_cpu()
 
         return updated_parameters, num_examples, {"partition": partition_id, "num_tokens": num_tokens}
 
     '''
     def evaluate(self, parameters, config):
+        self.move_model_to_gpu()
         self.set_parameters(parameters)
         
         batch_size = config.get("eval_batch_size", 8)
@@ -160,6 +185,8 @@ class LLMFlowerClient(fl.client.NumPyClient):
                 torch.cuda.empty_cache()
         
         avg_bleurt = total_bleurt / total_examples if total_examples > 0 else 0.0
+
+        self.move_model_to_cpu()
 
         return float(avg_bleurt), total_examples, {
             "bleurt": float(avg_bleurt)

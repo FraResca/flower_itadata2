@@ -31,20 +31,34 @@ class ServerEvaluator:
             report_to="none"
         )
 
+    def move_model_to_cpu(self):
+        self.model.to("cpu")
+        self.device = "cpu"
+
+    def move_model_to_gpu(self):
+        if torch.cuda.is_available():
+            self.model.to("cuda")
+            self.device = "cuda"
+        else:
+            self.device = "cpu"
+
     def set_parameters(self, parameters):
-        param_names = sorted(k for k, v in self.model.named_parameters() if v.requires_grad)
-        with torch.no_grad():
-            for param_name, param_data in zip(param_names, parameters):
-                param = self.model
-                for part in param_name.split('.')[:-1]:
-                    param = getattr(param, part)
-                param_part = getattr(param, param_name.split('.')[-1])
-                param_part.copy_(torch.tensor(param_data, device=self.device))
+        state_dict = self.model.state_dict()
+        new_state_dict = {}
+        for (k, _), v in zip(state_dict.items(), parameters):
+            new_state_dict[k] = torch.tensor(v, device=self.device)
+        self.model.load_state_dict(new_state_dict, strict=False)
 
     def evaluate_fn(self, server_round, parameters, config):
+        self.move_model_to_gpu()
+        
         if server_round == 0:
             print("Skipping evaluation before first training round.")
+
+            self.move_model_to_cpu()
             return None, {}
+
+        
 
         self.set_parameters(parameters)
         
@@ -86,9 +100,15 @@ class ServerEvaluator:
             predictions, label_ids = prediction_output.predictions, prediction_output.label_ids
 
             # Decode predictions and labels
-            predictions_ids = torch.argmax(torch.tensor(predictions).to(self.device), dim=-1)
-            decoded_preds = self.tokenizer.batch_decode(predictions_ids.cpu().numpy(), skip_special_tokens=True)
-            
+            input_ids = torch.tensor([example["input_ids"] for example in batch_dataset]).to(self.device)
+            generated_ids = self.model.generate(
+                input_ids=input_ids,
+                max_new_tokens=32,
+                eos_token_id=self.tokenizer.eos_token_id,
+                pad_token_id=self.tokenizer.pad_token_id
+            )
+            decoded_preds = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
+
             label_ids_np = np.array(label_ids)
             label_ids_np[label_ids_np == -100] = self.tokenizer.pad_token_id
             decoded_labels = self.tokenizer.batch_decode(label_ids_np, skip_special_tokens=True)
@@ -126,10 +146,13 @@ class ServerEvaluator:
             json.dump(predictions_log, f, indent=2, ensure_ascii=False)
 
         avg_bleurt = total_bleurt / total_examples if total_examples else 0.0
+
+        self.move_model_to_cpu()
+
         return avg_bleurt, {"bleurt": avg_bleurt}
 
 def main():
-    num_rounds = 10
+    num_rounds = 15
     min_clients = 1
 
     # Server configuration
