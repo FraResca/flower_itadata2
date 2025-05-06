@@ -47,7 +47,7 @@ def preprocess_function(example):
         texts.append(full_text)
     return {"text": texts}
 
-def tokenize_function(examples, tokenizer, max_length=256):
+def tokenize_function(examples, tokenizer, max_length=512):
     tokens = tokenizer(
         examples["text"], truncation=True, max_length=max_length,
         padding="max_length", return_tensors="pt"
