@@ -8,5 +8,6 @@ server_evaluation
 tokenized_train
 tokenized_val
 aggregated_models
+hcm_dataset
 
 __pycache__
