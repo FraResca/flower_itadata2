@@ -1,4 +1,6 @@
 import os
+import json
+import random
 from datasets import load_dataset
 from tqdm import tqdm
 
@@ -36,7 +38,7 @@ def clean_string(string):
 
 def save_processed_dataset(dataset, save_path): 
     '''
-        Saves preprocessed dataset. Requires the following dataset structure:
+        Saves preprocessed dataset as a JSONL file. Each line is a JSON object with keys "prompt" and "answer".
         dataset: dictionary with one key "train"
         dataset["train"]: dictionary with two keys "input" and "output"
         dataset["train"]["input"] and dataset["train"]["output"]: lists of strings
@@ -46,9 +48,11 @@ def save_processed_dataset(dataset, save_path):
     print(f"Saving: {save_path}")
     with open(save_path, "w", encoding="utf-8") as outfile, tqdm(total=100) as pbar:
         for i in range(target):
-            outfile.write(dataset["train"]["input"][i])
-            outfile.write("\n")
-            outfile.write(dataset["train"]["output"][i])
+            example = {
+                "prompt": dataset["train"]["input"][i],
+                "answer": dataset["train"]["output"][i]
+            }
+            outfile.write(json.dumps(example, ensure_ascii=False))
             outfile.write("\n")
 
             # Print indicative progress
@@ -56,24 +60,16 @@ def save_processed_dataset(dataset, save_path):
             if progress >= next_update:
                 pbar.update(1)
                 next_update += 1
+        
+
 
 def load_processed_dataset(load_path):
     '''
-        Loads preprocessed dataset.
-        Assumes that the file alternates lines: one input followed by the corresponding output
+        Loads preprocessed dataset saved as JSONL.
+        Each line is a JSON object with keys "prompt" and "answer".
     '''
-    dataset = {}
-    dataset["train"] = {}
-    dataset["train"]["input"] = []
-    dataset["train"]["output"] = []
-
-    with open(load_path, "r", encoding="utf-8") as infile:
-        for i, line in enumerate(infile):
-            line = line.strip()
-            if i % 2 == 0:
-                dataset["train"]["input"].append(line)
-            else:
-                dataset["train"]["output"].append(line)
+    with open(load_path, "r") as jsonfile:
+        dataset = [json.loads(line) for line in jsonfile]
 
     return dataset
 
@@ -94,6 +90,9 @@ def print_stats():
 ########## PREPROCESS ##########
 ################################
 def preprocess_all():
+    if not os.path.exists(DATASETS_PATH):
+        os.makedirs(DATASETS_PATH)
+    
     preprocess_chatdoctor_icliniq_7k()
     preprocess_medical_meadow_medical_flashcards_34k()
     preprocess_medical_meadow_wikidoc_10k()
@@ -121,7 +120,7 @@ def preprocess_chatdoctor_icliniq_7k():
         chatdoctor_icliniq_7k["train"]["output"].append(output)
 
     # Save
-    save_processed_dataset(chatdoctor_icliniq_7k, f"{DATASETS_PATH}/chatdoctor_icliniq_7k.txt")
+    save_processed_dataset(chatdoctor_icliniq_7k, f"{DATASETS_PATH}/chatdoctor_icliniq_7k.jsonl")
 
 # def preprocess_chatdoctor_healthcaremagic_112k():
 #     # Load dataset
@@ -156,7 +155,7 @@ def preprocess_medical_meadow_medical_flashcards_34k():
         medical_meadow_medical_flashcards_34k["train"]["output"].append(output)
 
     # Save
-    save_processed_dataset(medical_meadow_medical_flashcards_34k, f"{DATASETS_PATH}/medical_meadow_medical_flashcards_34k.txt")
+    save_processed_dataset(medical_meadow_medical_flashcards_34k, f"{DATASETS_PATH}/medical_meadow_medical_flashcards_34k.jsonl")
 
 
 def preprocess_medical_meadow_wikidoc_10k():
@@ -192,7 +191,7 @@ def preprocess_medical_meadow_wikidoc_10k():
         medical_meadow_wikidoc_10k["train"]["output"].append(output)
 
     # Save
-    save_processed_dataset(medical_meadow_wikidoc_10k, f"{DATASETS_PATH}/medical_meadow_wikidoc_10k.txt")
+    save_processed_dataset(medical_meadow_wikidoc_10k, f"{DATASETS_PATH}/medical_meadow_wikidoc_10k.jsonl")
 
 
 def preprocess_medical_meadow_wikidoc_patient_information_6k():
@@ -215,7 +214,7 @@ def preprocess_medical_meadow_wikidoc_patient_information_6k():
         medical_meadow_wikidoc_patient_information_6k["train"]["output"].append(output)
 
     # Save
-    save_processed_dataset(medical_meadow_wikidoc_patient_information_6k, f"{DATASETS_PATH}/medical_meadow_wikidoc_patient_information_6k.txt")
+    save_processed_dataset(medical_meadow_wikidoc_patient_information_6k, f"{DATASETS_PATH}/medical_meadow_wikidoc_patient_information_6k.jsonl")
 
 def preprocess_pubmed_qa_211k():
     # Load dataset
@@ -260,7 +259,90 @@ def preprocess_pubmed_qa_211k():
         pubmed_qa_211k["train"]["output"].append(output)
 
     # Save
-    save_processed_dataset(pubmed_qa_211k, f"{DATASETS_PATH}/pubmed_qa_211k.txt")
+    save_processed_dataset(pubmed_qa_211k, f"{DATASETS_PATH}/pubmed_qa_211k.jsonl")
+
+def save_train_test_split(dataset, dataset_name, train_size=0.9, seed=42):
+    '''
+        Splits the dataset into train and test sets.
+        dataset: list of dictionaries with keys "prompt" and "answer"
+        train_size: proportion of the dataset to include in the train split
+        seed: random seed for reproducibility
+    '''
+    # Shuffle the dataset
+    random.seed(seed)
+    random.shuffle(dataset)
+
+    # Split the dataset
+    split_index = int(len(dataset) * train_size)
+    train_set = dataset[:split_index]
+    test_set = dataset[split_index:]
+
+    # Save the train and test sets
+    with open(f"{DATASETS_PATH}/{dataset_name}_train_set.jsonl", "w") as train_file:
+        for example in train_set:
+            json.dump(example, train_file)
+            train_file.write("\n")
+        
+    with open(f"{DATASETS_PATH}/{dataset_name}_test_set.jsonl", "w") as test_file:
+        for example in test_set:
+            json.dump(example, test_file)
+            test_file.write("\n")
+
+def save_all_train_test():
+    '''
+        Saves all datasets in the DATASETS_PATH directory
+    '''
+    for filename in os.listdir(DATASETS_PATH):
+        if filename.endswith(".jsonl"):
+            dataset = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
+            save_train_test_split(dataset, filename.split(".")[0])
+
+def create_balanced_test_set(num_samples=1024):
+    '''
+        Creates a balanced test set from the test datasets in the DATASETS_PATH directory.
+        Samples from each test set proportionally to the number of examples in the test set.
+        num_samples: number of samples to include in the validation set
+    '''
+
+    # Load all datasets
+    datasets = {}
+    for filename in os.listdir(DATASETS_PATH):
+        if filename.endswith("_test_set.jsonl"):
+            dataset_name = filename.split("_test_set.jsonl")[0]
+            datasets[dataset_name] = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
+
+    # List the number of examples in each dataset
+    dataset_sizes = {dataset_name: len(dataset) for dataset_name, dataset in datasets.items()}
+
+    # Scale them to sum to 1024
+    total_size = sum(dataset_sizes.values())
+    scale_factor = num_samples / total_size
+    scaled_sizes = {dataset_name: int(size * scale_factor) for dataset_name, size in dataset_sizes.items()}
+
+    # Ensure that the sum of the scaled sizes is equal to num_samples
+    scaled_sum = sum(scaled_sizes.values())
+    if scaled_sum != num_samples:
+        # Adjust the last dataset to make the sum equal to num_samples
+        last_dataset_name = list(scaled_sizes.keys())[-1]
+        scaled_sizes[last_dataset_name] += (num_samples - scaled_sum)
+
+    print(f"Scaled sizes: {scaled_sizes}")
+    
+    balanced_test_set = []
+    for dataset_name, dataset in datasets.items():
+        sample_size = scaled_sizes[dataset_name]
+        random.seed(42)
+        random.shuffle(dataset)
+        samples = dataset[:sample_size]
+        balanced_test_set.extend(samples)
+        print(f"Added {sample_size} samples from {dataset_name} to the balanced test set")
+    
+    # Save the balanced test set
+    with open(f"{DATASETS_PATH}/balanced_test_set.jsonl", "w") as test_file:
+        for example in balanced_test_set:
+            json.dump(example, test_file)
+            test_file.write("\n")
+    
 
 ##########################
 ########## MAIN ##########
@@ -269,3 +351,6 @@ def preprocess_pubmed_qa_211k():
 # For preprocessing purposes only
 if __name__ == "__main__":
     preprocess_all()
+    save_all_train_test()
+    create_balanced_test_set()
+    print("All datasets preprocessed and saved.")

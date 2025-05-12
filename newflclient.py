@@ -1,17 +1,24 @@
 import flwr as fl
 import torch
+import json
+import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from newflutils import load_train_partition, create_hcm_dataset, empty_gpu_cache
 from tqdm import tqdm
 from peft import LoraConfig, get_peft_model
 from torch.utils.data import DataLoader
-from torch.cuda.amp import GradScaler
+from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test
+from datasets import Dataset
 
+def get_client_config_param(param_name, default_value):
+    with open("client_config.json", "r") as f:
+        data = json.load(f)
+        param_value = data.get(param_name, default_value)
+    return param_value
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self, model_name="HuggingFaceTB/SmolLM2-135M"):
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
-        self.scaler = torch.cuda.amp.GradScaler()
         lora_config = LoraConfig(
             r=8,
             lora_alpha=32,
@@ -94,13 +101,20 @@ class FlowerClient(fl.client.NumPyClient):
     def fit(self, parameters, config):
         empty_gpu_cache()
 
+        dataset_folder_name = "datasets"
+        dataset_name = get_client_config_param("dataset_name", "chatdoctor_icliniq_7k")
+
         self.set_parameters(parameters)
-        train_data = load_train_partition()
+        train_data = load_processed_dataset(f"{dataset_folder_name}/{dataset_name}_train_set.jsonl")
+        num_examples = get_client_config_param("train_examples", 1024)
+        train_data = Dataset.from_list(train_data)
+        train_data = train_data.shuffle().select(range(num_examples))
+
         optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5)
         self.model.train()
         total_tokens = 0
 
-        batch_size = 8
+        batch_size = get_client_config_param("train_batch_size", 2)
         dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=lambda x: x)
         for batch in tqdm(dataloader, desc="Training", unit="batch"):
             try:
@@ -125,13 +139,10 @@ class FlowerClient(fl.client.NumPyClient):
                     prompt_len = prompt_ids.size(0)
                     labels[i, :prompt_len] = -100
 
-                with torch.amp.autocast("cuda"):
-                    outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-                    loss = outputs.loss
-
-                self.scaler.scale(loss).backward()
-                self.scaler.step(optimizer)
-                self.scaler.update()
+                outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+                loss = outputs.loss
+                loss.backward()
+                optimizer.step()
                 optimizer.zero_grad()
                 total_tokens += (labels != -100).sum().item()
 
@@ -180,5 +191,13 @@ class FlowerClient(fl.client.NumPyClient):
     '''
         
 if __name__ == "__main__":
-    create_hcm_dataset()
-    fl.client.start_client(server_address="0.0.0.0:8080", client=FlowerClient().to_client())
+    # if there is no dataset folder, create it
+    dataset_folder_name = "datasets"
+    if not os.path.exists(dataset_folder_name):
+        os.makedirs(dataset_folder_name)
+        preprocess_all()
+        save_all_train_test()
+    fl.client.start_client(
+        server_address="0.0.0.0:8080",
+        client=FlowerClient(model_name=get_client_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")).to_client()
+    )

@@ -1,3 +1,7 @@
 {
-    "modelname": "HuggingFaceTB/SmolLM2-135M"    
+    "modelname": "HuggingFaceTB/SmolLM2-135M",
+    "dataset_name": "chatdoctor_icliniq_7k",
+    "train_examples": 16,
+    "train_batch_size": 8,
+    "eval_batch_size": 8
 }

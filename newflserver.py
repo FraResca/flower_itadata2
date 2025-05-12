@@ -1,16 +1,22 @@
 import flwr as fl
 from flwr.server import ServerConfig
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from datasets import load_dataset
-import evaluate
 import os
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import evaluate
 import json
-from newflutils import create_hcm_dataset, load_test_data, empty_gpu_cache
+from newflutils import empty_gpu_cache
 from datasets import Dataset
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from peft import LoraConfig, get_peft_model
+from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test, create_balanced_test_set
+
+def get_sever_config_param(param_name, default_value):
+    with open("server_config.json", "r") as f:
+        data = json.load(f)
+        param_value = data.get(param_name, default_value)
+    return param_value
 
 class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
     def aggregate_fit(self, rnd, results, failures):
@@ -42,7 +48,9 @@ def evaluate_fn(server_round, parameters, config):
     if server_round == 0:
         return 0.0, {}
 
-    model_name = "HuggingFaceTB/SmolLM2-135M"
+    dataset_folder_name = "datasets"
+
+    model_name = get_sever_config_param("model_name", "HuggingFaceTB/SmolLM2-135M")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
@@ -71,13 +79,13 @@ def evaluate_fn(server_round, parameters, config):
     model.load_state_dict(state_dict, strict=False)
     model.eval()
 
-    val_dataset = load_test_data()
-    val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(50))
+    val_dataset = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
+    val_dataset = Dataset.from_list(val_dataset)
     references = []
     candidates = []
 
     output_file = f"eval_outputs_round{server_round}.jsonl"
-    batch_size = 16
+    batch_size = get_sever_config_param("eval_batch_size", 2)
     dataloader = DataLoader(val_dataset, batch_size=batch_size, collate_fn=lambda x: x)
     
     with open(output_file, "a") as jsonfile:
@@ -125,7 +133,13 @@ def evaluate_fn(server_round, parameters, config):
     return loss, {"rougeL": avg_rouge}
 
 def main():
-    create_hcm_dataset()
+    dataset_folder_name = "datasets"
+
+    if not os.path.exists(dataset_folder_name):
+        os.makedirs(dataset_folder_name)
+        preprocess_all()
+        save_all_train_test()
+        create_balanced_test_set()
 
     min_clients = 1
     server_config = ServerConfig(

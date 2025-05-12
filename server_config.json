@@ -1,3 +1,5 @@
 {
-    "modelname": "HuggingFaceTB/SmolLM2-135M"
+    "modelname": "HuggingFaceTB/SmolLM2-135M",
+    "eval_examples": 32, 
+    "eval_batch_size": 16
 }

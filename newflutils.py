@@ -6,6 +6,8 @@ import random
 import torch
 import gc
 
+
+
 def download_hcm_dataset():
     # Download the HCM dataset
     dataset = load_dataset("wangrongsheng/HealthCareMagic-100k-en")
@@ -63,7 +65,7 @@ def create_hcm_dataset():
                     jsonfile.write("\n")
         print(f"Created {len(train_data) // partition_size} partitions of the training data.")
 
-def load_train_partition():
+def load_train_partition(dataset_path):
     dataset_folder_name = "hcm_dataset"
 
     partition_files = [f for f in os.listdir(dataset_folder_name) if f.startswith("train_data_")]
