@@ -291,11 +291,20 @@ def save_train_test_split(dataset, dataset_name, train_size=0.9, seed=42):
 def save_all_train_test():
     '''
         Saves all datasets in the DATASETS_PATH directory
+        ignore the ones that are already train/test sets
     '''
     for filename in os.listdir(DATASETS_PATH):
-        if filename.endswith(".jsonl"):
+        if filename.endswith(".jsonl") and not filename.endswith("_train_set.jsonl") and not filename.endswith("_test_set.jsonl"):
             dataset = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
             save_train_test_split(dataset, filename.split(".")[0])
+
+    # create ALL_train_set.jsonl
+    all_train_data = load_all_train()
+    with open(f"{DATASETS_PATH}/ALL_train_set.jsonl", "w") as train_file:
+        for example in all_train_data:
+            json.dump(example, train_file)
+            train_file.write("\n")
+
 
 def create_balanced_test_set(num_samples=1024):
     '''
@@ -342,7 +351,28 @@ def create_balanced_test_set(num_samples=1024):
         for example in balanced_test_set:
             json.dump(example, test_file)
             test_file.write("\n")
+
+def load_all_train():
+    '''
+        Loads all train datasets in the DATASETS_PATH directory as one
+    '''
+    # Load all datasets that end with _train_set.jsonl
+    datasets = {}
+    for filename in os.listdir(DATASETS_PATH):
+        if filename == "ALL_train_set.jsonl":
+            continue
+        if filename.endswith("_train_set.jsonl"):
+            dataset_name = filename.split("_train_set.jsonl")[0]
+            datasets[dataset_name] = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
+    # Concatenate all datasets
+    all_train_data = []
+    for dataset_name, dataset in datasets.items():
+        all_train_data.extend(dataset)
     
+    print(f"Loaded {len(all_train_data)} training examples from {len(datasets)} datasets")
+
+    return all_train_data
+
 
 ##########################
 ########## MAIN ##########
