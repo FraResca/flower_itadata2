@@ -39,8 +39,8 @@ class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
 
 def evaluate_fn(server_round, parameters, config):
     empty_gpu_cache()
-    # if server_round == 0:
-    #     return 0.0, {}
+    if server_round == 0:
+        return 0.0, {}
 
     model_name = "HuggingFaceTB/SmolLM2-135M"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -72,12 +72,12 @@ def evaluate_fn(server_round, parameters, config):
     model.eval()
 
     val_dataset = load_test_data()
-    val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(100))
+    val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(50))
     references = []
     candidates = []
 
     output_file = f"eval_outputs_round{server_round}.jsonl"
-    batch_size = 4
+    batch_size = 16
     dataloader = DataLoader(val_dataset, batch_size=batch_size, collate_fn=lambda x: x)
     
     with open(output_file, "a") as jsonfile:
@@ -109,6 +109,8 @@ def evaluate_fn(server_round, parameters, config):
                 }, jsonfile, indent=2)
                 jsonfile.write("\n")
 
+                empty_gpu_cache()
+
     metric = evaluate.load("rouge")
     results = metric.compute(predictions=candidates, references=references)
     avg_rouge = results["rougeL"]
@@ -127,7 +129,7 @@ def main():
 
     min_clients = 1
     server_config = ServerConfig(
-        num_rounds=10,
+        num_rounds=25,
     )
 
     strategy = TokenWeightedFedAvg(

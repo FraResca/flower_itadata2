@@ -1,16 +1,17 @@
 import flwr as fl
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from newflutils import load_train_partition, load_test_data, create_hcm_dataset, empty_gpu_cache
+from newflutils import load_train_partition, create_hcm_dataset, empty_gpu_cache
 from tqdm import tqdm
-from torch.utils.data import DataLoader
-from datasets import Dataset
 from peft import LoraConfig, get_peft_model
+from torch.utils.data import DataLoader
+from torch.cuda.amp import GradScaler
 
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self, model_name="HuggingFaceTB/SmolLM2-135M"):
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.scaler = torch.cuda.amp.GradScaler()
         lora_config = LoraConfig(
             r=8,
             lora_alpha=32,
@@ -39,6 +40,8 @@ class FlowerClient(fl.client.NumPyClient):
         state_dict = {k: torch.tensor(v) for k, v in params_dict}
         self.model.load_state_dict(state_dict, strict=False)
 
+    '''
+    # con autocast
     def fit(self, parameters, config):
         empty_gpu_cache()
 
@@ -55,34 +58,101 @@ class FlowerClient(fl.client.NumPyClient):
             prompts = [s["prompt"] for s in batch]
             answers = [s["answer"] for s in batch]
 
-            inputs = [p + a for p, a in zip(prompts, answers)]
-            encodings = self.tokenizer(inputs, return_tensors="pt", padding=True, truncation=True)
+            sequences = [p + a for p, a in zip(prompts, answers)]
+            encodings = self.tokenizer(
+                sequences,
+                return_tensors="pt",
+                padding=True,
+                truncation=True
+            )
 
             input_ids = encodings["input_ids"].to(self.device)
             attention_mask = encodings["attention_mask"].to(self.device)
-
             labels = input_ids.clone()
+
             for i, (prompt, answer) in enumerate(zip(prompts, answers)):
                 prompt_ids = self.tokenizer(prompt, return_tensors="pt", truncation=True)["input_ids"][0]
                 prompt_len = prompt_ids.size(0)
-                labels[i, :prompt_len] = -100  # Mask prompt tokens
-            outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-            loss = outputs.loss
-            loss.backward()
-            optimizer.step()
+                labels[i, :prompt_len] = -100
+
+            with torch.amp.autocast("cuda"):
+                outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+                loss = outputs.loss
+
+            self.scaler.scale(loss).backward()
+            self.scaler.step(optimizer)
+            self.scaler.update()
             optimizer.zero_grad()
             total_tokens += (labels != -100).sum().item()
 
             empty_gpu_cache()
+
         return self.get_parameters(), len(train_data), {"num_tokens": total_tokens}
-    
+    '''
+    # '''
+    # Senza autocast
+    def fit(self, parameters, config):
+        empty_gpu_cache()
+
+        self.set_parameters(parameters)
+        train_data = load_train_partition()
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5)
+        self.model.train()
+        total_tokens = 0
+
+        batch_size = 8
+        dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=lambda x: x)
+        for batch in tqdm(dataloader, desc="Training", unit="batch"):
+            try:
+                prompts = [s["prompt"] for s in batch]
+                answers = [s["answer"] for s in batch]
+
+                sequences = [p + a for p, a in zip(prompts, answers)]
+                encodings = self.tokenizer(
+                    sequences,
+                    return_tensors="pt",
+                    padding=True,
+                    truncation=True,
+                    max_length=512
+                )
+
+                input_ids = encodings["input_ids"].to(self.device)
+                attention_mask = encodings["attention_mask"].to(self.device)
+                labels = input_ids.clone()
+
+                for i, (prompt, _) in enumerate(zip(prompts, answers)):
+                    prompt_ids = self.tokenizer(prompt, return_tensors="pt", truncation=True)["input_ids"][0]
+                    prompt_len = prompt_ids.size(0)
+                    labels[i, :prompt_len] = -100
+
+                with torch.amp.autocast("cuda"):
+                    outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+                    loss = outputs.loss
+
+                self.scaler.scale(loss).backward()
+                self.scaler.step(optimizer)
+                self.scaler.update()
+                optimizer.zero_grad()
+                total_tokens += (labels != -100).sum().item()
+
+            except RuntimeError as e:
+                if "out of memory" in str(e):
+                    print("OOM detected, skipping batch.")
+                    torch.cuda.empty_cache()
+                    continue
+                else:
+                    raise e
+
+            empty_gpu_cache()
+        
+        return self.get_parameters(), len(train_data), {"num_tokens": total_tokens}    # '''
     '''
     def evaluate(self, parameters, config):
         empty_gpu_cache()
 
         self.set_parameters(parameters)
         val_dataset = load_test_data()
-        val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(100))
+        val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(50))
         # Remove Dataset.from_list(val_dataset) and use val_data directly
         self.model.eval()
         total_loss = 0.0

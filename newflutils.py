@@ -1,8 +1,10 @@
 from datasets import load_dataset
+from tqdm import tqdm
 import json
 import os
 import random
 import torch
+import gc
 
 def download_hcm_dataset():
     # Download the HCM dataset
@@ -46,8 +48,9 @@ def create_hcm_dataset():
                 jsonfile.write("\n")
         print("Test data saved to test_data.jsonl")
 
-        partition_size = 2048
-        for i in range(0, len(train_data), partition_size):
+        partition_size = 4096
+        num_partitions = (len(train_data) + partition_size - 1) // partition_size
+        for i in tqdm(range(0, len(train_data), partition_size), desc="Saving train partitions", unit="partition", total=num_partitions):
             indices = list(range(i, min(i + partition_size, len(train_data))))
             partition = train_data.select(indices)
             partition_file = f"{dataset_folder_name}/train_data_{i // partition_size}.jsonl"
@@ -60,7 +63,7 @@ def create_hcm_dataset():
                     jsonfile.write("\n")
         print(f"Created {len(train_data) // partition_size} partitions of the training data.")
 
-def load_train_partition(partition_index):
+def load_train_partition():
     dataset_folder_name = "hcm_dataset"
 
     partition_files = [f for f in os.listdir(dataset_folder_name) if f.startswith("train_data_")]
@@ -82,3 +85,5 @@ def empty_gpu_cache():
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
         torch.cuda.ipc_collect()
+
+    gc.collect()
