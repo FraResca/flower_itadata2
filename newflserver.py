@@ -1,16 +1,17 @@
 import flwr as fl
-from flwr.server import ServerConfig
 import torch
 import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import evaluate
 import json
 from newflutils import empty_gpu_cache
+from flwr.server import ServerConfig
 from datasets import Dataset
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from peft import LoraConfig, get_peft_model
 from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test, create_balanced_test_set
+from bert_score import score as bert_score_fn
 
 def get_sever_config_param(param_name, default_value):
     with open("server_config.json", "r") as f:
@@ -45,8 +46,10 @@ class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
 
 def evaluate_fn(server_round, parameters, config):
     empty_gpu_cache()
-    if server_round == 0:
+    if get_sever_config_param("round_0", False) == False and server_round == 0:
         return 0.0, {}
+
+    seed = get_sever_config_param("seed", 42)
 
     dataset_folder_name = "datasets"
 
@@ -80,7 +83,7 @@ def evaluate_fn(server_round, parameters, config):
     model.eval()
 
     val_dataset = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
-    val_dataset = Dataset.from_list(val_dataset)
+    val_dataset = Dataset.from_list(val_dataset).shuffle(seed=seed).select(range(get_sever_config_param("eval_examples", len(val_dataset))))
     references = []
     candidates = []
 
@@ -123,14 +126,28 @@ def evaluate_fn(server_round, parameters, config):
     results = metric.compute(predictions=candidates, references=references)
     avg_rouge = results["rougeL"]
 
-    loss = 1.0 - avg_rouge
+    P, R, F1 = bert_score_fn(candidates, references, lang="en", model_type="bert-base-uncased")
+    avg_bert = F1.mean().item()
+
+    model_save_path = f"server_model_round{server_round}.pt"
+    torch.save(model.state_dict(), model_save_path)
+
+    # Save metrics
+    metrics_save_path = f"server_metrics.json"
+    with open(metrics_save_path, "w") as metrics_file:
+        json.dump({
+            "round": server_round,
+            "rougeL": avg_rouge,
+            "bert": avg_bert
+        }, metrics_file, indent=2)
 
     del model
     del tokenizer
     del val_dataset
+
     empty_gpu_cache()
 
-    return loss, {"rougeL": avg_rouge}
+    return avg_rouge, {"rougeL": avg_rouge, "bert": avg_bert}
 
 def main():
     dataset_folder_name = "datasets"

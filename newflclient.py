@@ -3,7 +3,7 @@ import torch
 import json
 import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from newflutils import load_train_partition, create_hcm_dataset, empty_gpu_cache
+from newflutils import empty_gpu_cache
 from tqdm import tqdm
 from peft import LoraConfig, get_peft_model
 from torch.utils.data import DataLoader
@@ -107,8 +107,7 @@ class FlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         train_data = load_processed_dataset(f"{dataset_folder_name}/{dataset_name}_train_set.jsonl")
         num_examples = get_client_config_param("train_examples", 1024)
-        train_data = Dataset.from_list(train_data)
-        train_data = train_data.shuffle().select(range(num_examples))
+        train_data = Dataset.from_list(train_data).shuffle().select(range(num_examples))
 
         optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5)
         self.model.train()
