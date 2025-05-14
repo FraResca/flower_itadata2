@@ -278,7 +278,7 @@ if __name__ == "__main__":
     while True:
         try:
             fl.client.start_client(
-                server_address="0.0.0.0:8080",
+                server_address="10.27.2.8:8080",
                 client=FlowerClient(model_name=get_client_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")).to_client()
             )
             break  # Exit loop if connection is successful
