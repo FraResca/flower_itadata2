@@ -87,7 +87,10 @@ def evaluate_fn(server_round, parameters, config):
     model.eval()
 
     val_dataset = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
-    val_dataset = Dataset.from_list(val_dataset).shuffle(seed=seed).select(range(get_sever_config_param("eval_examples", len(val_dataset))))
+
+    # non seeded shuffle to ensure different rounds get different samples
+    val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(get_sever_config_param("eval_examples", len(val_dataset))))
+    
     references = []
     candidates = []
 
@@ -136,7 +139,7 @@ def evaluate_fn(server_round, parameters, config):
     model_save_path = f"server_model_round{server_round}.pt"
     torch.save(model.state_dict(), model_save_path)
 
-    metrics_save_path = f"server_metrics.json"
+    metrics_save_path = f"server_metrics.jsonl"
     # Save metrics
     if not os.path.exists(metrics_save_path):
         # create the file if it doesn't exist
@@ -171,7 +174,7 @@ def main():
     if not os.path.exists(dataset_folder_name):
         os.makedirs(dataset_folder_name)
         preprocess_all()
-        save_all_train_test()
+        save_all_train_test(get_sever_config_param("seed", 42))
         create_balanced_test_set()
 
     min_clients = 1

@@ -288,7 +288,7 @@ def save_train_test_split(dataset, dataset_name, train_size=0.9, seed=42):
             json.dump(example, test_file)
             test_file.write("\n")
 
-def save_all_train_test():
+def save_all_train_test(seed=42):
     '''
         Saves all datasets in the DATASETS_PATH directory
         ignore the ones that are already train/test sets
@@ -296,7 +296,7 @@ def save_all_train_test():
     for filename in os.listdir(DATASETS_PATH):
         if filename.endswith(".jsonl") and not filename.endswith("_train_set.jsonl") and not filename.endswith("_test_set.jsonl"):
             dataset = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
-            save_train_test_split(dataset, filename.split(".")[0])
+            save_train_test_split(dataset, filename.split(".")[0], seed=seed)
 
     # create ALL_train_set.jsonl
     all_train_data = load_all_train()
@@ -313,17 +313,17 @@ def create_balanced_test_set(num_samples=1024):
         num_samples: number of samples to include in the validation set
     '''
 
-    # Load all datasets
+    # Load all test sets
     datasets = {}
     for filename in os.listdir(DATASETS_PATH):
         if filename.endswith("_test_set.jsonl"):
             dataset_name = filename.split("_test_set.jsonl")[0]
             datasets[dataset_name] = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
 
-    # List the number of examples in each dataset
+    # Number of examples in each test set
     dataset_sizes = {dataset_name: len(dataset) for dataset_name, dataset in datasets.items()}
 
-    # Scale them to sum to 1024
+    # Scale them to sum to num_samples
     total_size = sum(dataset_sizes.values())
     scale_factor = num_samples / total_size
     scaled_sizes = {dataset_name: int(size * scale_factor) for dataset_name, size in dataset_sizes.items()}
@@ -331,7 +331,6 @@ def create_balanced_test_set(num_samples=1024):
     # Ensure that the sum of the scaled sizes is equal to num_samples
     scaled_sum = sum(scaled_sizes.values())
     if scaled_sum != num_samples:
-        # Adjust the last dataset to make the sum equal to num_samples
         last_dataset_name = list(scaled_sizes.keys())[-1]
         scaled_sizes[last_dataset_name] += (num_samples - scaled_sum)
 
@@ -351,6 +350,18 @@ def create_balanced_test_set(num_samples=1024):
         for example in balanced_test_set:
             json.dump(example, test_file)
             test_file.write("\n")
+
+    # Save a json file with the number of examples in each dataset, their ids and the number of examples in the balanced test set
+    with open(f"{DATASETS_PATH}/dataset_info.json", "w") as info_file:
+        dataset_info = {}
+        for dataset_name, dataset in datasets.items():
+            dataset_info[dataset_name] = {
+                "num_examples": len(dataset),
+                "scaled_size": scaled_sizes[dataset_name],
+                "balanced_test_set_size": len(balanced_test_set)
+            }
+        json.dump(dataset_info, info_file, indent=4)
+
 
 def load_all_train():
     '''

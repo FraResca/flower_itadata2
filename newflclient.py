@@ -7,9 +7,11 @@ from newflutils import empty_gpu_cache
 from tqdm import tqdm
 from peft import LoraConfig, get_peft_model
 from torch.utils.data import DataLoader
-from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test
+from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test, create_balanced_test_set
 from datasets import Dataset
 import time
+import evaluate
+from bert_score import score as bert_score_fn
 
 def get_client_config_param(param_name, default_value):
     with open("client_config.json", "r") as f:
@@ -110,6 +112,8 @@ class FlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         train_data = load_processed_dataset(f"{dataset_folder_name}/{dataset_name}_train_set.jsonl")
         num_examples = get_client_config_param("train_examples", 1024)
+
+        # non seeded shuffle to ensure different rounds get different samples
         train_data = Dataset.from_list(train_data).shuffle().select(range(num_examples))
 
         optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5)
@@ -118,7 +122,7 @@ class FlowerClient(fl.client.NumPyClient):
 
         batch_size = get_client_config_param("train_batch_size", 2)
         dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=lambda x: x)
-        for batch in tqdm(dataloader, desc="Training", unit="batch"):
+        for batch in tqdm(dataloader, desc="Client Training", unit="batch"):
             try:
                 prompts = [s["prompt"] for s in batch]
                 answers = [s["answer"] for s in batch]
@@ -166,46 +170,111 @@ class FlowerClient(fl.client.NumPyClient):
             f.write(f"Client Fit - {time.time() - start_time} seconds\n")
         
         return self.get_parameters(), len(train_data), {"num_tokens": total_tokens}    # '''
-    '''
+    
     def evaluate(self, parameters, config):
+        start_time = time.time()
         empty_gpu_cache()
 
+        dataset_folder_name = "datasets"
+        dataset_name = get_client_config_param("dataset_name", "chatdoctor_icliniq_7k")
+
         self.set_parameters(parameters)
-        val_dataset = load_test_data()
-        val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(50))
-        # Remove Dataset.from_list(val_dataset) and use val_data directly
+        if dataset_name == "ALL":
+            val_data = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
+        else:
+            val_data = load_processed_dataset(f"{dataset_folder_name}/{dataset_name}_test_set.jsonl")
+        num_examples = get_client_config_param("eval_examples", 50)
+
+        # Shuffle and select a subset for evaluation
+        val_data = Dataset.from_list(val_data).shuffle().select(range(min(num_examples, len(val_data))))
+
         self.model.eval()
         total_loss = 0.0
-        batch_size = 2
-        dataloader = DataLoader(val_dataset, batch_size=batch_size, collate_fn=lambda x: x)
+        total_tokens = 0
+        batch_size = get_client_config_param("eval_batch_size", 2)
+        dataloader = DataLoader(val_data, batch_size=batch_size, collate_fn=lambda x: x)
+
+        references = []
+        candidates = []
+
         with torch.no_grad():
-            for batch in tqdm(dataloader, desc="Evaluating", unit="batch"):
+            for batch in tqdm(dataloader, desc="Client Evaluation", unit="batch"):
                 prompts = [s["prompt"] for s in batch]
                 answers = [s["answer"] for s in batch]
-                inputs = [p + a for p, a in zip(prompts, answers)]
-                encodings = self.tokenizer(inputs, return_tensors="pt", padding=True, truncation=True)
+                sequences = [p + a for p, a in zip(prompts, answers)]
+                encodings = self.tokenizer(
+                    sequences,
+                    return_tensors="pt",
+                    padding=True,
+                    truncation=True,
+                    max_length=512
+                )
                 input_ids = encodings["input_ids"].to(self.device)
                 attention_mask = encodings["attention_mask"].to(self.device)
                 labels = input_ids.clone()
-                for i, (prompt, answer) in enumerate(zip(prompts, answers)):
+                for i, (prompt, _) in enumerate(zip(prompts, answers)):
                     prompt_ids = self.tokenizer(prompt, return_tensors="pt", truncation=True)["input_ids"][0]
                     prompt_len = prompt_ids.size(0)
                     labels[i, :prompt_len] = -100
                 outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-                total_loss += outputs.loss.item() * len(batch)
-        avg_loss = total_loss / len(val_dataset)
+                loss = outputs.loss
+                total_loss += loss.item() * len(batch)
+                total_tokens += (labels != -100).sum().item()
 
-        empty_gpu_cache()
-        return float(avg_loss), len(val_dataset), {}
-    '''
-        
+                # Generate predictions for ROUGE/BERT
+                gen_inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.device)
+                gen_input_ids = gen_inputs["input_ids"]
+                gen_attention_mask = gen_inputs.get("attention_mask")
+                generated = self.model.generate(
+                    input_ids=gen_input_ids,
+                    attention_mask=gen_attention_mask,
+                    max_new_tokens=64,
+                    do_sample=True,
+                    temperature=0.7,
+                    top_p=0.9,
+                    eos_token_id=self.tokenizer.eos_token_id,
+                    pad_token_id=self.tokenizer.eos_token_id,
+                )
+                for i in range(len(batch)):
+                    generated_ids = generated[i][gen_input_ids.shape[-1]:]
+                    pred = self.tokenizer.decode(generated_ids, skip_special_tokens=True).strip()
+                    candidates.append(pred)
+                    references.append(answers[i])
+
+                empty_gpu_cache()
+
+        avg_loss = total_loss / len(val_data)
+
+        # Compute ROUGE
+        rouge_metric = evaluate.load("rouge")
+        rouge_results = rouge_metric.compute(predictions=candidates, references=references)
+        avg_rouge = rouge_results["rougeL"]
+
+        # Compute BERTScore
+        P, R, F1 = bert_score_fn(candidates, references, lang="en", model_type="bert-base-uncased")
+        avg_bert = F1.mean().item()
+
+        # Optionally, save metrics to file
+        if not os.path.exists("client_eval_times.txt"):
+            with open("client_eval_times.txt", "w") as f:
+                f.write("Client Evaluation Times\n")
+        with open("client_eval_times.txt", "a") as f:
+            f.write(f"Client Evaluate - {time.time() - start_time} seconds\n")
+
+        return float(avg_loss), len(val_data), {
+            "num_tokens": total_tokens,
+            "rougeL": avg_rouge,
+            "bert": avg_bert
+        }
+            
 if __name__ == "__main__":
     # if there is no dataset folder, create it
     dataset_folder_name = "datasets"
     if not os.path.exists(dataset_folder_name):
         os.makedirs(dataset_folder_name)
         preprocess_all()
-        save_all_train_test()
+        save_all_train_test(get_client_config_param("seed", 42))
+        create_balanced_test_set()
     fl.client.start_client(
         server_address="0.0.0.0:8080",
         client=FlowerClient(model_name=get_client_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")).to_client()
