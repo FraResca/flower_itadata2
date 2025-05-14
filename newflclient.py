@@ -275,7 +275,13 @@ if __name__ == "__main__":
         preprocess_all()
         save_all_train_test(get_client_config_param("seed", 42))
         create_balanced_test_set()
-    fl.client.start_client(
-        server_address="0.0.0.0:8080",
-        client=FlowerClient(model_name=get_client_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")).to_client()
-    )
+    while True:
+        try:
+            fl.client.start_client(
+                server_address="0.0.0.0:8080",
+                client=FlowerClient(model_name=get_client_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")).to_client()
+            )
+            break  # Exit loop if connection is successful
+        except Exception as e:
+            print(f"Connection failed: {e}. Retrying in 10 seconds...")
+            time.sleep(10)
