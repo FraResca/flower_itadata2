@@ -6,3 +6,4 @@ rm -rf cached_datasets
 rm -rf smollm-finetuned
 rm -rf hcm_dataset
 rm eval_outputs*
+rm server_model_round*

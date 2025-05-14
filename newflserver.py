@@ -1,5 +1,6 @@
 import flwr as fl
 import torch
+import time
 import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import evaluate
@@ -45,7 +46,10 @@ class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
         return aggregated_parameters, {}
 
 def evaluate_fn(server_round, parameters, config):
+    start_time = time.time()
+
     empty_gpu_cache()
+    
     if get_sever_config_param("round_0", False) == False and server_round == 0:
         return 0.0, {}
 
@@ -132,9 +136,14 @@ def evaluate_fn(server_round, parameters, config):
     model_save_path = f"server_model_round{server_round}.pt"
     torch.save(model.state_dict(), model_save_path)
 
-    # Save metrics
     metrics_save_path = f"server_metrics.json"
-    with open(metrics_save_path, "w") as metrics_file:
+    # Save metrics
+    if not os.path.exists(metrics_save_path):
+        # create the file if it doesn't exist
+        with open(metrics_save_path, "w") as metrics_file:
+            json.dump([], metrics_file)        
+    
+    with open(metrics_save_path, "a") as metrics_file:
         json.dump({
             "round": server_round,
             "rougeL": avg_rouge,
@@ -146,6 +155,13 @@ def evaluate_fn(server_round, parameters, config):
     del val_dataset
 
     empty_gpu_cache()
+    
+    if not os.path.exists("server_eval_times.txt"):
+        with open("server_eval_times.txt", "w") as f:
+            f.write("Server Evaluation Times\n")
+
+    with open("server_eval_times.txt", "a") as f:
+        f.write(f"Server Evaluation - {time.time() - start_time:.2f} seconds\n")
 
     return avg_rouge, {"rougeL": avg_rouge, "bert": avg_bert}
 

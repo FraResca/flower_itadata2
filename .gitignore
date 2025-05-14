@@ -10,6 +10,7 @@ tokenized_val
 aggregated_models
 hcm_dataset
 eval_outputs*
+server_model*
 datasets
 
 __pycache__

@@ -9,6 +9,7 @@ from peft import LoraConfig, get_peft_model
 from torch.utils.data import DataLoader
 from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test
 from datasets import Dataset
+import time
 
 def get_client_config_param(param_name, default_value):
     with open("client_config.json", "r") as f:
@@ -99,6 +100,8 @@ class FlowerClient(fl.client.NumPyClient):
     # '''
     # Senza autocast
     def fit(self, parameters, config):
+        start_time = time.time()
+
         empty_gpu_cache()
 
         dataset_folder_name = "datasets"
@@ -154,6 +157,13 @@ class FlowerClient(fl.client.NumPyClient):
                     raise e
 
             empty_gpu_cache()
+
+        if not os.path.exists("client_train_times.txt"):
+            with open("client_train_times.txt", "w") as f:
+                f.write("Client Training Times\n")
+        
+        with open("client_train_times.txt", "a") as f:
+            f.write(f"Client Fit - {time.time() - start_time} seconds\n")
         
         return self.get_parameters(), len(train_data), {"num_tokens": total_tokens}    # '''
     '''

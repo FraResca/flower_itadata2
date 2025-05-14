@@ -1,640 +1,640 @@
 {
   "prompt": "What is the potential CNS complication that can arise from measles (rubeola) infection?",
-  "prediction": "The potential CNS complication that can arise from measles (rubeola) infection is meningoencephalitis. The disease can cause brain damage and even death.",
+  "prediction": "The potential CNS complication that can arise from measles (rubeola) infection is meningitis.",
   "reference": "Subacute sclerosing panencephalitis (SSPE) is a potential CNS complication that can arise from measles (rubeola) infection."
 }
 {
   "prompt": "Do admission Norton scale scores correlate with rehabilitation outcome and length in elderly patients following cerebrovascular accident?",
-  "prediction": "Admission scores are associated with the length of hospital stay in patients who underwent surgical intervention, but no significant differences were found between admission scores and other predictors of hospital stay length.",
+  "prediction": "Admission Norton scores are correlated with rehabilitation outcome and length in elderly patients following a cerebrovascular accident. The findings of this study are important in the future evaluation of clinical outcomes and rehabilitation in elderly patients with a stroke.",
   "reference": "The Norton scoring system may be used to predict the outcome and duration of rehabilitation in elderly patients after CVA."
 }
 {
   "prompt": "Does carbon monoxide from heme catabolism protect against hepatobiliary dysfunction in endotoxin-treated rat liver?",
-  "prediction": "We found that the presence of heme catabolism is protective against hepatobiliary dysfunction in hemodialysis patients.",
+  "prediction": "These results indicate that the oxidative stress of heme catabolism may contribute to the pathogenesis of hemodialysis and hepatesis.",
   "reference": "These results suggest protective roles of CO against hepatobiliary dysfunction caused by heme overloading under stress conditions."
 }
 {
   "prompt": "Does nKG2D ligand expression in human colorectal cancer reveal associations with prognosis and evidence for immunoediting?",
-  "prediction": "In human colorectal cancer, nKG2D expression is associated with a poor prognosis, with the exception of high-grade disease. NKG2D is a potent growth factor and tumor suppressor that is expressed in a variety of tumor types, and it is expressed in human colon carcinoma cells. In addition, nKG",
+  "prediction": "These data suggest that NKG2D expression is an independent risk factor for colon cancer progression. NKG2D may serve as a potential biomarker for colon cancer diagnosis and prognosis.",
   "reference": "The observations presented are consistent with an immunoediting mechanism that selects tumor cells that have lost or reduced their expression of NKG2D ligands. The combination of MIC and tumor-node-metastasis stage was found to be the strongest predictor of survival, splitting patients into eight groups and suggesting prognostic value in clinical assessment. Of particular interest were stage I patients with low expression of MIC who had a similar survival to stage III patients, and may be candidates for adjuvant therapy."
 }
 {
   "prompt": "Is the allosteric modulation of thyroxine-binding globulin affinity entropy driven?",
-  "prediction": "The present study indicates that the allosteric modulator of thyroxine-binding globulin affinity entropy is a 21 kDa protein-protein interaction. The present results suggest that the allosteric modulator of thyroxine-binding globulin affinity entropy is a 21 kDa protein-protein",
+  "prediction": "Our findings suggest that the allosteric modulator of TGB is a G-protein-coupled kinase that is capable of modulating the affinity of TGB to its target protein. This is consistent with the findings of other studies showing that G-protein coupled receptors can also exert a G-protein-coupled effect",
   "reference": "TBG allosteric regulation is entropy driven. The presence of multiple S states may allow more efficient T4 release due to protease activity."
 }
 {
   "prompt": "Does publication bias play a role in the reporting of the results of endoscopic ultrasound staging of upper gastrointestinal cancers?",
-  "prediction": "The results of the present study suggest that the publication bias is not an important factor in the reporting of the results of endoscopic ultrasound staging of GCC.",
+  "prediction": "In our study, we found a significant publication bias in the reporting of the results of endoscopic ultrasound staging of upper GI cancers. The publication bias may be the result of the authors\u2019 bias in reporting the results of the study. The authors should be aware of this bias in their study and should be aware of the limitations",
   "reference": "No evidence was found for the selective reporting of more positive EUS results for esophageal, gastric, and pancreatic cancer staging, which suggests that publication bias was not present."
 }
 {
   "prompt": "Are features of the metabolic syndrome associated with objectively measured physical activity and fitness in Danish children : the European Youth Heart Study ( EYHS )?",
-  "prediction": "The results of the EYHS study suggest that physical activity and fitness are associated with improved metabolic health in Danish children.",
+  "prediction": "The results of this study indicate that the presence of a significant number of high-risk metabolic features is a strong predictor of physical activity and fitness in Danish children.",
   "reference": "Physical activity is inversely associated with metabolic risk, independently of potential confounders. The interaction between physical activity and fitness suggests that the potential beneficial effect of activity may be greatest in children with lower cardiorespiratory fitness."
 }
 {
   "prompt": "Is interleukin-1 induction of aggrecanase gene expression in human articular chondrocytes mediated by mitogen-activated protein kinases?",
-  "prediction": "These results indicate that IL-1 induces aggrecanase gene expression through its mitogen-activated protein kinase-dependent pathway.",
+  "prediction": "Interleukin-1 induction of aggrecanase gene expression in human articular chondrocytes is mediated by MAPK-IL-1 signaling pathway.",
   "reference": "These results suggest partial involvement of ERK-, p38-and JNK-MAPKs as well as AP-1, ATF-2 and NF-\u0138B transcription factors in IL-1-induced ADAMTS-4 in chondrocytes. Inhibition of these targets by the specific pharmacological agents could be useful for reducing aggrecanase-driven cartilage resorption in arthritis."
 }
 {
   "prompt": "What are the symptoms of Somnolence?",
-  "prediction": "Symptoms of Somnolence include: Sleepiness, lack of energy, and a general lack of interest.",
+  "prediction": "The symptoms of somnolence include: 1. Fatigue 2. Irritability 3. Anxiety 4. Dizziness 5. Confusion 6. Hallucinations 7. Loss of coordination 8. Loss of balance 9. Weakness 10. Numbness",
   "reference": "Excessive daytime sleepiness (without a known cause) suggests that you have a significant sleep disorder. It is different from fatigue. Depression, anxiety, stress, and boredom can all contribute to excessive sleepiness, but these conditions more typically cause fatigue and apathy."
 }
 {
   "prompt": "Do endothelial [ Ca2+ ] i and caveolin-1 antagonistically regulate eNOS activity and microvessel permeability in rat venules?",
-  "prediction": "The present study provides the first evidence that the microvasculature is regulated by the endothelial [ Ca2+ ] and caveolin-1 systems in the rat venule.",
+  "prediction": "The results suggest that E2 and CCA1 antagonistically regulate eNOS activity and microvessel permeability in rat venules.",
   "reference": "Our results indicate that eNOS inhibition and reduced NO production contribute to the inhibitory action of AP-CAV on PAF-induced increases in permeability. CAV and endothelial [Ca(2+)](i) antagonistically regulate eNOS activity in intact microvessels, and the level of produced NO is the key determinant of the degree of permeability increases during inflammation."
 }
 {
   "prompt": "Is ventricular tachycardia/fibrillation early after defibrillator implantation in patients with hypertrophic cardiomyopathy explained by a high-risk subgroup of patients?",
-  "prediction": "Our results suggest that the majority of patients with HCM who received a defibrillator were younger and less aggressive in their initial treatments, which is consistent with a high-risk subgroup of patients who receive a defibrillator.",
+  "prediction": "Ventricular tachycardia/fibrillation early after defibrillator implantation in patients with HCM is explained by a high-risk subgroup of patients with HCM.",
   "reference": "High-risk patients with HCM and VT/VF early after ICD implantation are particularly prone to subsequent VT/VF throughout follow-up. Early ICD interventions for VT/VF are largely confined to patients with prior cardiac arrest or systolic dysfunction and therefore more likely driven by higher arrhythmic risk rather than lead-related proarrhythmia."
 }
 {
   "prompt": "Does supraspinal Projection of Serotonergic and Noradrenergic Pathways modulate Nociceptive Transmission in the Lower Urinary Tract of Rats?",
-  "prediction": "The results of our study suggest that the supraspinal projection of NOS and NE is involved in the modulation of nociceptive transmission. The results suggest that the supraspinal projection of NOS and NE might be important in the modulation of pain transmission in the lower urinary tract.",
+  "prediction": "The results suggest that the supraspinal projection of NOS plays an important role in the modulation of nociceptive transmission in the lower urinary tract of rats.",
   "reference": "Supraspinal projections of descending serotonergic and noradrenergic pathways to the lower lumbar spinal cord modulate nocieptive transmission in the LUT. Administration of SNRI attenuates nocieptive transmission in the LUT, which could result from enhancement of modulating descending serotonergic and noradrenergic pathways."
 }
 {
   "prompt": "Do colony forming unit endothelial cells exhibit telomerase alternative splicing variants and activity?",
-  "prediction": "Telomerase alternative splicing variants are associated with telomere shortening and with CFTR-mediated apoptosis in CFTR-deficient mice, and may contribute to telomere shortening and apoptosis.",
+  "prediction": "We conclude that TFs are likely to play a role in the expression of telomerase alternative splicing variants and activity in T cells.",
   "reference": "The absence of telomerase activity in the CFU-EC is a result of pre-transcriptional regulation of gene expression rather than other mechanisms for controlling telomerase activity such as post-transcriptional modifications. This finding can explain the limited proliferative activity of CFU-EC cells. We propose that absence of telomerase activity in CFU-EC can be attributable to their more mature monocytic nature that needs further investigations."
 }
 {
   "prompt": "What is the embryonic origin of the branchial pouches?",
-  "prediction": "The embryonic origin of the branchial pouches is a posterior, dorsal, and anterior-posterior arrangement of the postero-lateral structures of the pharynx.",
+  "prediction": "The embryonic origin of the branchial pouches is the embryonic formation of the pharynx.",
   "reference": "The branchial pouches are derivatives of endoderm."
 }
 {
   "prompt": "How long is the incubation period for the rabies virus?",
-  "prediction": "The incubation period for rabies virus is approximately 30 to 60 days.",
+  "prediction": "The incubation period for the rabies virus is approximately 30 days.",
   "reference": "The incubation period for the rabies virus is typically weeks to months. Rabies is a viral infection that affects the nervous system and is usually transmitted through the bite of an infected animal. The incubation period is the time between exposure to the virus and the onset of symptoms. During this time, the virus replicates in the body and travels to the brain. Once symptoms appear, the disease is almost always fatal. Symptoms of rabies may include fever, headache, muscle weakness, and seizures. It is important to seek medical attention immediately if you have been bitten by an animal, especially if the animal was wild or unvaccinated, in order to receive prompt treatment and prevent the onset of symptoms."
 }
 {
   "prompt": "What are the symptoms of Hyperchloremia?",
-  "prediction": "Hyperchloremia is a condition in which the body has an abnormally high amount of chlorethylamine. This can cause a variety of symptoms, including nausea, vomiting, fatigue, and muscle weakness. It is important to get medical attention if you have signs of hyperchloremia, as treatment",
+  "prediction": "Hyperchloremia can cause confusion, confusion, and confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion, confusion,",
   "reference": "Often, hyperchloremia does not produce symptoms. Symptoms may include: Excessive fluid loss (Diarrhea, Vomiting) Dyspnea (shortness of breath) Intense thirst Weakness Tachypnea (rapid breathing) Hypertension (high blood pressure) Pitting Edema (abnormal amount of fluid under the skin, causing swelling) Lowered cognitive ability Kussmaul's breathing (very deep and labored breathing at a normal or reduced rate) Coma If the sufferer is a diabetic, hyperchloremia can cause high levels of blood sugar."
 }
 {
   "prompt": "What to expect if I have Congenital heart block  (Outlook/Prognosis)?",
-  "prediction": "Congenital heart block can cause a heart rhythm problem. Congenital heart block is a condition in which the heart is not able to contract normally. The heart rate and rhythm are slowed down. Congenital heart block can be treated with medications, which slow the heart rate and rhythm. Congenital heart block can also be treated",
+  "prediction": "Congenital heart block is usually not life threatening, but it can be difficult to diagnose. Treatment depends on the severity of the heart block and the amount of heart muscle damage. The most common treatment is a pacemaker to keep the heart's normal rhythm. This may help to prevent further heart damage. If heart failure develops,",
   "reference": "Patients presenting as fetuses or at birth have significantly higher morbidity and mortality rates than do patients presenting later in childhood."
 }
 {
   "prompt": "How is endocarditis due to S. aureus characterized in terms of virulence and onset?",
-  "prediction": "E. coli is the most common cause of endocarditis, but S. aureus is the most common cause of S. aureus-endocarditis.",
+  "prediction": "S. aureus is characterized as a gram-positive, aerobic bacterium that is capable of causing endocarditis in humans.",
   "reference": "Endocarditis due to S. aureus is characterized by high virulence and rapid onset. S. aureus is a type of bacteria that can cause a variety of infections, including endocarditis. Compared to other bacteria that can cause endocarditis, S. aureus has a higher virulence, which means it is more likely to cause severe infections. The onset of endocarditis due to S. aureus is also typically rapid, with symptoms developing quickly over a period of days to weeks. It is important to diagnose and treat endocarditis due to S. aureus promptly, as it can lead to serious complications such as heart failure, sepsis, and stroke."
 }
 {
   "prompt": "Hello doctor,I have a misalignment and mild crowding of teeth in upper jaw and have bite issues. I have consulted a maxillofacial surgeon and advised tooth removal prior to braces and removed upper left tooth, probably molar tooth, and advised to consult orthodontist for braces. I want to know whether there will be any shifting of teeth or any other complications in the future? Please help me with your advice.",
-  "prediction": "Your doctor will be able to answer that question.",
+  "prediction": "Hello! I'm sorry to hear about your concern about the potential impact of tooth removal on your mouth. The dentist will discuss the best options for your particular case and provide you with the necessary care to address any potential concerns. In general, the removal of a tooth can affect the surrounding teeth and surrounding bone, but it",
   "reference": "It is common for teeth to shift during orthodontic treatment, but this can usually be managed by your orthodontist. Removing a tooth can sometimes cause adjacent teeth to shift towards the empty space, so it is important to follow your orthodontist's instructions for wearing braces and using any other orthodontic appliances to prevent this from happening. It is also important to maintain good oral hygiene during treatment to prevent the development of cavities or gum disease that could complicate treatment. Overall, with proper care, the risk of complications should be low, and you should be able to achieve a healthy, straight smile."
 }
 {
   "prompt": "Are human papillomavirus ( HPV ) transcripts in malignant inverted papilloma from integrated HPV DNA?",
-  "prediction": "Human papillomavirus (HPV) transcripts were detected in the immunohistochemical profile of the malignant inverted papilloma from the HPV DNA. The HPV transcripts were associated with a higher incidence of the cancer.",
+  "prediction": "The findings indicate that HPV transcripts are present in most malignant inverted papilloma and are likely to be important for HPV progression in this form of cancer.",
   "reference": "HPV transcripts were present in SCC positive for HPV, and the relative level of E7 to E5 transcripts indicates integration of the viral genome. These findings are suggestive of HPV having an active role in the lesion. More extensive studies are needed to determine the exact role of HPV in IP and progression to SCC."
 }
 {
   "prompt": "Does shoulder position increase ulnar nerve strain at the elbow of patients with cubital tunnel syndrome?",
-  "prediction": "In this study, the shoulder position increased the ulnar nerve strain at the elbow of patients with cubital tunnel syndrome.",
+  "prediction": "Surgical shoulder position did not increase ulnar nerve strain at the elbow of patients with CTS.",
   "reference": "This study indicated that increased sensitivity in the SIREF test compared with the EF test was due to the increase in ulnar nerve strain around the elbow. To the best of our knowledge, this is the first study showing that shoulder position changes the ulnar nerve strain around the elbow in living patients with CubTS."
 }
 {
   "prompt": "Is an intact putative mouse telomerase essential N-terminal domain necessary for proper telomere maintenance?",
-  "prediction": "The present study provides the first evidence that telomerase is required for proper telomere maintenance in the mouse.",
+  "prediction": "The present study demonstrates that the N-terminal domain of telomerase plays a critical role in telomere maintenance and may be a novel target for therapy to prevent telomere shortening.",
   "reference": "An intact mTERT N-terminus which contributes to mTR binding, DNA binding and telomerase activity is necessary for elongation of short telomeres and the maintenance of functional telomeres. It is reasonable to speculate that relative levels of mTERT-Insi1 may regulate telomere function in specific tissues."
 }
 {
   "prompt": "Is the appetite-suppressant effect of nicotine enhanced by caffeine?",
-  "prediction": "Nicotine increases the appetite-suppressant effect of caffeine, and caffeine is a potent appetite-suppressant.",
+  "prediction": "Nicotine and caffeine enhance the appetite-suppressant effect of nicotine.",
   "reference": "Caffeine added to nicotine chewing gum appears to amplify its attenuating effects on appetite and the combinations of 1-mg of nicotine with caffeine seem to be well tolerated."
 }
 {
   "prompt": "Is [ Loss of weight in hemodialysis patients after hospitalization related with length of stay and degree of inflammation ]?",
-  "prediction": "Patients hospitalized after hospitalization have a higher risk of weight loss and higher degree of inflammation than those in the general population.",
+  "prediction": "In hemodialysis patients, the weight loss is related with the length of stay and degree of inflammation.",
   "reference": "Hospitalization of hemodialysis patients have a negative nutritional impact causing a significant loss of weight, probably reflecting a reduction of muscle mass. We found that length of stay in hospital is a basic factor associated with this nutritional impairment. The pathologies promoting hospitalization could influence this derangement through inflammation but this hypothesis should be investigated."
 }
 {
   "prompt": "What is the underlying pathology of coarctation of the aorta?",
-  "prediction": "Coarctation of the aorta is an congenital anomaly characterized by a narrowing of the aorta, which is caused by a malformation of the aortic valve. The underlying pathology of coarctation of the aorta is a congenital anomaly of the aortic valve, which is present at birth. This is a congenital malformation of",
+  "prediction": "Coarctation of the aorta is a congenital disorder of the aortic valve. It is caused by a defect in the closure of the aortic valve during fetal development. The aortic valve is a two-part valve that separates the left atrium from the left ventricle. The aortic valve opens to allow blood to flow from the",
   "reference": "Coarctation of the aorta is a condition characterized by a narrowing or stenosis of the aorta, specifically in the descending aorta beyond the origin of the great vessels.  This narrowing can cause increased pressure in the arteries before the coarctation and decreased pressure in the arteries after the coarctation. This can lead to a variety of symptoms, including high blood pressure, headaches, chest pain, and leg cramps.  Coarctation of the aorta can be diagnosed through physical exams, imaging tests, and other diagnostic procedures. Treatment options may include medications to manage blood pressure, surgical repair, or balloon angioplasty to widen the narrowed area. Early diagnosis and treatment are important to prevent complications such as heart failure or stroke."
 }
 {
   "prompt": "Are g-induced myocardium functional alterations related to structural changes in rat heart?",
-  "prediction": "G-induced myocardium functional alterations in rats are related to changes in the heart's structural components.",
+  "prediction": "These findings suggest that G-induced myocardial functional changes may be related to structural changes in the myocardium.",
   "reference": "The functional mechanical and energetic transformations observed in a previous investigation using an identical experimental protocol probably took place at an early stage of myocardial adaptation to +Gz acceleration. We conclude that our protocol of repeated +Gz exposures is a model of chronic overloading very different from classical models."
 }
 {
   "prompt": "Are sleep Problems Associated With Chronic Pain Over and Above Mutual Associations With Depression and Catastrophizing?",
-  "prediction": "Chronic pain and catastrophizing may be associated with sleep problems.",
+  "prediction": "The association between sleep problems and CMP is not associated with depression or catastrophizing. Sleep problems may be caused by other psychiatric disorders, such as anxiety disorders. The sleep problems may be caused by other psychiatric disorders, such as anxiety disorders. Sleep problems may also be related to other psychiatric disorders, such as depression and",
   "reference": "Given that sleep has an important and unique contribution to pain and physical function, it is important that sleep disturbances are addressed both in the assessment and treatment of chronic pain."
 }
 {
   "prompt": "Does a Macintosh laryngoscope blade for videolaryngoscopy reduce stylet use in patients with normal airways?",
-  "prediction": "A laryngoscope blade for videolaryngoscopy reduces the amount of stylet used in patients with normal airways.",
+  "prediction": "This study demonstrates that the use of a laryngoscope blade in videolaryngoscopy reduces the amount of stylet used and the amount of time spent in the laryngoscope.",
   "reference": "The trachea of a large proportion of patients with normal airways can be intubated successfully with certain VLS blades without using a stylet, although the three studied VLSs clearly differ in outcome. The Storz VLS displaces soft tissues in the fashion of a classic Macintosh scope, affording room for tracheal tube insertion and limiting the need for stylet use compared with the other two scopes. Although VLSs offer several advantages, including better visualization of the glottic entrance and intubation conditions, a good laryngeal view does not guarantee easy or successful tracheal tube insertion. We recommend that the geometry of VLSs, including blade design, should be studied in more detail."
 }
 {
   "prompt": "What is the diagnostic test used to identify the presence of hookworms, specifically Ancylostoma duodenale and Necator americanus?",
-  "prediction": "The diagnostic test used to identify the presence of hookworms, specifically Ancylostoma duodenale and Necator americanus, is the fecal examination.",
+  "prediction": "The diagnostic test used to identify the presence of hookworms, specifically Ancylostoma duodenale and Necator americanus, is the fecal occult blood test (FOBT).",
   "reference": "The diagnostic test used to identify the presence of hookworms, specifically Ancylostoma duodenale and Necator americanus, is the examination of stool for the presence of eggs using an ova and parasite (O&P) test. Hookworms are parasitic nematodes that can infect humans and cause a range of symptoms, including anemia, abdominal pain, and diarrhea. The eggs of the parasite can be shed in the stool and can be identified by examining a stool sample under a microscope. In addition to the O&P test, a blood test may also be used to detect antibodies to the parasite. Treatment for hookworm infection typically involves the use of antiparasitic medications, such as albendazole or mebendazole, along with measures to address any nutritional deficiencies caused by the infection."
 }
 {
   "prompt": "Hi doctor,I am 51 years old with a complaint of bloating, loose stools, burning sensation in the abdomen 15 years back. I managed two years without medicine. I was advised to use Rabeprazole to which my symptoms subsided a little bit. From then I cannot tolerate spicy foods, fruits, caffeinated drinks, and curd. If I take these foods my stomach starts bloating with loose stools, burning sensation in the abdomen. At times, I get pains in the hands and feet, burning sensation and pain in the back of the head and breathlessness. These symptoms subside by passing flatus and belching and on using medication.I was evaluated and diagnosed as a case of IBS. I am uploading my complete details. Please find attachment.",
-  "prediction": "",
+  "prediction": "Hi, I am sorry to hear about your symptoms. I understand that you are having problems with bloating and loose stools. It is important to manage these symptoms as they can worsen over time and can cause discomfort. I would recommend that you talk to your healthcare provider about your symptoms and possible medications. They can help to manage",
   "reference": "Thank you for providing the details and the attachment. Based on your symptoms and history, it seems like you have functional dyspepsia and irritable bowel syndrome (IBS). The bloating, loose stools, burning sensation in the abdomen, and intolerance to certain foods are typical symptoms of functional dyspepsia. The hand and feet pains, headaches, and breathlessness may be related to anxiety or IBS. The medication you are taking, Rabeprazole, is a proton pump inhibitor (PPI) that reduces stomach acid production and can improve symptoms of functional dyspepsia. However, long-term use of PPIs can cause side effects such as magnesium deficiency, bone loss, and an increased risk of infections. For your symptoms, I would recommend a combination of lifestyle changes and medication. Lifestyle changes include avoiding trigger foods and eating smaller, more frequent meals, avoiding alcohol and smoking, reducing stress, and getting regular physical activity. Medications that can help with IBS symptoms include antispasmodics, fiber supplements, and antidepressants. I would also recommend discussing the possibility of tapering off the PPI with your doctor and monitoring your magnesium levels. If your symptoms persist or worsen, you may benefit from further testing or referral to a gastroenterologist. Overall, it is important to work closely with your healthcare provider to manage your symptoms and find a treatment plan that works best for you."
 }
 {
   "prompt": "What is a first line treatment for essential tremor?",
-  "prediction": "First-line treatment for essential tremor is levodopa therapy.",
+  "prediction": "First-line treatment for essential tremor is a magnesium sulfate (L-d-tubocurarine) injection.",
   "reference": "\u03b2-blockers are a first line treatment for essential tremor."
 }
 {
   "prompt": "Are overweight status and intrauterine exposure to gestational diabetes associated with children 's metabolic health?",
-  "prediction": "These findings indicate that overweight status and gestational diabetes during pregnancy are associated with poor health outcomes in children.",
+  "prediction": "The present study supports the hypothesis that overweight status and intrauterine exposure to gestational diabetes are independently associated with children's metabolic health. The association between these two factors may be a basis for the intervention of intervention to address overweight status and intrauterine exposure to gestational diabetes.",
   "reference": "Intrauterine exposure to gestational diabetes was associated with greater central adiposity and insulin secretion, and lower HDL-C, irrespective of current weight status. Future research should examine respective contributions of the intrauterine environment and of underlying genotype on children's metabolic health."
 }
 {
   "prompt": "What role do echocardiography and ultrasound play in the diagnosis of endocarditis?",
-  "prediction": "Echocardiography and ultrasound play a role in the diagnosis of endocarditis, and the echocardiography and ultrasound are the main diagnostic tools in the diagnosis of endocarditis.",
+  "prediction": "The role of echocardiography and ultrasound in the diagnosis of endocarditis is to determine the presence of pericardial effusion.",
   "reference": "The goals of echocardiography in the patient with endocarditis include the following:    Irregular echogenic mass attached to valve leaflet The attachment of the vegetation is on the upstream side of the valve leaflet There is chaotic independent movement of the mass relative to the valve The minimum size of a vegetation that is identifiable on transthoracic echocardiography is 3 mm and by transoesophageal echocardiography route is 2 mm. With treatment and time, the vegetation shrinks and can become fibrosed or calcified. It may not disappear completely. Large vegetations occur with fungal endocarditis or Staphylococcus aureus endocarditis. The hemodynamic effects are mostly due to valvular regurgitation as a result of valve destruction. The valve and the surrounding anatomy should be carefully inspected for the following complications: Fistula Perforation Prosthetic dehiscence Aneurysm Vegetations Valve ulcers or erosions Rupture of chordaes Endocardial jet lesions Flail leaflets or cusps Abscess formation (annular and ring) In general, transthoracic echocardiography (TTE) is often adequate for the diagnosis of infective endocarditis in cases where cardiac structures-of-interest are well visualized. The transthoracic echocardiogram has a sensitivity and specificity of approximately 65% and 95% if the echocardiographer believes there is'probable' or'almost certain' evidence of endocarditis.   Specific situations where transesophageal echocardiography (TEE) is preferred over TTE include: The presence of a prosthetic valve Poor transthoracic views Continuing sepsis despite adequate antibiotic therapy New PR prolongation No signs of endocarditis on transthoracic echocardiography, but high clinical suspicion Suspected periannular complications Children with complex congenital cardiac lesions Patients with S. Aureus caused bacteremia and pre-existing valvular abnormalities that make TTE interpretation more difficult (e.g. calcific aortic stenosis)."
 }
 {
   "prompt": "Do hIV-specific T-cells accumulate in the liver in HCV/HIV co-infection?",
-  "prediction": "In HCV/HIV co-infection, T-cells from the liver of HCV-infected individuals show increased expression of CD4+ T-cells and CD8+ T-cells. These T-cell responses may be indicative of the presence of HCV-specific T-cells in the liver.",
+  "prediction": "These data suggest that HIV-specific T-cells accumulate in the liver of HCV/HIV co-infected patients, and this could be a potential mechanism by which HCV-induced liver damage is caused.",
   "reference": "The accumulation of functional HIV-specific T-cells in the liver during HCV/HIV co-infection may represent a bystander role for HIV in inducing faster progression of liver disease."
 }
 {
   "prompt": "Does rosiglitazone decrease 11beta-hydroxysteroid dehydrogenase type 1 in subcutaneous adipose tissue?",
-  "prediction": "In this study, a dose-dependent decrease in 11beta-hydroxysteroid dehydrogenase type 1 was observed in the rat subcutaneous adipose tissue. These data suggest that rosiglitazone is an effective treatment for the hyperandrogenic syndrome associated with the metabolic syndrome.",
+  "prediction": "ROS may be a potential target of ROS-1 in subcutaneous adipose tissue.",
   "reference": "Part of the beneficial effects of rosiglitazone may be mediated by a reduction in the 11beta-HSD1 mRNA expression and activity in subcutaneous abdominal fat."
 }
 {
   "prompt": "Is serum adiponectin level correlated with the size of HDL and LDL particles determined by high performance liquid chromatography?",
-  "prediction": "Our data suggest that serum adiponectin levels are related to the size of HDL and LDL particles.",
+  "prediction": "This study indicates that serum adiponectin level is correlated with the size of HDL and LDL particles determined by high performance liquid chromatography.",
   "reference": "APN may be associated with the formation of both HDL and LDL particles, reflecting the enhancement of RCT and the improvement in TG-rich lipoprotein metabolism and insulin resistance."
 }
 {
   "prompt": "Are cannabidivarin-rich cannabis extracts anticonvulsant in mouse and rat via a CB1 receptor-independent mechanism?",
-  "prediction": "These findings suggest that CB1 receptors are important for the anticonvulsant activity of CB1R-rich cannabinoids, and provide a new approach to the development of a CB1R-independent anticonvulsant in the future.",
+  "prediction": "Cannabidivarin-rich extracts are anticonvulsant in mouse and rat.",
   "reference": "CBDV BDSs exerted significant anticonvulsant effects in three models of seizure that were not mediated by the CB1 cannabinoid receptor and were of comparable efficacy with purified CBDV. These findings strongly support the further clinical development of CBDV BDSs for the treatment of epilepsy."
 }
 {
   "prompt": "Does the tumour suppressor miR-34c target MET in prostate cancer cells?",
-  "prediction": "MIR-34c targets MET and thereby blocks the growth of prostate cancer cells. MET is associated with the development of cancer. Therefore, MET may be used as a novel treatment for prostate cancer.",
+  "prediction": "Our findings demonstrate that miR-34c is a tumour suppressor gene that targets MET in prostate cancer cells.",
   "reference": "These findings provide a novel molecular mechanism of MET regulation in PCa and contribute to the increasing evidence that miR-34c has a key tumour suppressive role in PCa."
 }
 {
   "prompt": "Is presence of tumor necrosis a significant predictor of survival in clear cell renal cell carcinoma : higher prognostic accuracy of extent based rather than presence/absence classification?",
-  "prediction": "In our study, presence of tumor necrosis is a significant predictor of survival in clear cell renal cell carcinoma.",
+  "prediction": "The present study shows that presence of tumor necrosis A is a significant predictor of survival in patients with CCRC, and the presence of tumor necrosis A was associated with a higher survival in patients with CCRC.",
   "reference": "Tumor necrosis is an adverse prognostic factor in clear cell renal cell carcinoma but prospective evaluation of necrosis on a presence/absence basis shows that it does not provide independent prognostic information. The predictive accuracy of an extent based classification is superior and is retained as an independent prognostic factor. We recommend the scoring of necrosis according to its extent with further subclassification based on a 20% cutoff."
 }
 {
   "prompt": "What is the purpose of having an MRI for pulmonary nodules?",
-  "prediction": "An MRI is the gold standard for diagnosing and evaluating pulmonary nodules. A MRI is a simple and accurate method of assessing lung nodules. By using an MRI, the physician can obtain an accurate picture of the lung nodules and their location, size, and depth. This information is crucial for diagnosing and treating pulmonary nodules accurately.",
+  "prediction": "The purpose of having an MRI for pulmonary nodules is to identify and exclude pulmonary nodules that may be cancerous or that may be causing symptoms. Pulmonary nodules are a common condition that can occur in the lungs, but they can also occur in other parts of the body, such as the liver or pancreas. An MRI is a useful",
   "reference": "On MRI, characteristic features of pulmonary nodule include higher soft tissue contrast, lack of radiation exposure, lesion characterization by evaluation of signal intensities, and characterization of the dynamics of contrast uptake."
 }
 {
   "prompt": "What to expect if I have Hymenolepis infection  (Outlook/Prognosis)?",
-  "prediction": "The outcome of the infection is good. Your doctor will monitor your symptoms and blood work for the next few weeks to determine if you have a recurrence of the infection. If you have a recurrence, your doctor will monitor your symptoms and blood work for the next few weeks to determine if you have a recurrence of the infection.",
+  "prediction": "If left untreated, the infection can be treated with antibiotics.",
   "reference": "Expect full recovery following treatment."
 }
 {
   "prompt": "Does histidine domain-protein tyrosine phosphatase interact with Grb2 and GrpL?",
-  "prediction": "These data suggest that Grb2 and GrpL interact with Grb2 and GrpL-related proteins, but not with Grb2-related proteins.",
+  "prediction": "Our results suggest that Grb2 and GrpL interact with Grb2 and GrpL-2, respectively, and that Grb2 and GrpL-2 are the two proteins that interact with Grb2.",
   "reference": "The interaction of HD-PTP with two adapters of the Grb2 family, essential for numerous signaling pathways, suggests that HD-PTP might be important for signaling through a plethora of receptors."
 }
 {
   "prompt": "Do genomes of the rice pest brown planthopper and its endosymbionts reveal complex complementary contributions for host adaptation?",
-  "prediction": "The results suggest that endosymbiont-induced gene silencing is a fundamental aspect of rice pest adaptation.",
+  "prediction": "This study indicates that the two genomes of the brown planthopper and its endosymbionts provide a rich source of genomic data that will be useful in understanding the evolution of rice.",
   "reference": "Our study reveals a series of complex adaptations of the brown planthopper involving a variety of biological processes, that result in its highly destructive impact on the exclusive host rice. All these findings highlight potential directions for effective pest control of the planthopper."
 }
 {
   "prompt": "Does recursive partitioning analysis ( RPA ) classification predict survival in patients with brain metastases from sarcoma?",
-  "prediction": "RPA classification can be used to predict survival in patients with brain metastases from sarcoma. However, the accuracy of the algorithm is limited by the number of nodes in the tumor.",
+  "prediction": "RPA classification provides a new approach to predict survival in patients with brain metastases from sarcoma.",
   "reference": "This analysis is the first to support the prognostic utility of the Radiation Therapy Oncology Group RPA classification for sarcoma brain metastases and may be used as a treatment guideline tool in this rare disease."
 }
 {
   "prompt": "What are the common symptoms of Alport syndrome?",
-  "prediction": "The most common symptoms of Alport syndrome are:* pain or tenderness at the point of joint damage* swelling around the joint* discharge of yellow or greenish mucous from the eyes* difficulty breathing* pain or tenderness in the groin area* swelling of the face and hands* difficulty with swallowing* difficulty with breathing* difficulty with",
+  "prediction": "Alport syndrome is characterized by:",
   "reference": "Alport syndrome often presents with a triad of ocular disturbances, isolated hematuria, and sensory hearing loss. These symptoms may not always be present in every individual with Alport syndrome and can vary in severity. Ocular disturbances may include abnormalities in the shape and color of the lens, while isolated hematuria refers to the presence of blood in the urine without any other symptoms. Sensory hearing loss may also be present, which can range from mild to severe and may affect one or both ears."
 }
 {
   "prompt": "What specific sensory deficits can occur as a result of anterior spinal artery occlusion?",
-  "prediction": "Sensory deficits are the most common sensory deficits. The most common sensory deficits are sensory loss of pain, touch, temperature, and proprioception.",
+  "prediction": "A specific sensory deficit can occur as a result of anterior spinal artery occlusion.",
   "reference": "Loss of pain and temperature sensation can occur as a result of anterior spinal artery occlusion."
 }
 {
   "prompt": "Does phosphorylation of threonine 638 critically control the dephosphorylation and inactivation of protein kinase Calpha?",
-  "prediction": "Our results suggest that phosphorylation of threonine 638 is critical for the regulation of Calpha function, and that this regulation is mediated by the action of a protein kinase.",
+  "prediction": "The results of this study demonstrate that phosphorylation of threonine 638 is critical for the inactivation of PKC-calpha. This may be a novel mechanism for PKC-calpha activation and PKC-calpha in vivo.",
   "reference": "The T638 phosphorylation site is not required for the catalytic function of PKCalpha per se, but serves to control the duration of activation by regulating the rate of dephosphorylation and inactivation of the protein. This is achieved through the cooperative interaction between the T638 and T497 sites; if either of these residues is not phosphorylated, the protein is supersensitive to phosphatase action. This model of PKCalpha function is likely to be of general significance to the protein kinase superfamily, where similarly juxtaposed sites exist. We conclude that dephosphorylation of PKCalpha, and, by inference, other protein kinases, is regulated by multisite phosphorylation."
 }
 {
   "prompt": "Are microRNAs related to angiogenesis dysregulated in endometrioid endometrial cancer?",
-  "prediction": "Our results suggest that microRNAs may play a role in the angiogenesis-promoting actions of endometrial cancer.",
+  "prediction": "These data demonstrate that the miRNAs involved in the regulation of angiogenesis are different in endometrial cancer and endometrioid endometrioma.",
   "reference": "A dysregulated expression of miRNAs related to angiogenesis and an increase in the VEGF-A levels were observed in endometrial cancer in comparison with control. The different expression of miRNAs could modulate the expression of angiogenic and antiangiogenic factors, which may play an important role in the pathogenesis of endometrial cancer."
 }
 {
   "prompt": "Do hLA class II alleles specify phenotypes of ketosis-prone diabetes?",
-  "prediction": "HLA class II alleles are strongly correlated with phenotype of diabetic ketoacidosis.",
+  "prediction": "These data suggest that the HLA class II alleles in the human population are not genetically correlated with the predisposition to diabetes and that the association of HLA class II alleles with diabetes cannot be explained by the presence of a single locus.",
   "reference": "HLA class II alleles associated with susceptibility or resistance to autoimmune type 1 diabetes help specify the four subgroups of KPD. Inheritance of these alleles may influence long-term beta-cell functional reserve."
 }
 {
   "prompt": "Does 5-hydroxytryptamine have an endothelium-derived hyperpolarizing factor-like effect on coronary flow in isolated rat hearts?",
-  "prediction": "These results show that 5-hydroxytryptamine has an endothelium-derived hyperpolarizing effect on coronary flow in isolated rat hearts. These results suggest that 5-hydroxytryptamine has an endothelium-derived hyperpolarizing effect on coronary flow.",
+  "prediction": "These data indicate that 5-HT acts on endothelial cells to inhibit coronary blood flow.",
   "reference": "In the present study, we found that 5-HT-induced coronary flow increases are mediated by the activation of 5-HT7 receptor in rat hearts in the absence of L-NAME. Metabolites of cytochrome P450s, small-conductance Ca(2+)-activated K(+) channel, and intermediate-conductance Ca(2+)-activated K(+) channel are involved in 5-HT-induced coronary flow increases in L-NAME-treated hearts, which resemble the mechanisms of EDHF-induced vasorelaxation. The role of large-conductance Ca(2+)-activated K(+) channel in 5-HT-induced coronary flow increases in L-NAME-treated hearts needs further investigation."
 }
 {
   "prompt": "Does pharmacological IKK2 inhibition block liver steatosis and initiation of non-alcoholic steatohepatitis?",
-  "prediction": "Our results demonstrate that IPK inhibition prevents hepatocyte proliferation and steatosis in HSCs. The inhibition of IPK in HSCs could be a therapeutic target in the treatment of liver steatosis and non-alcoholic steatohepatitis.",
+  "prediction": "These results suggest that KO inhibition of the IKK2 may be a potential therapeutic approach for the prevention of non-alcoholic steatohepatitis.",
   "reference": "The data demonstrate that AS602868-mediated IKK2 inhibition represents a new therapeutic approach to prevent dietary-induced NASH progression."
 }
 {
   "prompt": "Do circulating fibrocytes define a new leukocyte subpopulation that mediates tissue repair?",
-  "prediction": "We demonstrate that circulating fibrocytes are a new leukocyte subpopulation that is involved in tissue repair.",
+  "prediction": "This study demonstrates that circulating fibrocytes can be defined as a new leukocyte subpopulation that mediates tissue repair.",
   "reference": "Blood-borne fibrocytes contribute to scar formation and may play an important role both in normal wound repair and in pathological fibrotic responses."
 }
 {
   "prompt": "Does resveratrol reduce renal and lung injury caused by sepsis in rats?",
-  "prediction": "Reseveratrol significantly reduced the incidence of renal and lung injury in rats. Resveratrol may play a role in reducing the severity of sepsis, and may be useful as a novel therapeutic agent for treating sepsis.",
+  "prediction": "Resveratrol treatment significantly reduces renal injury and lung injury induced by sepsis in rats.",
   "reference": "Resveratrol, a phenolic compound, reduces sepsis-induced remote organ injury, at least in part, through its ability to balance oxidant-antioxidant status, to inhibit neutrophil infiltration and to regulate the release of inflammatory mediators."
 }
 {
   "prompt": "What are the available sources of information on colorectal cancer?",
-  "prediction": "The available sources of information on colorectal cancer include: * The American Cancer Society. * The American Cancer Society. * The American College of Physicians. * The American Society of Clinical Oncology. * The American Society of Colon and Rectal Surgeons. * The American Society of Clinical Oncology. * The American Society of Clinical Oncology.",
+  "prediction": "The available sources of information on colorectal cancer are the American Cancer Society, the American Cancer Society, the National Cancer Institute, the American College of Physicians, the American Society of Colon and Rectal Surgeons, the American Society for Clinical Pathology, the American Gastroenterological Association, and the American Gastroenterological Association.",
   "reference": "There are four main types of treatment for colorectal cancer: surgery, radiation therapy, chemotherapy and targeted therapies. The option depends on the stage of your cancer. Sometimes two or more types of treatment may be used at the same time or used one after the other. Before treatment starts, ask your health care team about possible side effects and how treatment may change your normal activities. Because cancer treatments often damage healthy cells and tissues, side effects are common. Side effect may not be the same for each person, and they may change from one treatment session to the next. Surgery: Surgery is the main treatment for both colon cancer and rectal cancer. The types of surgery are different for each cancer. For colon cancer, surgery type includes colectomy, segmental resection and laparoscopic-assisted colectomy. As rectal cancer is concerned, there are low anterior resection, proctectomy with colo-anal anastomosis, abdominoperineal (AP) resection and pelvic exenteration. Radiation therapy: It includes external-beam radiation therapy and brachytherapy (internal radiation therapy). This is a cancer treatment to kill cancer cells or keep them from growing by using high-energy x-rays or other types of radiation. Chemotherapy: This treatment is to use drugs to stop the growth of cancer cells either by killing the cells or by stopping them from dividing. Targeted therapy: This type of therapy is to use drugs such as monoclonal antibodies to attack parts of cancer cells."
 }
 {
   "prompt": "Is poor longitudinal continuity of care associated with an increased mortality rate among patients with mental disorders : results from the French National Health Insurance Reimbursement Database?",
-  "prediction": "Poor continuity of care is associated with an increased mortality rate among patients with mental disorders.",
+  "prediction": "Our results indicate that patients with mental disorders have poor continuity of care, and therefore high mortality rate.",
   "reference": "Improving longitudinal continuity of care in mental health care may contribute to substantially decrease mortality."
 }
 {
   "prompt": "Is unfractionated heparin administration in patients treated with bivalirudin during primary percutaneous coronary intervention associated lower mortality and target lesion thrombosis : a report from the Swedish Coronary Angiography and Angioplasty Registry ( SCAAR )?",
-  "prediction": "Fractionated heparin was associated with a 23% lower mortality and a 12% lower target lesion thrombosis in patients treated with bivalirudin during primary percutaneous coronary intervention.",
+  "prediction": "The association between FHA and TNM-negative coronary disease was not observed with FHA, but the association between FHA and TNM-negative coronary disease was significantly lower with FHA. Patients who received FHA for a long time had an increased risk of myocardial infarction.",
   "reference": "An additional bolus dose of UFH is associated with a lower rate of death or definite target lesion thrombosis at 30 days in patients undergoing primary PCI with bivalirudin as anticoagulant."
 }
 {
   "prompt": "Is immunodeficiency associated with the African form of Kaposi sarcoma?",
-  "prediction": "Immunodeficiency is associated with the African form of Kaposi sarcoma.",
+  "prediction": "The presence of immunodeficiency in patients with AIDS is an independent risk factor for the development of Kaposi sarcoma.",
   "reference": "No, immunodeficiency is not associated with the African form of Kaposi sarcoma."
 }
 {
   "prompt": "Is severe left ventricular dyssynchrony associated with poor prognosis in patients with moderate systolic heart failure undergoing coronary artery bypass grafting?",
-  "prediction": "The current literature suggests that the use of an ACLS is associated with improved prognosis in patients with moderate systolic heart failure undergoing coronary artery bypass grafting.",
+  "prediction": "Severe LV dyssynchrony was associated with poor prognosis in patients undergoing coronary artery bypass grafting, and the occurrence of LV dyssynchrony was associated with poor prognosis.",
   "reference": "The presence of severe LV dyssynchrony is associated with poor clinical outcomes despite revascularization. These results advocate a routine assessment of both LV dyssynchrony and viability to predict outcome in systolic heart failure patients undergoing CABG surgery."
 }
 {
   "prompt": "Does histone acetylation regulate prostate ductal morphogenesis through a bone morphogenetic protein-dependent mechanism?",
-  "prediction": "Histone acetylation is a key factor in the regulation of prostate ductal morphogenesis.",
+  "prediction": "Histone acetylation may be involved in the regulation of the morphogenetic program of the prostate ductal epithelium.",
   "reference": "These results are consistent with an active role for HDACs in shaping prostate morphogenesis by regulating Bmp abundance."
 }
 {
   "prompt": "Does the expression of TMPRSS4 and Erk1 correlate with metastasis and poor prognosis in Chinese patients with gastric cancer?",
-  "prediction": "The expression of TMPRSS4 and Erk1 is positively correlated with the prognosis of gastric cancer patients with a history of gastric cancer.",
+  "prediction": "The results of this study suggest that TMPRSS4 is involved in the development of gastric cancer and may be useful in predicting the prognosis of patients with gastric cancer.",
   "reference": "Expression of TMPRSS4 in gastric cancer is significantly associated with lymph node and distant metastasis, high Erk1 expression, and poor prognosis. TMPRSS4 and Erk1 proteins could be useful markers to predict tumor progression and prognosis of gastric cancer."
 }
 {
   "prompt": "Does an automated approach for the identification of horizontal gene transfers from complete genomes reveal the rhizome of Rickettsiales?",
-  "prediction": "An automated approach for the identification of horizontal gene transfers from complete genomes reveals the rhizome of Rickettsiales.",
+  "prediction": "The present study shows that a novel approach for the identification of horizontal gene transfers from complete genomes is possible and the results of the analysis are comparable to those obtained by other approaches.",
   "reference": "Our analysis provides a comprehensive, systematic approach for the automated detection of HGTs from several complete proteome sequences that can be applied to detect instances of HGT within other genomes of interest."
 }
 {
   "prompt": "Does sustained-release genistein from nanostructured lipid carrier suppress human lens epithelial cell growth?",
-  "prediction": "The present study demonstrated that sustained-release genistein from lipid-loaded nanostructured lipid carrier significantly suppressed the growth of human lens epithelial cells.",
+  "prediction": "These data demonstrate that sustained-release genistein from a lipid carrier may suppress lens epithelial cell growth.",
   "reference": "Sustained drug release by Gen-NLCs may impede HLEC growth."
 }
 {
   "prompt": "Is estradiol-to-testosterone ratio associated with response to metformin treatment in women with clomiphene citrate-resistant polycystic ovary syndrome ( PCOS )?",
-  "prediction": "Estradiol-to-testosterone ratio is inversely associated with response to metformin treatment in PCOS.",
+  "prediction": "Estradiol-to-testosterone ratio in PCOS patients with MCMC has a significant association with response to metformin treatment.",
   "reference": "The results suggest that in women with CC-resistant PCOS, elevated E2/T is associated with a better response to metformin."
 }
 {
   "prompt": "Does expression of mucin-like carcinoma-associated antigen in the cyst fluid differentiate mucinous from nonmucinous pancreatic cysts?",
-  "prediction": "In this study, expression of mucin-like carcinoma-associated antigen in the cyst fluid differentiated mucinous from nonmucinous pancreatic cysts. This result is consistent with the results from other studies that have reported a higher expression of mucin-like carcinoma-associated antigen in the cyst fluid of nonmucinous pancreatic",
+  "prediction": "The expression of MLC in the cyst fluid, as determined by Western blot, is independent of the composition of the cyst fluid and the presence of mucinous or nonmucinous pancreatic cysts. Therefore, the MLC gene may be used as a marker for the detection of pancreatic cyst development.",
   "reference": "These data suggest that MCA determination in the cyst fluid is a promising new tumor marker for the preoperative diagnosis of mucinous cystic neoplasms of the pancreas."
 }
 {
   "prompt": "Is esophageal tumor length independently associated with long-term survival?",
-  "prediction": "Our results suggest that a shorter length of treatment may be associated with a higher risk of a longer survival.",
+  "prediction": "Ewing sarcoma, particularly large tumors, is associated with longer survival compared with small tumors.",
   "reference": "Esophageal tumor length is an independent predictor of long-term survival in the current era and should be considered for incorporation into the current esophageal cancer staging system to better predict long-term survival and identify high-risk patients for postoperative therapy."
 }
 {
   "prompt": "What type of hernias are commonly found in patients with Mallory Weiss syndrome and are considered a strong predisposing factor?",
-  "prediction": "Hernias are common in patients with Mallory Weiss syndrome.",
+  "prediction": "Patients with Mallory Weiss syndrome and are commonly found to have a type of hernia called a bulging hernia.",
   "reference": "Hiatal hernias are commonly found in patients with Mallory Weiss syndrome and are considered a strong predisposing factor. Mallory Weiss syndrome is a condition characterized by tears in the lining of the esophagus or stomach, usually caused by severe vomiting or retching. Hiatal hernias occur when the upper part of the stomach protrudes through the diaphragm and into the chest cavity. The presence of a hiatal hernia in patients with Mallory Weiss syndrome may increase the risk of developing complications such as bleeding or perforation. Treatment options for Mallory Weiss syndrome typically involve addressing the underlying cause, such as alcohol abuse or gastroesophageal reflux disease (GERD), and may include medications, lifestyle changes, or surgery."
 }
 {
   "prompt": "Does denver screening protocol for blunt cerebrovascular injury reduce the use of multi-detector computed tomography angiography?",
-  "prediction": "The 3D FFT method for the detection of CNV is more sensitive than the 1D FFT method for detecting CNV. Therefore, the 3D FFT method may be an effective alternative for the detection of CNV.",
+  "prediction": "Densys screening protocol for CBF is not effective in reducing the use of CTA, but is effective in reducing the use of CTA and is associated with lower mortality and morbidity in CBF patients.",
   "reference": "Application of the CTA to the Denver protocol screen-positive trauma patients can decrease the use of CTA as a pre-emptive screening tool by 95-97% and reduces its hazards."
 }
 {
   "prompt": "What is the reason for the increased risk of pyelonephritis during pregnancy?",
-  "prediction": "The increased risk of pyelonephritis during pregnancy can be attributed to the increase in the body weight of the mother during pregnancy. This may lead to increased fluid retention in the kidneys and increase the risk of developing pyelonephritis.",
+  "prediction": "During pregnancy, the risk of pyelonephritis is increased.",
   "reference": "The increased risk of pyelonephritis during pregnancy is due to the widening of the ureters caused by progesterone and increased glucose levels in the urine, which can lead to the ascension of bacteria to the kidneys."
 }
 {
   "prompt": "Does thirty-gene pharmacogenomic test correlate with residual cancer burden after preoperative chemotherapy for breast cancer?",
-  "prediction": "These results suggest that a preoperative pharmacogenomic test can predict cancer burden after preoperative chemotherapy for breast cancer.",
+  "prediction": "Our results suggest that the pharmacogenetic test correlates with residual cancer burden after preoperative chemotherapy for breast cancer.",
   "reference": "The 30-gene pharmacogenomic test showed good correlation with the extent of residual invasive cancer burden measured as both continuous and categorical variables."
 }
 {
   "prompt": "Does activation of the estrogen receptor contribute to the progression of pulmonary lymphangioleiomyomatosis via matrix metalloproteinase-induced cell invasiveness?",
-  "prediction": "The results of this study indicate that the activation of estrogen receptor contributes to the progression of pulmonary lymphangioleiomyomatosis via matrix metalloproteinase-induced cell invasiveness.",
+  "prediction": "Our results indicate that the activation of ER\u03b1 is a critical factor in the progression of PLL and could be a potential therapeutic target for PLL.",
   "reference": "The invasion and destruction of lung parenchyma in LAM is, at least partially, an estrogen-MMP-driven process, which has major implications for therapeutic interventions."
 }
 {
   "prompt": "Does cortical vessel sign on susceptibility weighted imaging reveal clinically relevant hypoperfusion in internal carotid artery stenosis?",
-  "prediction": "We propose that the hypoperfusion may be clinically relevant in vascular patients with ICH.",
+  "prediction": "In patients with ICA, an increased risk of hypoperfusion and vascular calcification is associated with cortical vessel sign on CVI.",
   "reference": "In patients with ICA stenosis, asymmetric cortical vessel sign is a sign of clinically relevant hypoperfusion."
 }
 {
   "prompt": "Does the F-actin modifier villin regulate insulin granule dynamics and exocytosis downstream of islet cell autoantigen 512?",
-  "prediction": "Our data suggest that F-actin modifiers are involved in the regulation of insulin granule dynamics and exocytosis downstream of islet cell autoantigen 512.",
+  "prediction": "Villin is a critical regulator of insulin granule dynamics and exocytosis downstream of islet cell autoantigen 512.",
   "reference": "Our findings show that villin controls the size of the F-actin cages restricting SGs and, thus, regulates their dynamics and availability for exocytosis. Evidence that villin acts downstream of Ica512 also indicates that SGs directly influence the remodeling properties of the cortical actin cytoskeleton for tight control of insulin secretion."
 }
 {
   "prompt": "What medical condition is suggested by the presence of bibasilar crackles, S3 gallop, displaced point of maximum impulse, and lower extremity edema?",
-  "prediction": "Bibasilar crackles, S3 gallop, displaced point of maximum impulse, and lower extremity edema are all suggestive of a subacute aortic dissection.",
+  "prediction": "The presence of bibasilar crackles, S3 gallop, displaced point of maximum impulse, and lower extremity edema is suggestive of heart failure.",
   "reference": "The presence of bibasilar crackles, S3 gallop, displaced point of maximum impulse, and lower extremity edema is suggestive of dilated cardiomyopathy. This is a type of heart disease that occurs when the heart muscle becomes weakened and enlarged, leading to poor pumping function and an inability to meet the body's needs for oxygenated blood. The symptoms of dilated cardiomyopathy can include shortness of breath, fatigue, swelling in the legs and ankles, and an irregular heartbeat. Treatment for the condition may include medications, lifestyle changes, and in some cases, surgery or a heart transplant."
 }
 {
   "prompt": "Does co-activation of nAChR and mGluR induce \u03b3 oscillation in rat medial septum diagonal band of Broca slices?",
-  "prediction": "NacR and mGluR interact in vivo in a co-activated manner, and the results support the notion that co-activation of these genes is involved in the activation of the \u03b2-adrenergic receptor and may play a role in the pathophysiology of hypertension.",
+  "prediction": "The results show that the co-activation of nAChR and mGluR can induce \u03b3 oscillation in the medial septum diagonal band of Broca slices. This can be a mechanism of the inhibition of medial septum degeneration and may be useful in the treatment of medial septum atrophy.",
   "reference": "Activation of mGluR1 and nAChR is able to program slow or fast network oscillation by altering the intensity of receptor activation, which may provide a mechanism for modulation of learning and memory."
 }
 {
   "prompt": "Under which class of HAART drugs does zidovudine (ZDV, formerly AZT) belong?",
-  "prediction": "ZDV is a HAART drug that is a selective antiretroviral that targets the HIV-1 infection.",
+  "prediction": "Zidovudine (ZDV), formerly AZT, belongs to the class of HAART drugs called \"tetracycline-based\" drugs.",
   "reference": "Zidovudine (ZDV, formerly AZT) belongs to the class of Nucleoside Reverse Transcriptase Inhibitors (NRTIs), which are antiretroviral drugs used in the treatment of HIV/AIDS."
 }
 {
   "prompt": "Does mood alter amygdala activation to sad distractors during an attentional task?",
-  "prediction": "The amygdala activation to sad distractors in the task is reduced in patients with depression.",
+  "prediction": "These findings suggest that the amygdala is activated in response to the amygdala activation of negative attentional stimuli.",
   "reference": "These findings reveal brain mechanisms that integrate emotional input and current mood state, with implications for understanding cognitive distractibility in depression."
 }
 {
   "prompt": "Is the thiopurine methyltransferase genetic polymorphism associated with thioguanine-related veno-occlusive disease of the liver in children with acute lymphoblastic leukemia?",
-  "prediction": "The genetic polymorphism associated with the thiopurine methyltransferase is a rare and heterogeneous gene that is associated with acute lymphoblastic leukemia. The association with thiopurine methyltransferase may explain the lack of association with other genetic markers that may be associated with acute lymphoblastic",
+  "prediction": "The association of the ThpM polymorphism with VOC-related veno-occlusive disease in children with ALL is consistent with a role of ThpM in the development of VOC.",
   "reference": "Thioguanine was associated with liver damage in 11% of children randomized to thioguanine without an improvement in event-free survival rate. The association of lower TPMT activity with thioguanine-related liver damage could provide a means of identifying at-risk patients."
 }
 {
   "prompt": "Does ciprofloxacin affect pregnancy loss in CBA/JxDBA/2J mice possibly via elevation of interleukin-3 and granulocyte macrophage-colony stimulating factor production?",
-  "prediction": "The findings suggest that Ciprofloxacin may be effective against the adverse effects of pregnancy loss in the mouse model of CBA/JxDBA/2J.",
+  "prediction": "Our findings indicate that Ciprofloxacin does not affect pregnancy loss in CBA/JxDBA/2J mice through either its effect on the IL-3 and the G-CSF production.",
   "reference": "Our data demonstrate the ability of ciprofloxacin to reduce pregnancy loss in the CBA/JxDBA/2J mouse model, possibly via elevation of IL-3 and GM-CSF production."
 }
 {
   "prompt": "Does use of additional electrocardiograph lead in low-risk patients undergoing exercise treadmill testing?",
-  "prediction": "A combination of ECG and ECG-I/II leads provides a more accurate and reliable assessment of cardiac function in patients undergoing exercise treadmill testing.",
+  "prediction": "In a low-risk group of patients, additional ECG lead was not required in treadmill testing.",
   "reference": "Electrocardiographic changes in auxiliary leads did not change the diagnostic use of the ETT and therefore may provide only a minimal contribution to the assessment of the low-risk CPEU population."
 }
 {
   "prompt": "Are low levels of RANTES associated with mortality in children with cerebral malaria?",
-  "prediction": "Our data suggest that the RANTES level is an important risk factor for mortality in children with cerebral malaria.",
+  "prediction": "Low RANTES levels were associated with mortality in children with cerebral malaria.",
   "reference": "The serum cytokine and chemokine profile of children who die of CM is similar to that of individuals who die of sepsis. Levels of RANTES are significantly lower in children with CM, and very low levels of RANTES are associated with mortality, independently of other cytokine and chemokine levels."
 }
 {
   "prompt": "Could you explain \"radiation-induced pericarditis\" in proper English?",
-  "prediction": "Radiation-induced pericarditis is a form of pericarditis that is caused by radiation exposure. It can occur in people who have received radiation treatment for cancer, and in people who have had heart surgery. Radiotherapy is a type of radiation therapy, which uses high-energy rays to treat cancer. This type of radiation",
+  "prediction": "Radiation-induced pericarditis is a condition in which radiation exposure causes a local increase in pericardial effusion and pericardial thickening.",
   "reference": "The survival rate in Hodgkin lymphoma, Non-Hodgkin's lymphoma and breast carcinomas has significantly improved with use of radiation therapy.However, radiation therapy to thoracic and mediastinal cancers have also led to the development of pericarditis, coronary artery disease, cardiomyopathy, conduction abnormalities in heart and valvular heart diseases which account for significant morbidity and mortality. Radiation-induced pericarditis was first described in the mid-1960s. The radiation-induced pericardial disease may be classified as acute pericarditis, delayed pericarditis, pancarditis, constrictive pericarditis, and pericardial effusion. Radiation therapy leads to disruption of endothelium and subsequent episodes of ischemia. The resulting fibrosis and fibrinous exudates replace collagen fibers. Radiation-induced pericardial disease can occur in any cancer survivor who receive thoracic radiation therapy, including breast cancer, Hodgkin's lymphoma, esophageal cancer, and lung cancer. Radiation-induced pericarditis depends on the total dose of radiation, the dose per fraction, the amount of cardiac silhouette exposed, and the nature of the radiation source. The incidence is higher with doses greater than 40 Gy (4000 rad). Echocardiography is the most commonly used screening modality for the detection and follow-up of radiation-induced cardiac disease. Acute pericarditis usually develops a few weeks after radiation exposure. Nearly 20% of patients with acute pericarditis develop chronic or constrictive pericarditis in the next 5-10 years following radiation therapy. The risk is increased when pericardial effusion was present previously. Chronic pericarditis can also occur in patients without a history of acute pericarditis. Acute pericarditis is a rare complication of radiation therapy. It presents with nonspecific pericarditis symptoms such as chest pain and fever shortly after radiation therapy. Delayed pericarditis occurs from months to years after exposure to radiation. It usually presents with chest pain, dyspnea, and orthopnea. The physical examination may show fever and pericardial rub. Laboratory findings include elevated inflammatory markers such as neutrophil count and erythrocyte sedimentation rate (ESR). On ECG, non-specific ST and T wave changes or ST-segment elevation in all leads may be noted. The majority of acute pericarditis cases are self-limited and respond well to nonsteroidal anti-inflammatory drugs and colchicine. In acute or chronic pericarditis, protein-rich exudate may accumulate in the pericardial sac leading to pericardial effusion. Findings on a chest x-ray or chest CT suggestive of chronic pericarditis include pericardial effusion and pericardial thickening. If the effusion is large enough, it may lead to tamponade. In patients presenting with tamponade, the physical examination may show hypotension, tachycardia, and jugular venous distention with a prominent Y descent, Kussmaul\u2019s sign, and distant heart sound. Radiation-induced pericardial effusion can be confused with malignant pericarditis and hypothyroidism -induced pericarditis. Pericarditis with large effusion can be drained either percutaneously or surgically. Those with recurrent pericardial effusion can be treated with pericardiotomy(pericardial window) or by surgical stripping. Constrictive pericarditis is a late complication of radiation therapy. Patients typically present with signs and symptoms of heart failure, similar to other causes of constrictive pericarditis. Cardiac MRI may be helpful in the diagnosis of constrictive pericarditis. It is useful to confirm the pericardial thickening. Cardiac catheterization may be also helpful in the diagnosis of constrictive pericarditis associated with radiation therapy. Pericardiectomy is recommended for patients who develop constrictive pericarditis. However, the perioperative mortality rate is higher in radiation-induced constrictive pericarditis compared to that of idiopathic constrictive pericarditis. Effective measures for the primary prevention of radiation-induced pericarditis include reducing the dose and volume of cardiac irradiation when possible."
 }
 {
   "prompt": "Is kIAA0008 gene associated with invasive phenotype of human hepatocellular carcinoma -- a functional analysis?",
-  "prediction": "The kIAA0008 gene is a candidate gene for the invasive phenotype of HCC. The present study demonstrated that kIAA0008 is a candidate gene for the invasive phenotype of HCC.",
+  "prediction": "KIAA0008 is associated with invasive phenotype of HCC, but not with its metastatic potential. This finding is not significant in comparison with other known genes.",
   "reference": "KIAA0008 expression is associated with invasiveness of HCC; overexpression of KIAA0008 leads to a more invasive phenotype of HCC cell lines."
 }
 {
   "prompt": "Does ethanol inhibit hepatocyte proliferation in insulin receptor substrate 1 transgenic mice?",
-  "prediction": "The present study demonstrates that ethanol inhibits hepatocyte proliferation in insulin receptor substrate 1 transgenic mice, and it may be used as a therapeutic strategy in the treatment of liver cancer.",
+  "prediction": "The results demonstrate that ethanol inhibits hepatocyte proliferation in the insulin-resistance model of human insulin-resistant mice.",
   "reference": "Altered transmission of growth signals through the IRS-1-mediated signal transduction cascade may represent a molecular mechanism of how ethanol inhibits hepatocyte proliferation."
 }
 {
   "prompt": "Does fatty acid amide hydrolase control mouse intestinal motility in vivo?",
-  "prediction": "This study demonstrates that LHA is required for intestinal motility in vivo and that it is essential for the development of intestinal motility in vivo.",
+  "prediction": "The results indicate that the action of FABH is involved in the modulation of intestinal motility.",
   "reference": "We conclude that FAAH is a physiologic regulator of intestinal motility and a potential target for the development of drugs capable of reducing intestinal motility."
 }
 {
   "prompt": "Is alpha-adrenergic receptor-stimulated hypertrophy in adult rat ventricular myocytes mediated via thioredoxin-1-sensitive oxidative modification of thiols on Ras?",
-  "prediction": "The alpha-adrenergic receptor-stimulated hypertrophy in adult rat ventricular myocytes is mediated via thioredoxin-1-sensitive oxidative modification of thiols on Ras. The mechanism of thioredoxin-1-sensitive oxidative modification of thiols on Ras is the same as that of the thiored",
+  "prediction": "Our results suggest that alpha-adrenergic receptor-stimulated hypertrophy in adult rat ventricular myocytes is mediated via thioredoxin-1-sensitive oxidative modification of thiols on Ras.",
   "reference": "AlphaAR-stimulated hypertrophic signaling in adult rat ventricular myocytes is mediated via a TRX1-sensitive posttranslational oxidative modification of thiols on Ras."
 }
 {
   "prompt": "Is a common ABCC2 promoter polymorphism a determinant of the risk of spina bifida?",
-  "prediction": "A common ABCC2 promoter polymorphism is associated with a higher risk of spina bifida.",
+  "prediction": "Our results indicate that the A11019C gene polymorphism is a potential risk factor for the risk of spina bifida.",
   "reference": "The results of the present analyses suggest that the C(-24)T variant of the ABCC2 gene is not a major determinant of spina bifida risk."
 }
 {
   "prompt": "Does stent placement in the pancreatic duct prevent pancreatitis after endoscopic sphincter dilation for removal of bile duct stones?",
-  "prediction": "The results of this study indicate that stent placement in the pancreatic duct prevents pancreatitis after endoscopic sphincter dilation for removal of bile duct stones.",
+  "prediction": "The present study confirms the efficacy of endoscopic sphincter dilation for the removal of bile duct stones and demonstrates the safety of this technique in patients with significant pancreatitis.",
   "reference": "Temporary placement of a stent in the pancreatic duct after sphincter dilation for removal of bile duct stones has a beneficial effect in terms of postprocedure hyperamylasemia and appears to reduce the frequency of postprocedure pancreatitis."
 }
 {
   "prompt": "Does a Rho-associated kinase mitigate reperfusion-induced change in the shape of cardiac capillary endothelial cells in situ?",
-  "prediction": "The findings of our study provide evidence that the Rho-associated kinase, RANKL, can effectively mitigate the reperfusion-induced change in the shape of the cardiac capillary endothelial cells in situ.",
+  "prediction": "The results indicate that Rho-activated KRAS and Rac2 can reduce the change in the shape of the endothelial cells that occur in reperfusion-induced changes in the cardiac capillary endothelial cells.",
   "reference": "These results suggest that ROCK1 is involved in cardiac capillary endothelial cell shape change in situ and that targeting the contractile system in this way may be useful in ameliorating reperfusion injury."
 }
 {
   "prompt": "When can I go back to work after Pacemaker insertion discharge instructions ?",
-  "prediction": "After Pacemaker insertion discharge instructions are given.You may return to work as soon as the discharge instructions have been completed.",
+  "prediction": "If you have a pacemaker, you can go back to work as soon as you are able to do so.",
   "reference": "It depends on the type of your work. You can ask your doctor when you can go back to work."
 }
 {
   "prompt": "Are region-dependent aggrecan degradation patterns in the rat intervertebral disc affected by mechanical loading in vivo?",
-  "prediction": "We demonstrated that the region-dependent aggrecan degradation patterns in the intervertebral disc were affected by mechanical loading in vivo. This suggests that the functional integrity of the intervertebral disc is affected by mechanical loading.",
+  "prediction": "The results demonstrate that RGD degrades in the intervertebral disc at different rates in response to mechanical loading. This may be a consequence of the RGD-mediated degradation of proteoglycans and may contribute to the mechanical resistance of the disc.",
   "reference": "Aggrecan G1 regions resulting from proteolysis were found to have a strong regionally specific pattern in the rat IVD, which was altered under excessive loading. The shift from aggrecanase to MMP-induced degradation products with dynamic compression overloading suggests that protein degradation and loss can precede major structural disruption in the IVD, and that MMP-induced aggrecan degradation may be a marker of mechanically induced disc degeneration."
 }
 {
   "prompt": "Are epigenetic changes mediated by polycomb repressive complex 2 and E2a associated with drug resistance in a mouse model of lymphoma?",
-  "prediction": "We identified a novel pathway of epigenetic regulation of the immune system in the context of tumor progression, with a role in the activation of the immune response to chemotherapy.",
+  "prediction": "The results suggest that epigenetic changes mediated by PRC2 and E2a are involved in the resistance to chemotherapy in a mouse model of lymphoma.",
   "reference": "Our data suggest a novel mechanism of drug resistance in which E2a and PRC2 drive changes in the B-cell epigenome; these alterations attenuate alkylating agent treatment-induced apoptosis."
 }
 {
   "prompt": "Do neurokinin 1 and 2 receptors mediate cholera toxin secretion in rat jejunum?",
-  "prediction": "These data suggest that these receptors are involved in cholera toxin secretion in the jejunum.",
+  "prediction": "These data suggest that the secretion of cholera toxin by the rat jejunum is mediated by Nkx2-4, and that Nkx2-4 is a key receptor for the secretion of cholera toxin.",
   "reference": "Prosecretory pathways involving NK-1 and NK-2 receptors specifically mediate the actions of cholera toxin in the small intestine."
 }
 {
   "prompt": "Does atractylodes macrocephala Koidz stimulate intestinal epithelial cell migration through a polyamine dependent mechanism?",
-  "prediction": "The polyamine-dependent mechanism of ATK2 stimulation of intestinal epithelial cell migration is a novel mechanism for ATK2 induction of epithelial cell migration.",
+  "prediction": "Our results demonstrate that atractylodes macrocephala Koidz activates intestinal epithelial cell migration and contributes to its migration through a polyamine dependent mechanism. This mechanism may be useful in the diagnosis of intestinal epithelial cell invasion.",
   "reference": "The results obtained from this study revealed that AMK significantly stimulates the migration of IEC-6 cells through a polyamine dependent mechanism, which could accelerate the healing of intestinal injury. These findings suggest the potential value of AMK in curing intestinal diseases characterized by injury and ineffective repair of the intestinal mucosa in clinical practice."
 }
 {
   "prompt": "Hello doctor,My mother has paranoia schizophrenia for the past 16 years. The delusions have become very absurd and in her story, her immediate family is the culprit. She has very vivid auditory hallucinations and sometimes visual hallucinations. She has refused to see a doctor as she believes they are in on it. Her stage of psychosis is very violent in which she screams and shouts and also turns violent. This has been going on for 16 years, but now the episodes of psychosis are becoming more intense. Please advise on how to talk to her or at the very least medicate her because it is taking a toll on our mental health. My sister suffers from depression and I suffer from anger management. How our father holds it together I have no clue. Please advise.",
-  "prediction": "I am an English graduate with a B.A. in English Literature. I have a Bachelor's in English Literature. My mother is a psychologist and I am a social worker. My sister is a counselor and I am a social worker. Please advise.",
+  "prediction": "Hello! I'm sorry to hear about your mother's situation. It is important to seek professional help for your daughter's mental health. There are many different types of schizophrenia, and it is important to seek professional help for your daughter's symptoms. One thing that can help is to work with a mental health professional, like",
   "reference": "I'm sorry to hear about the difficult situation with your mother's schizophrenia. It is not uncommon for individuals with this disorder to have delusions and hallucinations involving family members, and it can be challenging for family members to cope with the associated behavioral changes. It is important to recognize that your mother's illness is not her fault and that she likely cannot control her actions during periods of intense psychosis. While it can be difficult to communicate with someone who is experiencing paranoid delusions, it may be helpful to try to establish a relationship with her based on trust and empathy. It may be helpful to avoid engaging with her delusions, but instead listen to her concerns and try to offer support and reassurance. It would be best to seek the help of a mental health professional who specializes in schizophrenia. They can recommend strategies for managing delusions and hallucinations and prescribe appropriate medication. Depending on your country and state laws, involuntary hospitalization may be an option in situations where your mother's safety or the safety of others is at risk. You can seek the help of a mental health clinic for further guidance. In the meantime, it is essential to also take care of your mental health. You and your sister should seek therapy or counseling to manage the stress and burden caused by your mother's illness. It is not easy being the caretaker of someone with a severe mental illness, and it is vital to take breaks and practice self-care."
 }
 {
   "prompt": "What skin condition is characterized by raised, sharp edges with good demarcation?",
-  "prediction": "Seborrheic dermatitis.",
+  "prediction": "Ringworm is characterized by raised, sharp edges with good demarcation.",
   "reference": "Erysipelas is the skin condition that is characterized by raised, sharp edges with good demarcation."
 }
 {
   "prompt": "Do postoperative high-dose steroids improve mid-term survival with native liver in biliary atresia?",
-  "prediction": "The results of this study demonstrate that post-transplantation high-dose steroids are associated with improved survival and improved hepatic function in biliary atresia patients.",
+  "prediction": "Our findings suggest that high-dose steroids are safe and effective for the treatment of BLA.",
   "reference": "In contrast to previous reports, this pilot study shows that high-dose steroid pulses after Kasai procedure are not effective in postoperative adjuvant therapy protocols and should be avoided in upcoming multicenter steroid studies. Therefore, we recommend extended and randomized multicenter studies to pre-evaluate the supposed effectiveness of alternative steroid protocols, by comparing, 6 months after the Kasai procedure, the number of patients with normal bilirubin."
 }
 {
   "prompt": "Is prognosis of incidental gallbladder carcinoma influenced by the primary access technique : analysis of 837 incidental gallbladder carcinomas in the German Registry?",
-  "prediction": "The prognosis of incidental gallbladder carcinomas was significantly influenced by the technique of the primary access.",
+  "prediction": "In conclusion, the incidence of incidental gallbladder carcinoma is low in the German Registry. In the Registry, incidental gallbladder carcinoma was mainly detected in the abdominal cavity, which may be explained by the fact that the procedure is easier and more common in the abdominal cavity.",
   "reference": "The GR data, which relate to a large homogenous patient cohort, showed that when other potential influencing factors, e.g., IRR were eliminated, the primary access technique had no effect on prognosis. Stage-adjusted therapy should always be performed irrespective of the primary access technique."
 }
 {
   "prompt": "Is laparoscopic Nissen fundoplication more effective intreating patients with GERD-related chronic cough than Stretta radiofrequency?",
-  "prediction": "The laparoscopic Nissen fundoplication was more effective than Stretta radiofrequency in treating patients with GERD-related chronic cough.",
+  "prediction": "Laparoscopic Nissen fundoplication was more effective than Stretta radiofrequency in treating patients with GERD-related chronic cough.",
   "reference": "Even though laparoscopic Nissen fundoplication and Stretta are capable of controlling GERD-related cough effectively and safely in selected patients, laparoscopic Nissen fundoplication could improve more in symptoms and PPI elimination."
 }
 {
   "prompt": "Is vitamin D deficiency associated with type 2 diabetes mellitus in HIV infection?",
-  "prediction": "Our data suggest that vitamin D deficiency is a risk factor for the development of type 2 diabetes mellitus in HIV infection. Vitamin D deficiency is a risk factor for the development of type 2 diabetes mellitus in HIV infection. Vitamin D deficiency is a risk factor for the development of type 2 diabetes mellitus in HIV infection.",
+  "prediction": "Vitamin D deficiency was associated with type 2 diabetes mellitus in HIV infection.",
   "reference": "Our study demonstrates an association between vitamin D deficiency and type 2 diabetes mellitus. Clinical trials are needed to better characterize the association between vitamin D deficiency and type 2 diabetes mellitus in HIV infection and to evaluate whether vitamin D is able to prevent or delay the onset of type 2 diabetes mellitus."
 }
 {
   "prompt": "What are the two classes of antibiotics that can prolong the QT interval?",
-  "prediction": "Antibiotics can prolong the QT interval. The two classes of antibiotics that can prolong the QT interval are the tetracyclines and the cephalosporins.",
+  "prediction": "The two classes of antibiotics that can prolong the QT interval are aminoglycosides and tetracyclines.",
   "reference": "Macrolides and fluoroquinolones are the classes of antibiotics that can prolong the QT interval."
 }
 {
   "prompt": "Is efficacy of IGF-based growth hormone ( GH ) dosing in nonGH-deficient ( nonGHD ) short stature children with low IGF-I related to basal IGF-I levels?",
-  "prediction": "GH-related growth hormone ( GH ) dosing in nonGH-deficient ( nonGHD ) short stature children with low IGF-I related to basal IGF-I levels. GH-related growth hormone ( GH ) dosing in nonGH-deficient ( nonGHD ) short stature children with low I",
+  "prediction": "GH dosing was not associated with IGF-I levels in nonGH-deficient children with low IGF-I.",
   "reference": "In nonGHD subjects with short stature and serum IGF-I concentrations within and below the lower third of normal, adjusting GH dose to achieve an IGF-I level in the upper normal range resulted in a significant increase in HSDS, regardless of basal IGF-I levels."
 }
 {
   "prompt": "Does pAX6 increase glioma cell susceptibility to detachment and oxidative stress?",
-  "prediction": "We conclude that pAX6 is a novel target for the therapy of gliomas.",
+  "prediction": "Pax6 expression in glioma cells is a novel mechanism for glioma cell susceptibility to oxidative stress.",
   "reference": "To survive, GBM cells must resist oxidative stress in the necrotic zone as well as the intracellular ROS generated during detachment. Since PAX6 over-expression in low PAX6-expressing glioma cells attenuated cell survival and growth after detachment, these results suggest that a reduced PAX6 expression may be a molecular trait that gives glioma cells a real selection advantage over other cell types to survive in stressful conditions, thus resulting in expansion of their population."
 }
 {
   "prompt": "Is the expression of V-ATPase associated with drug resistance and pathology of non-small-cell lung cancer?",
-  "prediction": "Our results indicate that V-ATPase may play a role in the progression of lung cancer, with an increased risk of tumor progression and increased mortality. The function of V-ATPase in non-small-cell lung cancer remains to be fully understood.",
+  "prediction": "Our results suggest that the V-ATPase gene is involved in the development of non-small-cell lung cancer, and may play a role in the pathogenesis of this disease.",
   "reference": "V-ATPase was overexpressed in NSCLC. The expression of V-ATPase was related to the pathological type and grade of cancer and was likely associated with chemotherapy drug resistance in NSCLC."
 }
 {
   "prompt": "Does the Effect of altering ADL thresholds on active life expectancy estimate for older persons?",
-  "prediction": "The effect of changing ADL thresholds on the estimated active life expectancy of older persons is small, although not negligible.",
+  "prediction": "ADL thresholds that are too high or too low have a negative effect on the estimate of active life expectancy for older persons.",
   "reference": "The implications of the results include that disability measurement, including altering the definition of being disabled and possibly expanding the state space of a model, may not affect population-based estimates of ALE."
 }
 {
   "prompt": "Do polymorphisms of the ITGAM gene confer higher risk of discoid cutaneous than of systemic lupus erythematosus?",
-  "prediction": "The ITGAM polymorphism is associated with a higher risk of discoid cutaneous lupus, which is a chronic systemic disease.",
+  "prediction": "The results suggest that the ITGAM gene may be a potential marker for the development of cutaneous lupus and that the ITGAM gene polymorphism in the 5q31 region may contribute to the risk of systemic lupus erythematosus.",
   "reference": "We propose ITGAM as a novel susceptibility gene for cutaneous DLE. The risk effect is independent of systemic involvement and has an even stronger genetic influence on the risk of DLE than of SLE."
 }
 {
   "prompt": "Are gallstones Associated with Intima-Media Thickness of Common Carotid Arteries in Men?",
-  "prediction": "These findings suggest that gallstones and the presence of a common area of thick calcified media are associated with the presence of an intra-arterial calcified calcification, and that these findings are independent of the presence of atheromas.",
+  "prediction": "Gallstones are associated with intima-media thickness of common carotid arteries in men.",
   "reference": "Carotid intima-media thickness is higher in male subjects with gallstones, indicating that they are at greater risk for atherosclerosis."
 }
 {
   "prompt": "Does a spatial cluster analysis of tractor overturn in Kentucky from 1960 to 2002?",
-  "prediction": "A spatial cluster analysis of tractor overturn in Kentucky from 1960 to 2002 was performed. This analysis demonstrated that tractor overturn is a major contributor to the rural economy of Kentucky.",
+  "prediction": "This spatial cluster analysis shows that a significant number of tractor overturns occurred in a single location in the state of Kentucky. The spatial clustering of tractor overturns in Kentucky suggests that a large number of tractor overturns were occurring in a single location in the state of Kentucky.",
   "reference": "This study reveals that geographic hotspots of tractor overturns exist in Kentucky and identifies factors associated with overturns. This study provides policymakers a guide to targeted county-level interventions (e.g., roll-over protective structures promotion interventions) with the intention of reducing tractor overturns in the highest risk counties in Kentucky."
 }
 {
   "prompt": "Is obstructive sleep apnea associated with increased urinary albumin excretion?",
-  "prediction": "Obstructive sleep apnea is associated with increased urinary albumin excretion.",
+  "prediction": "The urinary albumin excretion was significantly increased in patients with OSA compared with controls. The urinary albumin excretion may be an important indicator of the severity of OSA.",
   "reference": "OSA is significantly associated with increased urine albumin excretion, especially among those with more severe disease. These data provide further evidence supporting endothelial dysfunction as a mediating pathway between cardiovascular disease and OSA."
 }
 {
   "prompt": "Is optimism measured pre-operatively associated with reduced pain intensity and physical symptom reporting after coronary artery bypass graft surgery?",
-  "prediction": "Our results show that optimism predicts pain intensity and physical symptom reporting after coronary artery bypass graft surgery. The findings are consistent with previous findings showing that optimism predicts pain intensity and physical symptom reporting. These findings suggest that optimism may be a useful predictor of pain intensity in patients with coronary artery bypass graft surgery.",
+  "prediction": "Optimism was positively associated with pain intensity and physical symptom reporting in patients undergoing coronary artery bypass graft surgery.",
   "reference": "Optimism is a modest, yet significant, predictor of pain intensity and physical symptom reporting after CABG surgery. Having positive expectations may promote better recovery."
 }
 {
   "prompt": "Does baseline omega-3 index correlate with aggressive and attention deficit disorder behaviours in adult prisoners?",
-  "prediction": "The findings suggest that a high omega-3 index correlates with aggressive and attention deficit disorders in adult prisoners.",
+  "prediction": "The baseline omega-3 index correlates with aggressive and attention deficit disorder behaviours in adult prisoners. The results may be important for the development of a biomarker for the development of these disorders.",
   "reference": "There is a high variability in omega-3 status of a NSW prison population, and inmates with lower omega-3 index were more aggressive and had higher ADD scores."
 }
 {
   "prompt": "Is calcium desensitisation in late polymicrobial sepsis associated with loss of vasopressor sensitivity in a murine model?",
-  "prediction": "Our data suggest that calcium desensitisation is a viable treatment strategy for late-onset sepsis.",
+  "prediction": "The results suggest that calcium desensitisation in late PMPS is associated with loss of vasopressor sensitivity and that calcium desensitisation can be used to improve vasopressor responsiveness in PMPS.",
   "reference": "In a murine model of sepsis, ROK-dependent inhibition of MLCP activity in vessels from septic mice was reduced. Responses to K(+) depolarisation, thromboxane A2 receptor activation and PKC activation were diminished in vitro whilst \u03b11-adrenergic responses remained intact. Inhibiting MLCP may present a novel therapeutic target to manage sepsis-induced vascular dysfunction."
 }
 {
   "prompt": "Is low ANXA10 expression associated with disease aggressiveness in bladder cancer?",
-  "prediction": "The current results indicate that low ANXA10 expression in bladder cancer is associated with higher disease aggressiveness. The current findings may provide a basis for the development of novel targeted therapies for bladder cancer.",
+  "prediction": "Low ANXA10 expression is associated with aggressive disease and with the presence of cancer, and may be a useful biomarker for predicting disease aggressiveness in bladder cancer.",
   "reference": "We conclude that ANXA10 may be a clinical relevant marker for predicting outcome in both early and advanced stages of bladder cancer."
 }
 {
   "prompt": "Is prolonged progesterone administration associated with less frequent cervicovaginal colonization by Ureaplasma urealyticum during pregnancy - Results of a pilot study?",
-  "prediction": "The results of this study suggest that prolonged progesterone administration may be associated with less frequent cervicovaginal colonization by Ureaplasma urealyticum during pregnancy.",
+  "prediction": "We conclude that prolonged progesterone administration is associated with more frequent cervicovaginal colonization by U. urealyticum during pregnancy, and this phenomenon may be related to the increase in the number of serological and immunological responses.",
   "reference": "Our results demonstrate the beneficial effects of progesterone administration in reducing the incidence of cervicovaginal colonization by Ureaplasma urealyticum."
 }
 {
   "prompt": "Is minimally invasive colon resection for malignant colonic conditions associated with a transient early increase in plasma sVEGFR1 and a decrease in sVEGFR2 levels after surgery?",
-  "prediction": "Our data suggest that colonic cancer patients with early, transient, and severe colorectal cancer have a transient increase in sVEGFR1 and sVEGFR2 levels after surgery, and a decrease in plasma sVEGFR1 and sVEGFR2 levels. These findings suggest that colonic cancer patients with",
+  "prediction": "In conclusion, the findings suggest that the early decrease in sVEGFR1 and sVEGFR2 levels after colonic resection may be associated with a transient increase in plasma sVEGFR1 and sVEGFR2 levels after surgery.",
   "reference": "sVEGFR2 values decreased and sVEGFR1 levels increased early after MICR; sVEGFR2 changes dominate due to their much larger magnitude. The net result is less plasma VEGF bound by soluble receptors and more plasma VEGF available to bind to ECs early after surgery."
 }
 {
   "prompt": "Does hepatitis E virus chimeric DNA vaccine elicit immunologic response in mice?",
-  "prediction": "This study demonstrates that chimeric DNA vaccine induced an immune response in mice and that the vaccine induced a protective effect against hepatitis E virus infection.",
+  "prediction": "Hepatitis E virus chimeric DNA vaccine elicited a strong immune response in mice. This study suggests that the chimeric DNA vaccine may be a useful strategy for the prevention of HEV infection.",
   "reference": "DNA vaccine containing HEV ORF2 and ORF3 chimeric gene can successfully induce specific humoral and cellular immune response in mice."
 }
 {
   "prompt": "Is increase in aortic pulse wave velocity associated with abnormal postprandial triglyceride response?",
-  "prediction": "Increased aortic pulse wave velocity associated with abnormal postprandial triglyceride response.",
+  "prediction": "Increased aortic pulse wave velocity is associated with increased postprandial triglyceride response.",
   "reference": "An increase in aPWV 6 h after an FM test correlates positively with abnormal postprandial hypertriglyceridemia. These relationships, reported here for the first time, could be of practical use for better evaluation of patient prognosis."
 }
 {
   "prompt": "Is fecal calprotectin a predictive marker of relapse in Crohn 's disease involving the colon : a prospective study?",
-  "prediction": "Fecal calprotectin may be a useful predictor of relapse in patients with Crohn's disease involving the colon.",
+  "prediction": "Fecal calprotectin is a predictor of relapse in Crohn's disease involving the colon. Its predictive value for recurrence is more pronounced in the colon than in the rectum. Further studies are needed to determine the clinical utility of the marker.",
   "reference": "Fecal calprotectin seems to be a reliable marker of relapse in quiescent Crohn's disease patients."
 }
 {
   "prompt": "Does cyclic hypobaric hypoxia improve markers of glucose metabolism in middle-aged men?",
-  "prediction": "This study provides the first evidence that chronic hypobaric hypoxia enhances the metabolic markers of glucose metabolism in middle-aged men.",
+  "prediction": "Our study shows that hypobaric hypoxia can improve markers of glucose metabolism in middle-aged men.",
   "reference": "Ten weeks of CVAC CHH exposure improves markers of glucose metabolism in middle-aged men at risk for metabolic syndrome."
 }
 {
   "prompt": "What is the second line management for recurrent variable decelerations during labor?",
-  "prediction": "The second line management for recurrent variable decelerations during labor includes: a. Restraining the baby. b. Positioning the baby to prevent cervical rupture. c. Positioning the baby in a safe position. d. Positioning the baby in the correct position.",
+  "prediction": "The second line management for recurrent variable decelerations during labor is to have the patient continue to deliver the baby.",
   "reference": "Variable decelerations during labor are a common occurrence and can be caused by a variety of factors, including fetal distress, umbilical cord compression, or maternal hypotension. The management of variable decelerations depends on the severity and frequency of the decelerations, as well as the overall health of the mother and baby. The second line management for recurrent variable decelerations is transcervical amnioinfusion, a procedure in which fluid is infused into the uterus through the cervix to help cushion the baby and relieve pressure on the umbilical cord. This can help improve blood flow and oxygen delivery to the baby, reducing the risk of fetal distress and the need for more invasive interventions such as a cesarean section. Other management options for variable decelerations may include changing the mother's position, administering oxygen to the mother, or using medications to stimulate contractions or relax the uterus."
 }
 {
   "prompt": "Does hoxa5 undergo dynamic DNA methylation and transcriptional repression in the adipose tissue of mice exposed to high-fat diet?",
-  "prediction": "Our data indicate that hoxa5 is a novel regulator of adipocyte differentiation and adipose tissue metabolism in mice exposed to a high-fat diet. These data suggest that hoxa5 may be a promising therapeutic target for obesity.",
+  "prediction": "Our results demonstrate that hoxa5 undergoes dynamic DNA methylation and transcriptional repression in adipose tissue, and that these changes are mediated by DNA methylation of the hoxa5 promoter. The results also suggest that hoxa5 is involved in the regulation of adipose tissue development. Our findings may be relevant to the development",
   "reference": "HFD induces adipose tissue abnormalities accompanied by epigenetic changes at the Hoxa5 adipose tissue remodeling gene."
 }
 {
   "prompt": "Does down-regulation of peroxisome proliferator-activated receptor \u03b3 coactivator-1\u03b1 expression in fatty acid-induced pancreatic beta-cell apoptosis involve nuclear factor-\u03baB pathway?",
-  "prediction": "The down-regulation of peroxisome proliferator-activated receptor \u03b3 coactivator-1\u03b1 expression is associated with the down-regulation of NF-\u03baB pathway in pancreatic beta-cell apoptosis.",
+  "prediction": "Down-regulation of PPAR\u03b3 expression in FABP-1\u03b1-overexpressing pancreatic beta-cells induces FABP-1\u03b1-dependent apoptosis through the NAF-1 pathway.",
   "reference": "NF-\u03baB canonical pathway was activated in PA-mediated \u03b2TC3 cell apoptosis, whereas non-canonical pathway was inhibited. Reduced PGC-1\u03b1 expression by PA in \u03b2TC3 cells could involve the activation of canonical NF-\u03baB pathway, so as to deteriorate the PA induced apoptosis."
 }
 {
   "prompt": "Are kynurenine and its metabolites -- kynurenic acid and anthranilic acid associated with soluble endothelial adhesion molecules and oxidative status in patients with chronic kidney disease?",
-  "prediction": "Kynurenine is the major inhibitor of endothelial adhesion molecules, while anthranilic acid and kynurenic acid are the major metabolites of endothelial adhesion molecules. These metabolites are involved in the regulation of the oxidative status of the vascular endothelium, and kynurenine is associated with oxidative stress.",
+  "prediction": "The present study suggests that kynurenine and kynurenic acid, which are associated with soluble endothelial adhesion molecules, may play an important role in the development of chronic kidney disease.",
   "reference": "This study demonstrated that KYN is independently and significantly associated with elevated sICAM-1, whereas oxidative status and platelets independently and significantly predicted increased sVCAM-1 levels in patients with CKD."
 }
 {
   "prompt": "Are small doses of LH activity needed early in ovarian stimulation for better quality oocytes in IVF-ET?",
-  "prediction": "The LH activity is the most important factor in the development of the embryo. LH activity is an essential determinant of the number of viable oocytes in the embryo. The LH activity should be increased early in the ovarian stimulation process in IVF-ET.",
+  "prediction": "Oocytes are more likely to be viable if the LH activity is greater than 500 U/mL in the follicular phase. LH activity is needed early in IVF-ET to increase the number of viable oocytes.",
   "reference": "The relatively small sample size does not allow a definitive conclusion for the important role of LH during early oocyte maturation. Our results, however, indicate a beneficial effect when small doses of LH are used for ovarian stimulation in IVF-ET cycles. This effect may be more important in cases in which few embryos are available for transfer."
 }
 {
   "prompt": "Do regulatory T cells depress immune responses to protective antigens in active tuberculosis?",
-  "prediction": "Our data demonstrate that regulatory T cells suppress immune responses to protective antigens in active TB.",
+  "prediction": "Our results indicate that Tregs can act as a negative regulator of immune responses to protective antigens in active tuberculosis.",
   "reference": "Specific CD4(+)CD25(high)FOXP3(+) T cells depress the T-cell-mediated immune responses to the protective mycobacterial antigen HBHA during active TB in humans."
 }
 {
   "prompt": "Is angiotensin ( 1-7 ) an antagonist at the type 1 angiotensin II receptor?",
-  "prediction": "Angiotensin II is an anti-angiotensin II antagonist. Angiotensin II is a vasoconstrictor.",
+  "prediction": "Angiotensin II is a potent vasoconstrictor at the type 1 receptor, and the angiotensin II receptor is a negative regulator of angiotensin II. Therefore, angiotensin II can act as an antagonist at the type 1 receptor, which may lead to the development of hypertension and other cardiovascular",
   "reference": "The present results show that Ang(1-7) is a specific non-competitive antagonist of Ang II at type 1 angiotensin II receptors."
 }
 {
   "prompt": "Are eEG responses to TMS sensitive to changes in the perturbation parameters and repeatable over time?",
-  "prediction": "The TMS response to the TMS parameters and repeatability of the TMS responses to the parameters is very sensitive to the perturbation parameters.",
+  "prediction": "EEG responses to TMS are sensitive to changes in the perturbation parameters and repeatable over time.",
   "reference": "These results demonstrate that the EEG responses to TMS essentially reflect deterministic properties of the stimulated neuronal circuits as opposed to stereotypical responses or uncontrolled variability. To the extent that TMS-evoked potentials are sensitive to changes and repeatable over time, they may be employed to detect longitudinal changes in the state of cortical circuits."
 }
 {
   "prompt": "Is zD1839 , a selective oral epidermal growth factor receptor-tyrosine kinase inhibitor , well tolerated and active in patients with solid , malignant tumors : results of a phase I trial?",
-  "prediction": "ZD1839 is a selective oral epidermal growth factor receptor-tyrosine kinase inhibitor with activity in patients with solid and malignant tumors, and is well tolerated and active in patients with solid and malignant tumors.",
+  "prediction": "ZD1839 is well tolerated in patients with solid malignancies and has a high affinity for the EGF receptor. ZD1839 is a promising candidate for treatment of malignancies and should be considered for clinical trials.",
   "reference": "ZD1839 was well tolerated, with DLT observed at a dose well above that at which antitumor activity was seen. Pharmacokinetic analysis confirmed that ZD1839 was suitable for administration as a once-daily oral tablet formulation. Phase II monotherapy and phase III combination trials in NSCLC are being conducted to investigate further the efficacy, tolerability, and optimal daily dose of ZD1839."
 }
 {
   "prompt": "Does heme oxygenase-1 protect pancreatic beta cells from apoptosis caused by various stimuli?",
-  "prediction": "His oxygenase-1 (OXA) protects pancreatic beta cells from apoptosis caused by various stimuli. OXA promotes beta cell survival in the presence of a variety of stress factors.",
+  "prediction": "The present study demonstrated that HxO(1) protects pancreatic beta cells against apoptosis induced by various stimuli. HxO(1) may be a promising drug target for pancreatic beta cell protection.",
   "reference": "Profound cell stress that occurs in islets after transplantation, as well as at the onset of diabetes, results in beta-cell loss through apoptosis. Protection of beta cells by HO-1 improves their survival in vitro after various proapoptotic stimuli, suggesting that HO-1 suppresses one or several signaling pathways leading to apoptosis. We hypothesize that our in vitro findings can be extrapolated to the in vivo situation, and we propose that expression of HO-1 in islets may illuminate a valuable new approach to improving diabetes treatment."
 }
