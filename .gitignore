@@ -11,6 +11,8 @@ aggregated_models
 hcm_dataset
 eval_outputs*
 server_model*
+client_*
+server_*
 datasets
 
 __pycache__

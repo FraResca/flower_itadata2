@@ -32,6 +32,7 @@ class FlowerClient(fl.client.NumPyClient):
         )
         self.model = get_peft_model(self.model, lora_config)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.tokenizer.padding_side = "left"
         # Set pad_token if not present
         if self.tokenizer.pad_token is None:
             if self.tokenizer.eos_token is not None:

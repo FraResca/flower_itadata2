@@ -158,7 +158,6 @@ def evaluate_fn(server_round, parameters, config):
     del val_dataset
 
     empty_gpu_cache()
-    
     if not os.path.exists("server_eval_times.txt"):
         with open("server_eval_times.txt", "w") as f:
             f.write("Server Evaluation Times\n")
@@ -177,7 +176,7 @@ def main():
         save_all_train_test(get_sever_config_param("seed", 42))
         create_balanced_test_set()
 
-    min_clients = 1
+    min_clients = get_sever_config_param("min_clients", 2)
     server_config = ServerConfig(
         num_rounds=25,
     )
