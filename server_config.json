@@ -1,6 +1,6 @@
 {
     "modelname": "HuggingFaceTB/SmolLM2-135M",
-    "min_clients": 1,
+    "min_clients": 2,
     "round_0": false,
     "eval_examples": 128,
     "eval_batch_size": 8,

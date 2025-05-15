@@ -7,3 +7,7 @@ rm -rf smollm-finetuned
 rm -rf hcm_dataset
 rm eval_outputs*
 rm server_model_round*
+rm server_eval_*
+rm server_metrics*
+rm client_eval_*
+rm client_train_*

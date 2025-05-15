@@ -53,8 +53,6 @@ def evaluate_fn(server_round, parameters, config):
     if get_sever_config_param("round_0", False) == False and server_round == 0:
         return 0.0, {}
 
-    seed = get_sever_config_param("seed", 42)
-
     dataset_folder_name = "datasets"
 
     model_name = get_sever_config_param("model_name", "HuggingFaceTB/SmolLM2-135M")
