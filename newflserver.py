@@ -175,6 +175,8 @@ def main():
         create_balanced_test_set()
 
     min_clients = get_sever_config_param("min_clients", 2)
+    print(f"Minimum number of clients: {min_clients}")
+
     server_config = ServerConfig(
         num_rounds=25,
     )
