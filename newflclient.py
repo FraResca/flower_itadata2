@@ -40,7 +40,14 @@ class FlowerClient(fl.client.NumPyClient):
             else:
                 self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
                 self.model.resize_token_embeddings(len(self.tokenizer))
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Set device, CUDA or MPS or CPU
+        #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        elif torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        else:
+            self.device = torch.device("cpu")
         self.model.to(self.device)
 
     def get_parameters(self, config=None):
