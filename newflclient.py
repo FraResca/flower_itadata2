@@ -48,6 +48,7 @@ class FlowerClient(fl.client.NumPyClient):
             self.device = torch.device("cuda")
         else:
             self.device = torch.device("cpu")
+        print(f"Using device: {self.device}")
         self.model.to(self.device)
 
     def get_parameters(self, config=None):
