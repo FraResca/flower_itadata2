@@ -22,19 +22,24 @@ def get_sever_config_param(param_name, default_value):
 
 class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
     def aggregate_fit(self, rnd, results, failures):
+        alfa = get_sever_config_param("alfa", 0.5)
         weights_results = []
         total_tokens = 0
+        total_samples = 0
         for _, fit_res in results:
             num_tokens = fit_res.metrics.get("num_tokens", 0)
+            num_samples = fit_res.metrics.get("num_samples", 0)
             total_tokens += num_tokens
-            weights_results.append((fit_res.parameters, num_tokens))
+            total_samples += num_samples
+            weights_results.append((fit_res.parameters, num_tokens, num_samples))
 
         if total_tokens == 0:
+            print("No tokens received from clients, skipping aggregation.")
             return super().aggregate_fit(rnd, results, failures)
 
         aggregated = None
-        for params, num_tokens in weights_results:
-            weight = num_tokens / total_tokens
+        for params, num_tokens, num_samples in weights_results:
+            weight = ((1 - alfa) * (num_samples / total_samples)) + (alfa * (num_tokens / total_tokens))
             params_ndarrays = fl.common.parameters_to_ndarrays(params)
             if aggregated is None:
                 aggregated = [weight * p for p in params_ndarrays]

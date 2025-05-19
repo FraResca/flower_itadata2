@@ -170,7 +170,7 @@ class FlowerClient(fl.client.NumPyClient):
         with open("client_train_times.txt", "a") as f:
             f.write(f"Client Fit - {time.time() - start_time} seconds\n")
         
-        return self.get_parameters(), len(train_data), {"num_tokens": total_tokens}    # '''
+        return self.get_parameters(), len(train_data), {"num_tokens": total_tokens, "num_samples": len(train_data)}    # '''
     
     def evaluate(self, parameters, config):
         start_time = time.time()
