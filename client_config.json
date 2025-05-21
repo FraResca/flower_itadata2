@@ -5,5 +5,6 @@
     "train_batch_size": 4,
     "seed": 42,
     "eval_examples": 128,
-    "eval_batch_size": 8
+    "eval_batch_size": 8,
+    "server_ip": "10.27.2.8:8080"
 }

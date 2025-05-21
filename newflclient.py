@@ -277,6 +277,9 @@ class FlowerClient(fl.client.NumPyClient):
         }
             
 if __name__ == "__main__":
+    #get the server ip from the config file
+    server_ip = get_client_config_param("server_ip", "10.27.2.8:8080")
+
     # if there is no dataset folder, create it
     dataset_folder_name = "datasets"
     if not os.path.exists(dataset_folder_name):
@@ -287,7 +290,7 @@ if __name__ == "__main__":
     while True:
         try:
             fl.client.start_client(
-                server_address="10.27.2.8:8080",
+                server_address=server_ip,
                 client=FlowerClient(model_name=get_client_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")).to_client()
             )
             break  # Exit loop if connection is successful
