@@ -63,7 +63,9 @@ def evaluate_fn(server_round, parameters, config):
     model_name = get_sever_config_param("model_name", "HuggingFaceTB/SmolLM2-135M")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
+    # model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
+    # viene già spostato successivamente
+    model = AutoModelForCausalLM.from_pretrained(model_name)
     lora_config = LoraConfig(
         r=8,
         lora_alpha=32,
@@ -112,9 +114,9 @@ def evaluate_fn(server_round, parameters, config):
                     input_ids=input_ids,
                     attention_mask=inputs.get("attention_mask"),
                     max_new_tokens=64,
-                    do_sample=True,
-                    temperature=0.7,
-                    top_p=0.9,
+                    do_sample=False,
+                   # temperature=0.7,
+                   # top_p=0.9,
                     eos_token_id=tokenizer.eos_token_id,
                     pad_token_id=tokenizer.eos_token_id,
                 )
