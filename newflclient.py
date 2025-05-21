@@ -12,6 +12,7 @@ from datasets import Dataset
 import time
 import evaluate
 from bert_score import score as bert_score_fn
+import gc
 
 def get_client_config_param(param_name, default_value):
     with open("client_config.json", "r") as f:
@@ -51,6 +52,7 @@ class FlowerClient(fl.client.NumPyClient):
         print(f"Using device: {self.device}")
         self.model.to(self.device)
 
+    '''
     def get_parameters(self, config=None):
         return [val.cpu().numpy() for val in self.model.state_dict().values()]
 
@@ -58,6 +60,16 @@ class FlowerClient(fl.client.NumPyClient):
         params_dict = zip(self.model.state_dict().keys(), parameters)
         state_dict = {k: torch.tensor(v) for k, v in params_dict}
         self.model.load_state_dict(state_dict, strict=False)
+    '''
+
+    def get_parameters(self, config=None):
+        return [val.detach().cpu().numpy() for _, val in self.model.named_parameters() if val.requires_grad]
+
+    def set_parameters(self, parameters):
+        named_params = [(name, param) for name, param in self.model.named_parameters() if param.requires_grad]
+        for (name, param), new_val in zip(named_params, parameters):
+            param.data = torch.tensor(new_val).to(param.device)
+
 
     '''
     # con autocast
@@ -168,7 +180,7 @@ class FlowerClient(fl.client.NumPyClient):
                     continue
                 else:
                     raise e
-
+                
             empty_gpu_cache()
 
         if not os.path.exists("client_train_times.txt"):
@@ -178,6 +190,8 @@ class FlowerClient(fl.client.NumPyClient):
         with open("client_train_times.txt", "a") as f:
             f.write(f"Client Fit - {time.time() - start_time} seconds\n")
         
+        gc.collect()
+
         return self.get_parameters(), len(train_data), {"num_tokens": total_tokens, "num_samples": len(train_data)}    # '''
     
     def evaluate(self, parameters, config):
@@ -269,6 +283,9 @@ class FlowerClient(fl.client.NumPyClient):
                 f.write("Client Evaluation Times\n")
         with open("client_eval_times.txt", "a") as f:
             f.write(f"Client Evaluate - {time.time() - start_time} seconds\n")
+
+        gc.collect()
+        empty_gpu_cache()
 
         return float(avg_loss), len(val_data), {
             "num_tokens": total_tokens,

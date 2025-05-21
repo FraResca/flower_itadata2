@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader
 from peft import LoraConfig, get_peft_model
 from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test, create_balanced_test_set
 from bert_score import score as bert_score_fn
+import gc
 
 def get_sever_config_param(param_name, default_value):
     with open("server_config.json", "r") as f:
@@ -39,7 +40,13 @@ class TokenWeightedFedAvg(fl.server.strategy.FedAvg):
 
         aggregated = None
         for params, num_tokens, num_samples in weights_results:
+            # Total samples and total tokens may be 0 if no clients sent updates
+            if total_samples == 0 or total_tokens == 0:
+                print("Total samples or total tokens is 0, skipping aggregation.")
+                return super().aggregate_fit(rnd, results, failures)
+            
             weight = ((1 - alfa) * (num_samples / total_samples)) + (alfa * (num_tokens / total_tokens))
+
             params_ndarrays = fl.common.parameters_to_ndarrays(params)
             if aggregated is None:
                 aggregated = [weight * p for p in params_ndarrays]
@@ -63,8 +70,6 @@ def evaluate_fn(server_round, parameters, config):
     model_name = get_sever_config_param("model_name", "HuggingFaceTB/SmolLM2-135M")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    # model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
-    # viene già spostato successivamente
     model = AutoModelForCausalLM.from_pretrained(model_name)
     lora_config = LoraConfig(
         r=8,
@@ -85,10 +90,16 @@ def evaluate_fn(server_round, parameters, config):
             tokenizer.add_special_tokens({'pad_token': '[PAD]'})
             model.resize_token_embeddings(len(tokenizer))
 
+    '''
     params_dict = zip(model.state_dict().keys(), parameters)
     state_dict = {k: torch.tensor(v).to(device) for k, v in params_dict}
-
     model.load_state_dict(state_dict, strict=False)
+    '''
+
+    named_params = [param for name, param in model.named_parameters() if param.requires_grad]
+    for param, new_val in zip(named_params, parameters):
+        param.data = torch.tensor(new_val).to(device)
+
     model.eval()
 
     val_dataset = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
@@ -161,6 +172,7 @@ def evaluate_fn(server_round, parameters, config):
     del model
     del tokenizer
     del val_dataset
+    gc.collect()
 
     empty_gpu_cache()
     if not os.path.exists("server_eval_times.txt"):
@@ -185,7 +197,7 @@ def main():
     print(f"Minimum number of clients: {min_clients}")
 
     server_config = ServerConfig(
-        num_rounds=25,
+        num_rounds=get_sever_config_param("num_rounds", 10),
     )
 
     strategy = TokenWeightedFedAvg(
