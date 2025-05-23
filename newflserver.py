@@ -17,7 +17,7 @@ import gc
 import sys
 
 def get_sever_config_param(param_name, default_value):
-    with open(f"server{sys.argv[1]}_config.json", "r") as f:
+    with open(f"config_files/server{sys.argv[1]}alfa{sys.argv[2]}.json", "r") as f:
         data = json.load(f)
         param_value = data.get(param_name, default_value)
     return param_value
@@ -147,10 +147,10 @@ def evaluate_fn(server_round, parameters, config):
     P, R, F1 = bert_score_fn(candidates, references, lang="en", model_type="bert-base-uncased")
     avg_bert = F1.mean().item()
 
-    model_save_path = f"server_model_round{server_round}.pt"
+    model_save_path = f"server{sys.argv[1]}alfa{sys.argv[2]}_model_round{server_round}.pt"
     torch.save(model.state_dict(), model_save_path)
 
-    metrics_save_path = f"server_metrics.jsonl"
+    metrics_save_path = f"server{sys.argv[1]}alfa{sys.argv[2]}_metrics.jsonl"
     # Save metrics
     if not os.path.exists(metrics_save_path):
         # create the file if it doesn't exist
@@ -170,19 +170,19 @@ def evaluate_fn(server_round, parameters, config):
     gc.collect()
 
     empty_gpu_cache()
-    if not os.path.exists("server_eval_times.txt"):
-        with open("server_eval_times.txt", "w") as f:
+    if not os.path.exists(f"server{sys.argv[1]}alfa{sys.argv[2]}_eval_times.txt"):
+        with open(f"server{sys.argv[1]}alfa{sys.argv[2]}_eval_times.txt", "w") as f:
             f.write("Server Evaluation Times\n")
 
-    with open("server_eval_times.txt", "a") as f:
+    with open(f"server{sys.argv[1]}alfa{sys.argv[2]}_eval_times.txt", "a") as f:
         f.write(f"Server Evaluation - {time.time() - start_time:.2f} seconds\n")
 
     return avg_rouge, {"rougeL": avg_rouge, "bert": avg_bert}
 
 def main():
 
-    if len(sys.argv) != 2 or sys.argv[1] not in ["135", "360"]:
-        print("Usage: python newflserver.py <135/360>")
+    if len(sys.argv) != 3 or sys.argv[1] not in ["135", "360"]:
+        print("Usage: python newflserver.py <135/360> <0/05/1>")
     
         
 

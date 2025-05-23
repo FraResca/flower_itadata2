@@ -16,7 +16,7 @@ import gc
 import sys
 
 def get_client_config_param(param_name, default_value):
-    with open(f"client{sys.argv[1]}{sys.argv[2]}_config.json", "r") as f:
+    with open(f"config_files/client{sys.argv[1]}{sys.argv[2]}", "r") as f:
         data = json.load(f)
         param_value = data.get(param_name, default_value)
     return param_value
@@ -279,11 +279,23 @@ class FlowerClient(fl.client.NumPyClient):
         avg_bert = F1.mean().item()
 
         # Optionally, save metrics to file
-        if not os.path.exists("client_eval_times.txt"):
-            with open("client_eval_times.txt", "w") as f:
+        if not os.path.exists(f"client{sys.argv[1]}{sys.argv[2]}_eval_times.txt"):
+            with open(f"client{sys.argv[1]}{sys.argv[2]}_eval_times.txt", "w") as f:
                 f.write("Client Evaluation Times\n")
-        with open("client_eval_times.txt", "a") as f:
+        with open(f"client{sys.argv[1]}{sys.argv[2]}_eval_times.txt", "a") as f:
             f.write(f"Client Evaluate - {time.time() - start_time} seconds\n")
+
+        # Save metrics to a JSON file
+        metrics_save_path = f"client{sys.argv[1]}{sys.argv[2]}_metrics.jsonl"
+        if not os.path.exists(metrics_save_path):
+            with open(metrics_save_path, "w") as metrics_file:
+                json.dump([], metrics_file)
+        with open(metrics_save_path, "a") as metrics_file:
+            json.dump({
+                "round": config["server_round"],
+                "rougeL": avg_rouge,
+                "bert": avg_bert
+            }, metrics_file, indent=2)
 
         gc.collect()
         empty_gpu_cache()
