@@ -1,5 +1,5 @@
 {
-    "modelname": "HuggingFaceTB/SmolLM2-135M",
+    "modelname": "HuggingFaceTB/SmolLM2-360M",
     "min_clients": 3,
     "num_rounds": 10,
     "round_0": true,

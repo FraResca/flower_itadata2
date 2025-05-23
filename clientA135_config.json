@@ -1,0 +1,10 @@
+{
+    "modelname": "HuggingFaceTB/SmolLM2-135M",
+    "dataset_name": "pubmed_qa_211k",
+    "train_examples": 32768,
+    "train_batch_size": 4,
+    "seed": 42,
+    "eval_examples": 32,
+    "eval_batch_size": 8,
+    "server_ip": "10.27.2.8:8080"
+}

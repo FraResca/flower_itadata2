@@ -1,0 +1,10 @@
+{
+    "modelname": "HuggingFaceTB/SmolLM2-135M",
+    "dataset_name": "small_sets_united",
+    "train_examples": 4096,
+    "train_batch_size": 1,
+    "seed": 42,
+    "eval_examples": 32,
+    "eval_batch_size": 1,
+    "server_ip": "10.27.2.8:8080"
+}

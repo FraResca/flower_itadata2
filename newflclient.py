@@ -13,9 +13,10 @@ import time
 import evaluate
 from bert_score import score as bert_score_fn
 import gc
+import sys
 
 def get_client_config_param(param_name, default_value):
-    with open("client_config.json", "r") as f:
+    with open(f"client{sys.argv[1]}{sys.argv[2]}_config.json", "r") as f:
         data = json.load(f)
         param_value = data.get(param_name, default_value)
     return param_value
@@ -294,6 +295,9 @@ class FlowerClient(fl.client.NumPyClient):
         }
             
 if __name__ == "__main__":
+    if len(sys.argv) != 3 or sys.argv[1] not in ["A", "B", "C"] or sys.argv[2] not in ["135", "360"]:
+        print("Usage: python newflclient.py <A/B/C> <135/360>")
+    
     #get the server ip from the config file
     server_ip = get_client_config_param("server_ip", "10.27.2.8:8080")
 

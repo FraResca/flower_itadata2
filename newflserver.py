@@ -14,9 +14,10 @@ from peft import LoraConfig, get_peft_model
 from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test, create_balanced_test_set
 from bert_score import score as bert_score_fn
 import gc
+import sys
 
 def get_sever_config_param(param_name, default_value):
-    with open("server_config.json", "r") as f:
+    with open(f"server{sys.argv[1]}_config.json", "r") as f:
         data = json.load(f)
         param_value = data.get(param_name, default_value)
     return param_value
@@ -179,6 +180,12 @@ def evaluate_fn(server_round, parameters, config):
     return avg_rouge, {"rougeL": avg_rouge, "bert": avg_bert}
 
 def main():
+
+    if len(sys.argv) != 2 or sys.argv[1] not in ["135", "360"]:
+        print("Usage: python newflserver.py <135/360>")
+    
+        
+
     dataset_folder_name = "datasets"
 
     if not os.path.exists(dataset_folder_name):
@@ -209,3 +216,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
