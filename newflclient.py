@@ -209,7 +209,7 @@ class FlowerClient(fl.client.NumPyClient):
         num_examples = get_client_config_param("eval_examples", 50)
 
         # Shuffle and select a subset for evaluation
-        val_data = Dataset.from_list(val_data).shuffle().select(range(min(num_examples, len(val_data))))
+        val_data = Dataset.from_list(val_data).shuffle(get_client_config_param("seed", 42)).select(range(min(num_examples, len(val_data))))
 
         self.model.eval()
         total_loss = 0.0

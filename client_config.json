@@ -1,7 +1,7 @@
 {
-    "modelname": "HuggingFaceTB/SmolLM2-135M",
+    "modelname": "HuggingFaceTB/SmolLM2-360M",
     "dataset_name": "pubmed_qa_211k",
-    "train_examples": 128,
+    "train_examples": 32768,
     "train_batch_size": 4,
     "seed": 42,
     "eval_examples": 32,

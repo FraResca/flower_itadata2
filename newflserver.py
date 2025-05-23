@@ -67,7 +67,7 @@ def evaluate_fn(server_round, parameters, config):
 
     dataset_folder_name = "datasets"
 
-    model_name = get_sever_config_param("model_name", "HuggingFaceTB/SmolLM2-135M")
+    model_name = get_sever_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     model = AutoModelForCausalLM.from_pretrained(model_name)
@@ -90,22 +90,18 @@ def evaluate_fn(server_round, parameters, config):
             tokenizer.add_special_tokens({'pad_token': '[PAD]'})
             model.resize_token_embeddings(len(tokenizer))
 
-    '''
-    params_dict = zip(model.state_dict().keys(), parameters)
-    state_dict = {k: torch.tensor(v).to(device) for k, v in params_dict}
-    model.load_state_dict(state_dict, strict=False)
-    '''
-
-    named_params = [param for name, param in model.named_parameters() if param.requires_grad]
-    for param, new_val in zip(named_params, parameters):
+    # --- Only update LoRA parameters ---
+    lora_named_params = [param for name, param in model.named_parameters() if param.requires_grad]
+    if len(lora_named_params) != len(parameters):
+        raise ValueError(f"Parameter count mismatch: model expects {len(lora_named_params)}, got {len(parameters)}")
+    for param, new_val in zip(lora_named_params, parameters):
         param.data = torch.tensor(new_val).to(device)
 
     model.eval()
 
     val_dataset = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
 
-    # non seeded shuffle to ensure different rounds get different samples
-    val_dataset = Dataset.from_list(val_dataset).shuffle().select(range(get_sever_config_param("eval_examples", len(val_dataset))))
+    val_dataset = Dataset.from_list(val_dataset).shuffle(get_sever_config_param("seed", 42)).select(range(get_sever_config_param("eval_examples", len(val_dataset))))
     
     references = []
     candidates = []
@@ -126,8 +122,6 @@ def evaluate_fn(server_round, parameters, config):
                     attention_mask=inputs.get("attention_mask"),
                     max_new_tokens=64,
                     do_sample=False,
-                   # temperature=0.7,
-                   # top_p=0.9,
                     eos_token_id=tokenizer.eos_token_id,
                     pad_token_id=tokenizer.eos_token_id,
                 )

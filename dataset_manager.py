@@ -74,13 +74,10 @@ def load_processed_dataset(load_path):
     return dataset
 
 def print_stats():
-    '''
-        Print the number of examples for each dataset and the total combined number of examples
-    '''
     total_examples = 0
     for filename in os.listdir(DATASETS_PATH):
         with open(f"{DATASETS_PATH}/{filename}", "r", encoding="utf-8") as dataset_file:
-            example_count = sum(0.5 for _ in dataset_file) # One example is on two lines, so add 1 every two lines, or 0.5 every line
+            example_count = sum(1 for _ in dataset_file)
         print(f"{filename}: {example_count} examples")
         total_examples += example_count
     print(f"Total: {total_examples} examples")
@@ -304,7 +301,31 @@ def save_all_train_test(seed=42):
         for example in all_train_data:
             json.dump(example, train_file)
             train_file.write("\n")
+    
+    # for every dataset (files in the folder that don't end with _train_set.jsonl or _test_set.jsonl) that
+    # has less than 10000 examples, unite their train sets as small_sets_united_train_set.jsonl
+    # and their test sets as small_sets_united_test_set.jsonl
+    small_sets_train = []
+    small_sets_test = []
 
+    for filename in os.listdir(DATASETS_PATH):
+        if filename.endswith("_train_set.jsonl") or filename.endswith("_test_set.jsonl"):
+            continue
+        dataset = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
+        if len(dataset) < 10000:
+            small_sets_train.extend(dataset)
+            small_sets_test.extend(dataset)
+    
+    with open(f"{DATASETS_PATH}/small_sets_united_train_set.jsonl", "w") as train_file:
+        for example in small_sets_train:
+            json.dump(example, train_file)
+            train_file.write("\n")
+    
+    with open(f"{DATASETS_PATH}/small_sets_united_test_set.jsonl", "w") as test_file:
+        for example in small_sets_test:
+            json.dump(example, test_file)
+            test_file.write("\n")
+            
 
 def create_balanced_test_set(num_samples=1024):
     '''

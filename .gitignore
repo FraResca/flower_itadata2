@@ -18,3 +18,4 @@ include
 share
 pyvenv.cfg
 __pycache__
+eval_outputs*
