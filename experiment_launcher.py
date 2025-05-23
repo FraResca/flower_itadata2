@@ -19,7 +19,7 @@ def run_commands(host, commands, is_local=False):
 
 
 commands_clientA = [
-    "cd repos/flower_itadata2 && source /home/francesco/miniconda3/etc/profile.d/conda.sh && conda activate flower && ./startclient.sh A {model}".format(model=model),
+    "cd repos/flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh A {model}".format(model=model),
 ]
 
 commands_clientB = [
@@ -27,11 +27,11 @@ commands_clientB = [
 ]
 
 commands_clientC = [
-    "cd Scaricati/flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh C {model}".format(model=model),
+    "cd flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh C {model}".format(model=model),
 ]
 
 commands_server = [
-    "cd repos/flower_itadata2 && source /home/francesco/miniconda3/etc/profile.d/conda.sh && conda activate flower && ./startserver.sh {model} {alfa}".format(model=model, alfa=alfa),
+    "cd repos/flower_itadata2 && source venv_flower/bin/activate && ./startserver.sh {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 # Host and command configurations

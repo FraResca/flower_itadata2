@@ -320,7 +320,7 @@ if __name__ == "__main__":
         preprocess_all()
         save_all_train_test(get_client_config_param("seed", 42))
         create_balanced_test_set()
-    while True:
+    for i in range(10):
         try:
             fl.client.start_client(
                 server_address=server_ip,
