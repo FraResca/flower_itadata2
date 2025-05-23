@@ -47,7 +47,7 @@ terminals = [
     {"host": "rambo", "commands": commands_clientA},      # Remote 1
     {"host": "giordano", "commands": commands_clientB},     # Remote 2
     {"host": "girolamo", "commands": commands_clientC},# Remote 3
-    {"host": "rambo",     "commands": ["echo Hello", "pwd"], "local": True},  # Local
+    {"host": "rambo",     "commands": commands_server, "local": True},  # Local
 ]
 
 @task
