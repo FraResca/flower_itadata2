@@ -16,7 +16,7 @@ import gc
 import sys
 
 def get_client_config_param(param_name, default_value):
-    with open(f"config_files/client{sys.argv[1]}{sys.argv[2]}", "r") as f:
+    with open(f"config_files/client{sys.argv[1]}{sys.argv[2]}.json", "r") as f:
         data = json.load(f)
         param_value = data.get(param_name, default_value)
     return param_value
