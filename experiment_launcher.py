@@ -3,7 +3,7 @@ import threading
 from invoke import Context
 
 model = "135"
-alfa = "05"
+alfa = "0"
 
 # Define each terminal's task
 def run_commands(host, commands, is_local=False):
@@ -19,19 +19,19 @@ def run_commands(host, commands, is_local=False):
 
 
 commands_clientA = [
-    "cd repos/flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh A {model}".format(model=model),
+    "cd repos/flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh A {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 commands_clientB = [
-    "cd Scaricati/flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh B {model}".format(model=model),
+    "cd Scaricati/flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh B {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 commands_clientC = [
-    "cd flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh C {model}".format(model=model),
+    "cd flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh C {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 commands_server = [
-    "cd repos/flower_itadata2 && git pull && source venv_flower/bin/activate && ./startserver.sh {model} {alfa}".format(model=model, alfa=alfa),
+    "cd repos/flower_itadata2 && source venv_flower/bin/activate && ./startserver.sh {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 # Host and command configurations
