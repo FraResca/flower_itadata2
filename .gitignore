@@ -9,8 +9,9 @@ __pycache__
 eval_outputs*
 fabric_script/sudo_passwds.json
 fabric_script/collected_files/girolamo/clientC135_eval_times.txt
-fabric_script/*.txt
-fabric_script/*.json
-fabric_script/*.lore
-fabric_script/*.jsonl
+fabric_script/**/*.txt
+fabric_script/**/*.json
+fabric_script/**/*.lore
+fabric_script/**/*.jsonl
 .gitignore
+
