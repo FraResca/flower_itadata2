@@ -1,16 +1,4 @@
-cached_datasets
-tinyllama_model
-tinyllama-alpaca-finetuned
-smollm_model
-smollm-alpaca-finetuned
-smollm-finetuned
-server_evaluation
-tokenized_train
-tokenized_val
-aggregated_models
-hcm_dataset
-server_model*
-server_*
+*.pt
 datasets
 bin
 lib
@@ -19,3 +7,5 @@ share
 pyvenv.cfg
 __pycache__
 eval_outputs*
+server*
+client*

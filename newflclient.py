@@ -292,7 +292,7 @@ class FlowerClient(fl.client.NumPyClient):
                 json.dump([], metrics_file)
         with open(metrics_save_path, "a") as metrics_file:
             json.dump({
-                "round": config["server_round"],
+                "round": config.get("server_round", -1),
                 "rougeL": avg_rouge,
                 "bert": avg_bert
             }, metrics_file, indent=2)
