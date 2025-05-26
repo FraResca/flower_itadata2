@@ -15,5 +15,6 @@ fabric_script/**/*.lore
 fabric_script/**/*.jsonl
 client*
 server*
+*.jsonl
 .gitignore
 
