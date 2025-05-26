@@ -35,10 +35,10 @@ def get_files(host, path, extensions = [".txt", ".lore", ".jsonl"]):
                 file = file.strip()
                 if file:
                     local_path = os.path.join(local_dir, os.path.basename(file))
-                    remote_path = os.path.join(path, file)
-                    print(f"[{host}] Copying {remote_path} to {local_path}")
-                    conn.get(remote_path, local=local_path)
-                    print(f"[{host}] Copied {remote_path} to {local_path}")
+                    #remote_path = os.path.join(path, file)
+                    print(f"[{host}] Copying {file} to {local_path}")
+                    conn.get(file, local=local_path)
+                    print(f"[{host}] Copied {file} to {local_path}")
         else:
             print(f"[{host}] No files found with extension {ext}")
 
