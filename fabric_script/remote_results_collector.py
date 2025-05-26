@@ -8,12 +8,11 @@ This script collects files from remote servers using Fabric.
 It connects to each server, runs a command to navigate to a specific directory, collects files with specified extensions, and saves them locally in a folder with same same name of the host.
 '''
 
-extensions_to_collect = [".txt", ".lore", ".jsonl"]
 
 # Define each terminal's task
-def get_files(host, command):
+def get_files(host, path, extensions = [".txt", ".lore", ".jsonl"]):
     print(f"{host}, {type(host)}")
-    print(f"{command}, {type(command)}")
+    print(f"{path}, {type(path)}")
     conn = Connection(host)
     # Create a directory to store collected files in the local machine
     local_dir = f"./collected_files/{host}/"
@@ -22,34 +21,37 @@ def get_files(host, command):
     #remove all files in the local directory
     for file in os.listdir(local_dir):
         os.remove(os.path.join(local_dir, file))
-
-    print(f"\n[{host}] Running: {command}", type(command))
-    result = conn.run(command, hide=False)
  
     # Collect files with specified extensions
-    for ext in extensions_to_collect:
-        #files = conn.run(f"find . -maxdepth 1 -name '*{ext}'")
-        files = conn.run("pwd")
+    for ext in extensions:
+        command = f"find {path} -maxdepth 1 -name '*{ext}'"
+        print(f"\n[{host}] Running: {command}")
+        files = conn.run(command, hide=True)
         if files.stdout:
             print(f"[{host}] Found files with extension {ext}: {files.stdout}")
             # Copying files to local machine
             #conn.get(files.stdout, local=f"./collected_files/{host}/")
+            for file in files.stdout.splitlines():
+                file = file.strip()
+                if file:
+                    local_path = os.path.join(local_dir, os.path.basename(file))
+                    remote_path = os.path.join(path, file)
+                    print(f"[{host}] Copying {remote_path} to {local_path}")
+                    conn.get(remote_path, local=local_path)
+                    print(f"[{host}] Copied {remote_path} to {local_path}")
         else:
             print(f"[{host}] No files found with extension {ext}")
 
-    print(f"[{host}] Output:\n{result.stdout}")
+        print(f"[{host}] Output:\n{files.stdout}")
 
-
-commands_clientB =  "cd Scaricati/flower_itadata2"
-commands_clientC =  "cd flower_itadata2"
-commands_server =  "cd flower_itadata2"
+#find_command =  " find . -maxdepth 1 -name '*EXTENSION'"
 
 
 # Host and command configurations
 terminals = [
-    {"host": "giordano", "command": commands_clientB},
-    {"host": "girolamo", "command": commands_clientC},
-    {"host": "rambo", "command": commands_server},
+    {"host": "giordano", "path": "Scaricati/flower_itadata2"},
+    {"host": "girolamo", "path": "flower_itadata2"},
+    {"host": "rambo", "path": "repos/flower_itadata2"},
 ]
 
 @task
@@ -59,7 +61,7 @@ def run_all(c):
       
         t = threading.Thread(
             target=get_files,
-            args=(term["host"], term["command"]),
+            args=(term["host"], term["path"]),
         )
         threads.append(t)
         t.start()
@@ -68,4 +70,6 @@ def run_all(c):
         t.join()
 
 if __name__ == "__main__":
+    print("Starting remote results collector script")
+    print("The files will be collected in the folder ./collected_files/")
     run_all(Context())
