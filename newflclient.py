@@ -184,11 +184,11 @@ class FlowerClient(fl.client.NumPyClient):
                 
             empty_gpu_cache()
 
-        if not os.path.exists("client_train_times.txt"):
-            with open("client_train_times.txt", "w") as f:
+        if not os.path.exists(f"client{sys.argv[1]}{sys.argv[2]}{sys.argv[3]}_train_times.txt"):
+            with open(f"client{sys.argv[1]}{sys.argv[2]}{sys.argv[3]}_train_times.txt", "w") as f:
                 f.write("Client Training Times\n")
         
-        with open("client_train_times.txt", "a") as f:
+        with open(f"client{sys.argv[1]}{sys.argv[2]}{sys.argv[3]}_train_times.txt", "a") as f:
             f.write(f"Client Fit - {time.time() - start_time} seconds\n")
         
         gc.collect()
@@ -279,20 +279,20 @@ class FlowerClient(fl.client.NumPyClient):
         avg_bert = F1.mean().item()
 
         # Optionally, save metrics to file
-        if not os.path.exists(f"client{sys.argv[1]}{sys.argv[2]}_eval_times.txt"):
-            with open(f"client{sys.argv[1]}{sys.argv[2]}_eval_times.txt", "w") as f:
+        if not os.path.exists(f"client{sys.argv[1]}{sys.argv[2]}{sys.argv[3]}_eval_times.txt"):
+            with open(f"client{sys.argv[1]}{sys.argv[2]}{sys.argv[3]}_eval_times.txt", "w") as f:
                 f.write("Client Evaluation Times\n")
-        with open(f"client{sys.argv[1]}{sys.argv[2]}_eval_times.txt", "a") as f:
+        with open(f"client{sys.argv[1]}{sys.argv[2]}{sys.argv[3]}_eval_times.txt", "a") as f:
             f.write(f"Client Evaluate - {time.time() - start_time} seconds\n")
 
         # Save metrics to a JSON file
-        metrics_save_path = f"client{sys.argv[1]}{sys.argv[2]}_metrics.jsonl"
+        metrics_save_path = f"client{sys.argv[1]}{sys.argv[2]}{sys.argv[3]}_metrics.jsonl"
         if not os.path.exists(metrics_save_path):
             with open(metrics_save_path, "w") as metrics_file:
                 json.dump([], metrics_file)
         with open(metrics_save_path, "a") as metrics_file:
             json.dump({
-                "round": config["server_round"],
+                "round": config.get("server_round", -1),
                 "rougeL": avg_rouge,
                 "bert": avg_bert
             }, metrics_file, indent=2)
@@ -307,7 +307,7 @@ class FlowerClient(fl.client.NumPyClient):
         }
             
 if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[1] not in ["A", "B", "C"] or sys.argv[2] not in ["135", "360"]:
+    if len(sys.argv) != 4 or sys.argv[1] not in ["A", "B", "C"] or sys.argv[2] not in ["135", "360"] or sys.argv[3] not in ["0", "05", "1"]:
         print("Usage: python newflclient.py <A/B/C> <135/360>")
     
     #get the server ip from the config file

@@ -2,9 +2,6 @@ from fabric import Connection, task
 import threading
 from invoke import Context
 
-model = "135"
-alfa = "0"
-
 # Define each terminal's task
 def run_commands(host, commands, is_local=False):
     if is_local:
@@ -19,19 +16,19 @@ def run_commands(host, commands, is_local=False):
 
 
 commands_clientA = [
-    "cd repos/flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh A {model} {alfa}".format(model=model, alfa=alfa),
+    "cd repos/flower_itadata2 && ./cleaner.sh",
 ]
 
 commands_clientB = [
-    "cd Scaricati/flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh B {model} {alfa}".format(model=model, alfa=alfa),
+    "cd Scaricati/flower_itadata2 && ./cleaner.sh",
 ]
 
 commands_clientC = [
-    "cd flower_itadata2 && source venv_flower/bin/activate && ./startclient.sh C {model} {alfa}".format(model=model, alfa=alfa),
+    "cd flower_itadata2  && ./cleaner.sh",
 ]
 
 commands_server = [
-    "cd repos/flower_itadata2 && source venv_flower/bin/activate && ./startserver.sh {model} {alfa}".format(model=model, alfa=alfa),
+    "cd repos/flower_itadata2  && ./cleaner.sh",
 ]
 
 # Host and command configurations
