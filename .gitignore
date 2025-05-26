@@ -13,4 +13,6 @@ fabric_script/*.txt
 fabric_script/*.json
 fabric_script/*.lore
 fabric_script/*.jsonl
+client*
+server*
 .gitignore

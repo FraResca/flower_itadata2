@@ -107,7 +107,7 @@ def evaluate_fn(server_round, parameters, config):
     references = []
     candidates = []
 
-    output_file = f"eval_outputs_round{server_round}.jsonl"
+    output_file = f"eval{sys.argv[1]}alfa{sys.argv[2]}_outputs_round{server_round}.jsonl"
     batch_size = get_sever_config_param("eval_batch_size", 2)
     dataloader = DataLoader(val_dataset, batch_size=batch_size, collate_fn=lambda x: x)
     
@@ -184,8 +184,6 @@ def main():
     if len(sys.argv) != 3 or sys.argv[1] not in ["135", "360"]:
         print("Usage: python newflserver.py <135/360> <0/05/1>")
     
-        
-
     dataset_folder_name = "datasets"
 
     if not os.path.exists(dataset_folder_name):
