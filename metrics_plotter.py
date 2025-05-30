@@ -5,7 +5,7 @@ import os
 import re
 import sys
 
-SEARCH_PATH = "fabric_script/collected_files/**/server*alfa*_metrics.jsonl"
+SEARCH_PATH = f"fabric_script/collected_files/**/server{sys.argv[1]}alfa*_metrics.jsonl"
 
 json_obj_pattern = re.compile(r'\{[^}]*\}', re.DOTALL)
 

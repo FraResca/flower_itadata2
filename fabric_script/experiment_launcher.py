@@ -2,7 +2,7 @@ from fabric import Connection, task
 import threading
 from invoke import Context
 
-model = "135"
+model = "360"
 alfa = "1"
 
 # Define each terminal's task
@@ -36,10 +36,10 @@ commands_server = [
 
 # Host and command configurations
 terminals = [
+    {"host": "rambo", "commands": commands_server},
     {"host": "rambo", "commands": commands_clientA},
     {"host": "giordano", "commands": commands_clientB},
     {"host": "girolamo", "commands": commands_clientC},
-    {"host": "rambo", "commands": commands_server},
 ]
 
 @task
