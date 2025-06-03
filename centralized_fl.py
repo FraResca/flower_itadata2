@@ -69,7 +69,7 @@ def main():
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     model.train()
-    batch_size = get_config_param("train_batch_size", 2)
+    batch_size = get_config_param("train_batch_size", 4)
     epochs = get_config_param("epochs", 5)
     dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True, collate_fn=lambda x: x)
 
