@@ -153,18 +153,27 @@ def main():
         eval_time = eval_end - eval_start
         epoch_eval_times.append(eval_time)
 
-        metric = evaluate.load("rouge")
-        results = metric.compute(predictions=candidates, references=references)
-        avg_rouge = results["rougeL"]
+        # Ensure candidates and references are valid
+        if len(candidates) == 0 or len(references) == 0:
+            print(f"Warning: No predictions or references generated for epoch {epoch+1}. Skipping metric computation.")
+            epoch_metrics.append({
+                "epoch": epoch + 1,
+                "rougeL": None,
+                "bert": None
+            })
+        else:
+            metric = evaluate.load("rouge")
+            results = metric.compute(predictions=candidates, references=references)
+            avg_rouge = results["rougeL"]
 
-        P, R, F1 = bert_score_fn(candidates, references, lang="en", model_type="bert-base-uncased")
-        avg_bert = F1.mean().item()
+            P, R, F1 = bert_score_fn(candidates, references, lang="en", model_type="bert-base-uncased")
+            avg_bert = F1.mean().item()
 
-        epoch_metrics.append({
-            "epoch": epoch + 1,
-            "rougeL": avg_rouge,
-            "bert": avg_bert
-        })
+            epoch_metrics.append({
+                "epoch": epoch + 1,
+                "rougeL": avg_rouge,
+                "bert": avg_bert
+            })
 
         model.train()
 
