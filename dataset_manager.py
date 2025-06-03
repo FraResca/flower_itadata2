@@ -292,9 +292,10 @@ def save_all_train_test(seed=42):
     '''
     for filename in os.listdir(DATASETS_PATH):
         if filename.endswith(".jsonl") and not filename.endswith("_train_set.jsonl") and not filename.endswith("_test_set.jsonl"):
+            print(f"Loading {filename}")  # Add this line
             dataset = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
             save_train_test_split(dataset, filename.split(".")[0], seed=seed)
-
+            
     # create ALL_train_set.jsonl
     all_train_data = load_all_train()
     with open(f"{DATASETS_PATH}/ALL_train_set.jsonl", "w") as train_file:
@@ -309,12 +310,14 @@ def save_all_train_test(seed=42):
     small_sets_test = []
 
     for filename in os.listdir(DATASETS_PATH):
-        if filename.endswith("_train_set.jsonl") or filename.endswith("_test_set.jsonl"):
+        if filename.endswith("_train_set.jsonl") or filename.endswith("_test_set.jsonl") or not filename.endswith(".jsonl"):
             continue
+        print(f"Loading {filename} for small sets")  # Add this line
         dataset = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
         if len(dataset) < 10000:
             small_sets_train.extend(dataset)
             small_sets_test.extend(dataset)
+    
     
     with open(f"{DATASETS_PATH}/small_sets_united_train_set.jsonl", "w") as train_file:
         for example in small_sets_train:
@@ -337,7 +340,7 @@ def create_balanced_test_set(num_samples=1024):
     # Load all test sets
     datasets = {}
     for filename in os.listdir(DATASETS_PATH):
-        if filename.endswith("_test_set.jsonl"):
+        if filename.endswith("_test_set.jsonl") and not filename.startswith("small_sets_united"):
             dataset_name = filename.split("_test_set.jsonl")[0]
             datasets[dataset_name] = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
 
@@ -358,7 +361,10 @@ def create_balanced_test_set(num_samples=1024):
     print(f"Scaled sizes: {scaled_sizes}")
     
     balanced_test_set = []
+    # for dataset_name, dataset in datasets.items():
     for dataset_name, dataset in datasets.items():
+        if not dataset_name.endswith("_test_set.jsonl") or dataset_name == "small_sets_united*":
+            continue
         sample_size = scaled_sizes[dataset_name]
         random.seed(42)
         random.shuffle(dataset)
