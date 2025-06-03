@@ -4,7 +4,7 @@ import time
 import json
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import LoraConfig, get_peft_model
-from datasets import Dataset
+from datasets import Dataset, concatenate_datasets
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import evaluate
@@ -65,7 +65,7 @@ def main():
     smalls_data = load_processed_dataset(f"{dataset_folder_name}/small_sets_united_train_set.jsonl")
     smalls_data = Dataset.from_list(smalls_data).shuffle().select(range(min(len(smalls_data), 4096)))
 
-    train_data = pub211_data.concatenate(med34_data).concatenate(smalls_data)
+    train_data = concatenate_datasets([pub211_data, med34_data, smalls_data])
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     model.train()
