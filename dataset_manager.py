@@ -347,10 +347,15 @@ def create_balanced_test_set(num_samples=1024):
     # Number of examples in each test set
     dataset_sizes = {dataset_name: len(dataset) for dataset_name, dataset in datasets.items()}
 
-    # Scale them to sum to num_samples
     total_size = sum(dataset_sizes.values())
+    if total_size == 0:
+        print("No test sets found in DATASETS_PATH. No balanced test set created.")
+        return
+
+    # Scale them to sum to num_samples
     scale_factor = num_samples / total_size
-    scaled_sizes = {dataset_name: int(size * scale_factor) for dataset_name, size in dataset_sizes.items()}
+    # Guarantee at least 1 sample per dataset if possible
+    scaled_sizes = {dataset_name: max(1, int(size * scale_factor)) for dataset_name, size in dataset_sizes.items()}
 
     # Ensure that the sum of the scaled sizes is equal to num_samples
     scaled_sum = sum(scaled_sizes.values())
@@ -359,19 +364,22 @@ def create_balanced_test_set(num_samples=1024):
         scaled_sizes[last_dataset_name] += (num_samples - scaled_sum)
 
     print(f"Scaled sizes: {scaled_sizes}")
-    
+
     balanced_test_set = []
-    # for dataset_name, dataset in datasets.items():
+    random.seed(42)  # Set seed once for reproducibility
     for dataset_name, dataset in datasets.items():
-        if not dataset_name.endswith("_test_set.jsonl") or dataset_name == "small_sets_united*":
-            continue
         sample_size = scaled_sizes[dataset_name]
-        random.seed(42)
+        if sample_size == 0:
+            print(f"Warning: sample_size for {dataset_name} is 0, skipping.")
+            continue
         random.shuffle(dataset)
+        if sample_size > len(dataset):
+            print(f"Warning: Requested {sample_size} samples from {dataset_name}, but only {len(dataset)} available. Using all available samples.")
+            sample_size = len(dataset)
         samples = dataset[:sample_size]
         balanced_test_set.extend(samples)
         print(f"Added {sample_size} samples from {dataset_name} to the balanced test set")
-    
+
     # Save the balanced test set
     with open(f"{DATASETS_PATH}/balanced_test_set.jsonl", "w") as test_file:
         for example in balanced_test_set:

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/fresca/repos/flower_itadata2/centralized_fl.py", line 282, in <module>
+    main()
+  File "/home/fresca/repos/flower_itadata2/centralized_fl.py", line 34, in main
+    model_name = get_config_param("modelname", "HuggingFaceTB/SmolLM2-135M")
+  File "/home/fresca/repos/flower_itadata2/centralized_fl.py", line 18, in get_config_param
+    config_path = f"config_files/centralized{sys.argv[1]}.json"
+IndexError: list index out of range

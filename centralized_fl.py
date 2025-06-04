@@ -57,13 +57,13 @@ def main():
 
     # Load and shuffle train set
     pub211_data = load_processed_dataset(f"{dataset_folder_name}/pubmed_qa_211k_train_set.jsonl")
-    pub211_data = Dataset.from_list(pub211_data).shuffle().select(range(min(len(pub211_data), 32768)))
+    pub211_data = Dataset.from_list(pub211_data).shuffle().select(range(32768))
 
     med34_data = load_processed_dataset(f"{dataset_folder_name}/medical_meadow_medical_flashcards_34k_train_set.jsonl")
-    med34_data = Dataset.from_list(med34_data).shuffle().select(range(min(len(med34_data), 4096)))
+    med34_data = Dataset.from_list(med34_data).shuffle().select(range(4096))
 
     smalls_data = load_processed_dataset(f"{dataset_folder_name}/small_sets_united_train_set.jsonl")
-    smalls_data = Dataset.from_list(smalls_data).shuffle().select(range(min(len(smalls_data), 4096)))
+    smalls_data = Dataset.from_list(smalls_data).shuffle().select(range(4096))
 
     train_data = concatenate_datasets([pub211_data, med34_data, smalls_data])
 
@@ -115,6 +115,7 @@ def main():
         model.eval()
         val_data = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
         num_eval_examples = get_config_param("eval_examples", len(val_data))
+        print(f"Evaluating on {num_eval_examples} examples.")
         val_data = Dataset.from_list(val_data).shuffle(get_config_param("seed", 42)).select(range(num_eval_examples))
         val_dataloader = DataLoader(val_data, batch_size=get_config_param("eval_batch_size", 2), collate_fn=lambda x: x)
 
@@ -244,12 +245,18 @@ def main():
     with open(eval_time_file, "w") as f:
         f.write(f"{eval_time:.4f}\n")
 
-    metric = evaluate.load("rouge")
-    results = metric.compute(predictions=candidates, references=references)
-    avg_rouge = results["rougeL"]
+    # Add this check before metric computation
+    if len(candidates) == 0 or len(references) == 0:
+        print("Warning: No predictions or references generated in final evaluation. Skipping metric computation.")
+        avg_rouge = None
+        avg_bert = None
+    else:
+        metric = evaluate.load("rouge")
+        results = metric.compute(predictions=candidates, references=references)
+        avg_rouge = results["rougeL"]
 
-    P, R, F1 = bert_score_fn(candidates, references, lang="en", model_type="bert-base-uncased")
-    avg_bert = F1.mean().item()
+        P, R, F1 = bert_score_fn(candidates, references, lang="en", model_type="bert-base-uncased")
+        avg_bert = F1.mean().item()
 
     model_save_path = f"centralized{sys.argv[1]}_model.pt"
     torch.save(model.state_dict(), model_save_path)
