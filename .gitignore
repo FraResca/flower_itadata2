@@ -17,4 +17,4 @@ client*
 server*
 *.jsonl
 .gitignore
-
+plots/*
