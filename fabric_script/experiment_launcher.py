@@ -2,8 +2,8 @@ from fabric import Connection, task
 import threading
 from invoke import Context
 
-model = "360"
-alfa = "1"
+model = "135"
+alfa = "0"
 
 # Define each terminal's task
 def run_commands(host, commands, is_local=False):

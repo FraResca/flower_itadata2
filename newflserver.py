@@ -11,7 +11,7 @@ from datasets import Dataset
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from peft import LoraConfig, get_peft_model
-from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test, create_balanced_test_set
+from dataset_manager import load_processed_dataset, preprocess
 from bert_score import score as bert_score_fn
 import gc
 import sys
@@ -188,10 +188,7 @@ def main():
 
     if not os.path.exists(dataset_folder_name):
         os.makedirs(dataset_folder_name)
-        preprocess_all()
-        save_all_train_test(get_sever_config_param("seed", 42))
-        create_balanced_test_set()
-
+        preprocess()
     min_clients = get_sever_config_param("min_clients", 2)
     print(f"Minimum number of clients: {min_clients}")
 
