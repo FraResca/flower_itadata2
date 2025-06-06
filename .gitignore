@@ -8,13 +8,14 @@ pyvenv.cfg
 __pycache__
 eval_outputs*
 fabric_script/sudo_passwds.json
-fabric_script/collected_files/girolamo/clientC135_eval_times.txt
 fabric_script/**/*.txt
 fabric_script/**/*.json
 fabric_script/**/*.lore
 fabric_script/**/*.jsonl
-client*
-server*
+client*.txt
+server*.txt
+client*.jsonl
+server*.jsonl
 *.jsonl
 .gitignore
 plots/*

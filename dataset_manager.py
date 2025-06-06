@@ -3,6 +3,7 @@ import json
 import random
 from datasets import load_dataset
 from tqdm import tqdm
+from dataset_analisys import merge_trainsets_split_save
 
 ###############################
 ########## VARIABLES ##########
@@ -340,7 +341,7 @@ def create_balanced_test_set(num_samples=1024):
     # Load all test sets
     datasets = {}
     for filename in os.listdir(DATASETS_PATH):
-        if filename.endswith("_test_set.jsonl") and not filename.startswith("small_sets_united"):
+        if filename.endswith("_test_set.jsonl") and not filename.startswith("small_sets_united") and not filename.startswith("balanced"):
             dataset_name = filename.split("_test_set.jsonl")[0]
             datasets[dataset_name] = load_processed_dataset(f"{DATASETS_PATH}/{filename}")
 
@@ -424,9 +425,13 @@ def load_all_train():
 ########## MAIN ##########
 ##########################
 
+def preprocess():
+        preprocess_all()
+        save_all_train_test()
+        create_balanced_test_set()
+        merge_trainsets_split_save()
+
 # For preprocessing purposes only
 if __name__ == "__main__":
-    preprocess_all()
-    save_all_train_test()
-    create_balanced_test_set()
+    preprocess()
     print("All datasets preprocessed and saved.")

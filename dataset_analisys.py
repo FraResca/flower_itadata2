@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import os
 
 
 def create_histogram(word_counts: list, dataset_name: str = "Dataset Name"):
@@ -122,6 +123,29 @@ def print_dataset_statistics(word_count: list):
 
     #$create_histogram(dataset_dict["word_count"], dataset.split('/')[-1].replace('.jsonl', ''))
 
+def merge_trainsets_split_save():
+    # Find the train sets (their name ends with '_train_set') in the dataset_list and merge them
+
+    dataset_path = './datasets/'
+    dataset_list = ["medical_meadow_medical_flashcards_34k.jsonl", "medical_meadow_wikidoc_10k.jsonl", "medical_meadow_wikidoc_patient_information_6k.jsonl", "pubmed_qa_211k.jsonl"]
+    # add _train_set to the dataset names
+    dataset_list = [dataset.replace('.jsonl', '_train_set.jsonl') for dataset in dataset_list]
+
+    merged_dataset = merge_datasets(dataset_list, dataset_path)
+    short_samples, long_samples = dataset_split(merged_dataset, len_threshold=90)
+
+    # print the number of samples in each split and save the files with _train_set
+
+    print(f"Number of short samples: {len(short_samples)}")
+    print(f"Number of long samples: {len(long_samples)}")
+
+    with open(dataset_path + 'short_train_set.jsonl', 'w') as f:
+        for sample in short_samples:
+            f.write(json.dumps(sample) + '\n')
+    with open(dataset_path + 'long_train_set.jsonl', 'w') as f:
+        for sample in long_samples:
+            f.write(json.dumps(sample) + '\n')
+
 if __name__ == "__main__":
     dataset_path = './datasets/'  # Replace with your dataset path
     dataset_list = ["medical_meadow_medical_flashcards_34k.jsonl", "medical_meadow_wikidoc_10k.jsonl", "medical_meadow_wikidoc_patient_information_6k.jsonl", "pubmed_qa_211k.jsonl"]
@@ -139,6 +163,7 @@ if __name__ == "__main__":
     print_dataset_statistics(global_word_count)
 
     '''
+
     merged_dataset = merge_datasets(dataset_list, dataset_path)
     short_samples, long_samples = dataset_split(merged_dataset, len_threshold=90)
     print("SHORT:")

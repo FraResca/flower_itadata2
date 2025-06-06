@@ -19,15 +19,15 @@ def run_commands(host, commands, is_local=False):
 
 
 commands_clientA = [
-    "cd repos/flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh A {model} {alfa}".format(model=model, alfa=alfa),
+    "cd repos/flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh D {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 commands_clientB = [
-    "cd Scaricati/flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh B {model} {alfa}".format(model=model, alfa=alfa),
+    "cd Scaricati/flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh E {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 commands_clientC = [
-    "cd flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh C {model} {alfa}".format(model=model, alfa=alfa),
+    "cd flower_itadata2 && git pull && source venv_flower/bin/activate && ./startclient.sh F {model} {alfa}".format(model=model, alfa=alfa),
 ]
 
 commands_server = [

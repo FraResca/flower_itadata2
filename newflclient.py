@@ -7,7 +7,7 @@ from newflutils import empty_gpu_cache
 from tqdm import tqdm
 from peft import LoraConfig, get_peft_model
 from torch.utils.data import DataLoader
-from dataset_manager import load_processed_dataset, preprocess_all, save_all_train_test, create_balanced_test_set
+from dataset_manager import load_processed_dataset, preprocess
 from datasets import Dataset
 import time
 import evaluate
@@ -317,9 +317,7 @@ if __name__ == "__main__":
     dataset_folder_name = "datasets"
     if not os.path.exists(dataset_folder_name):
         os.makedirs(dataset_folder_name)
-        preprocess_all()
-        save_all_train_test(get_client_config_param("seed", 42))
-        create_balanced_test_set()
+        preprocess()
     for i in range(10):
         try:
             fl.client.start_client(
