@@ -16,7 +16,7 @@ def run_commands(host, commands, is_local=False):
         print(f"[{host}] Output:\n{result.stdout}")
 
 
-killer_commands = ["sudo kill -9 $(pidof python3)"]
+killer_commands = ["kill -9 $(pidof python3)"]
 
 
 terminals = [
