@@ -203,7 +203,7 @@ class FlowerClient(fl.client.NumPyClient):
         dataset_name = get_client_config_param("dataset_name", "chatdoctor_icliniq_7k")
 
         self.set_parameters(parameters)
-        if dataset_name == "ALL":
+        if dataset_name in ["ALL", "short", "long"]:
             val_data = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
         else:
             val_data = load_processed_dataset(f"{dataset_folder_name}/{dataset_name}_test_set.jsonl")
