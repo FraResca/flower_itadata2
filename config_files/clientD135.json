@@ -2,9 +2,9 @@
     "modelname": "HuggingFaceTB/SmolLM2-135M",
     "dataset_name": "long",
     "train_examples": 16384,
-    "train_batch_size": 1,
+    "train_batch_size": 4,
     "seed": 42,
     "eval_examples": 32,
-    "eval_batch_size": 1,
+    "eval_batch_size": 8,
     "server_ip": "10.27.2.8:8080"
 }

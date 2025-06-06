@@ -307,8 +307,8 @@ class FlowerClient(fl.client.NumPyClient):
         }
             
 if __name__ == "__main__":
-    if len(sys.argv) != 4 or sys.argv[1] not in ["A", "B", "C"] or sys.argv[2] not in ["135", "360"] or sys.argv[3] not in ["0", "05", "1"]:
-        print("Usage: python newflclient.py <A/B/C> <135/360>")
+    if len(sys.argv) != 4 or sys.argv[1] not in ["A", "B", "C", "D", "E", "F"] or sys.argv[2] not in ["135", "360"] or sys.argv[3] not in ["0", "05", "1"]:
+        print("Usage: python newflclient.py <A/B/C/D/E/F> <135/360>")
     
     #get the server ip from the config file
     server_ip = get_client_config_param("server_ip", "10.27.2.8:8080")
