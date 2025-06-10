@@ -3,7 +3,7 @@ import threading
 from invoke import Context
 
 model = "135"
-alfa = "0"
+alfa = "025"
 
 # Define each terminal's task
 def run_commands(host, commands, is_local=False):
