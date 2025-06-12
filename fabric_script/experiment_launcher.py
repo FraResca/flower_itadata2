@@ -2,11 +2,11 @@ from fabric import Connection, task
 import threading
 from invoke import Context
 
-model = "135"
+model = "360"
 alfa = "025"
 
 # Define each terminal's task
-def run_commands(host, commands, is_local=False):
+def run_commands(host, commands, is_local=False): 
     if is_local:
         conn = Connection('localhost')
     else:
