@@ -1,7 +1,7 @@
 {
     "modelname": "HuggingFaceTB/SmolLM2-360M",
     "dataset_name": "long",
-    "train_examples": 16384,
+    "train_examples": 8192,
     "train_batch_size": 4,
     "seed": 42,
     "eval_examples": 32,
