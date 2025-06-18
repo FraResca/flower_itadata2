@@ -73,7 +73,7 @@ def main():
     short_data = Dataset.from_list(short_data).shuffle(get_config_param("seed", 42)).select(range(16384))
 
     long_data = load_processed_dataset(f"{dataset_folder_name}/long_train_set.jsonl")
-    long_data = Dataset.from_list(long_data).shuffle(get_config_param("seed", 42)).select(range(16384))
+    long_data = Dataset.from_list(long_data).shuffle(get_config_param("seed", 42)).select(range(8192))
 
     train_data = concatenate_datasets([short_data, long_data])
 
