@@ -1,6 +1,6 @@
 {
     "modelname": "HuggingFaceTB/SmolLM2-360M",
-    "epochs": 5,
+    "epochs": 6,
     "round_0": true,
     "train_examples": 32768,
     "train_batch_size": 4,

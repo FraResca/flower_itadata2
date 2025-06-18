@@ -211,6 +211,7 @@ def main():
     eval_start = time.time()
 
     model.eval()
+    model.to(device)
     val_data = load_processed_dataset(f"{dataset_folder_name}/balanced_test_set.jsonl")
     num_eval_examples = get_config_param("eval_examples", len(val_data))
     val_data = Dataset.from_list(val_data).shuffle(get_config_param("seed", 42)).select(range(num_eval_examples))
