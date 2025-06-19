@@ -56,7 +56,6 @@ def main():
             model.resize_token_embeddings(len(tokenizer))
 
     # Load and shuffle train set
-    '''
     pub211_data = load_processed_dataset(f"{dataset_folder_name}/pubmed_qa_211k_train_set.jsonl")
     pub211_data = Dataset.from_list(pub211_data).shuffle().select(range(32768))
 
@@ -67,8 +66,8 @@ def main():
     smalls_data = Dataset.from_list(smalls_data).shuffle().select(range(4096))
 
     train_data = concatenate_datasets([pub211_data, med34_data, smalls_data])
-    '''
 
+    '''
     short_data = load_processed_dataset(f"{dataset_folder_name}/short_train_set.jsonl")
     short_data = Dataset.from_list(short_data).shuffle(get_config_param("seed", 42)).select(range(16384))
 
@@ -76,6 +75,7 @@ def main():
     long_data = Dataset.from_list(long_data).shuffle(get_config_param("seed", 42)).select(range(8192))
 
     train_data = concatenate_datasets([short_data, long_data])
+    '''
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     model.train()

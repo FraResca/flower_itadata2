@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import os
 import re
 import sys
+import matplotlib.pyplot as plt
+
+plt.rcParams.update({'font.size': 18})
 
 SEARCH_PATH = f"fabric_script/collected_files/**/server{sys.argv[1]}alfa*_metrics.jsonl"
 
@@ -49,10 +52,10 @@ num = sys.argv[1]
 plt.figure(figsize=(10, 5))
 for exp in experiments:
     plt.plot(exp["rounds"], exp["rougeL"], marker='o', label=exp["label"])
-plt.title('RougeL across Experiments')
-plt.xlabel('Round')
-plt.ylabel('RougeL Score')
-plt.legend()
+plt.title('RougeL across Experiments', fontsize=20)
+plt.xlabel('Round', fontsize=18)
+plt.ylabel('RougeL Score', fontsize=18)
+plt.legend(fontsize=16)
 plt.grid(True)
 plt.tight_layout()
 plt.savefig(f"rougeL_superposed_{num}.pdf")
@@ -63,10 +66,10 @@ print("RougeL plot saved as rougeL_superposed.pdf")
 plt.figure(figsize=(10, 5))
 for exp in experiments:
     plt.plot(exp["rounds"], exp["bert"], marker='x', label=exp["label"])
-plt.title('BERTScore across Experiments')
-plt.xlabel('Round')
-plt.ylabel('BERTScore')
-plt.legend()
+plt.title('BERTScore across Experiments', fontsize=20)
+plt.xlabel('Round', fontsize=18)
+plt.ylabel('BERTScore', fontsize=18)
+plt.legend(fontsize=16)
 plt.grid(True)
 plt.tight_layout()
 plt.savefig(f"bert_superposed_{num}.pdf")
